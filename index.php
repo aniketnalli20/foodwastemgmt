@@ -149,8 +149,6 @@ $listings = $listingsStmt->fetchAll();
             </button>
             <nav id="primary-navigation" class="nav-links" role="navigation" aria-label="Primary">
                 <a href="#hero">Home</a>
-                <a href="#home-panels">Overview</a>
-                <a href="#blog">Blog</a>
             </nav>
         </div>
     </header>
@@ -158,101 +156,13 @@ $listings = $listingsStmt->fetchAll();
         <div class="wrap">
             <h2 class="hero-title">Rescue surplus food. Feed communities.</h2>
             <p class="hero-sub">A simple platform connecting Indian donors with verified NGOs and volunteers for timely redistribution.</p>
-            <div class="hero-actions">
-                <a href="#blog" class="btn accent pill">Read the Blog</a>
-                <a href="#home-panels" class="btn secondary pill">Explore Overview</a>
-            </div>
         </div>
     </section>
 
     <main class="container">
-        <!-- Partner logos strip -->
-        <section id="partners" class="card logos-strip" aria-label="Trusted partners">
-            <div class="logos">
-                <span class="logo-chip">Swiggy</span>
-                <span class="logo-chip">Zomato</span>
-                <span class="logo-chip">DHL</span>
-                <span class="logo-chip">UPS</span>
-                <span class="logo-chip">BlueDart</span>
-                <span class="logo-chip">Delhivery</span>
-            </div>
-        </section>
-        <section id="home-panels" class="grid">
-            <div class="card">
-                <h2>Our Mission</h2>
-                <p>We reduce food waste and hunger in India by connecting surplus food from donors to NGOs and communities in need — quickly, safely, and locally.</p>
-            </div>
-            <div class="card">
-                <h2>How It Works</h2>
-                <p>Donors share surplus food; NGOs and volunteers coordinate pickup and distribution. Expiry-aware matching ensures timely delivery.</p>
-                <ul class="muted">
-                    <li>Share surplus and location</li>
-                    <li>Match with nearby NGOs</li>
-                    <li>Pickup and redistribute</li>
-                </ul>
-            </div>
-            <div class="card">
-                <h2>Get Involved</h2>
-                <p>Join us as an NGO partner or volunteer to help redistribute food safely and efficiently.</p>
-                <div class="hero-actions" style="margin-top:8px;">
-                    <a href="#blog" class="btn accent pill">Read the Blog</a>
-                    <a href="#contact" class="btn secondary pill">Contact Us</a>
-                </div>
-            </div>
-        </section>
-
-        <!-- Dark metrics banner inspired by reference UI -->
-        <section id="impact" class="section-dark card" aria-label="Impact metrics">
-            <h2 class="headline">A Winning Impact Record</h2>
-            <div class="metric-grid">
-                <div class="metric">
-                    <div class="metric-value">1.8 Days</div>
-                    <div class="metric-label">Avg. redistribution time</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">75%+</div>
-                    <div class="metric-label">Listings matched</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">97%</div>
-                    <div class="metric-label">Food safety compliance</div>
-                </div>
-            </div>
-            <div class="hero-actions" style="margin-top:12px;">
-                <a href="#home-panels" class="btn accent pill">Get Started</a>
-            </div>
-        </section>
-
-        <!-- Testimonial card -->
-        <section id="testimonial" class="card" aria-label="Community testimonial">
-            <blockquote class="quote">
-                <p>“This platform helped our community redistribute surplus meals in hours, not days. The coordination with local NGOs has been a game-changer.”</p>
-                <footer>
-                    <span class="avatar" aria-hidden="true"></span>
-                    <cite class="muted">Community Volunteer, Mumbai</cite>
-                </footer>
-            </blockquote>
-        </section>
-
-        <section id="blog" class="card">
-            <h2>Latest Articles</h2>
-            <div class="blog-grid">
-                <article class="post">
-                    <h3>Fighting Hunger with Surplus Food</h3>
-                    <p class="muted">A look at how communities can rescue surplus food and deliver it to those who need it most.</p>
-                    <small class="muted">By Team • <?= date('M j, Y') ?></small>
-                </article>
-                <article class="post">
-                    <h3>Best Practices for Safe Food Redistribution</h3>
-                    <p class="muted">Tips on handling, storage, and timing when redistributing cooked and perishable items.</p>
-                    <small class="muted">By Team • <?= date('M j, Y', strtotime('-2 days')) ?></small>
-                </article>
-                <article class="post">
-                    <h3>Volunteer Spotlight: Stories from the Field</h3>
-                    <p class="muted">Experiences from volunteers who’ve helped bridge donors and recipients.</p>
-                    <small class="muted">By Team • <?= date('M j, Y', strtotime('-5 days')) ?></small>
-                </article>
-            </div>
+        <section class="card">
+            <h2>Welcome</h2>
+            <p class="muted">Homepage content will be redesigned step by step.</p>
         </section>
     </main>
 

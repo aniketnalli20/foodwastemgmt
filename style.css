@@ -190,11 +190,11 @@ body {
 .site-header { position: sticky; top: 0; z-index: 1000; background: var(--bg); box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
 .header-inner { display: flex; align-items: center; justify-content: space-between; padding: 8px 20px; width: 100%; max-width: none; margin: 0; flex-wrap: wrap; gap: 8px; }
 .header-inner > * { min-width: 0; }
-.brand { font-weight: 700; color: var(--text); text-decoration: none; }
+.brand { font-weight: 800; color: var(--text); text-decoration: none; font-size: clamp(1.25rem, 1.6vw + 0.75rem, 1.75rem); letter-spacing: -0.01em; }
 .nav-toggle { display: inline-flex; flex-direction: column; gap: 3px; padding: 8px; border: 1px solid var(--border); background: var(--bg); border-radius: 6px; }
 .nav-toggle-bar { width: 20px; height: 2px; background: var(--text); }
 .nav-links { display: none; flex-direction: column; gap: 6px; width: 100%; }
-.nav-links a { color: var(--text); text-decoration: none; padding: 6px 10px; border-radius: 6px; }
+.nav-links a { color: var(--text); text-decoration: none; padding: 8px 12px; border-radius: 8px; font-size: clamp(0.95rem, 0.6vw + 0.7rem, 1.1rem); }
 .nav-links a:hover, .nav-links a:focus-visible { background: #f7f7f7; }
 .nav-links.open { display: flex; }
 @media (min-width: 768px) {
