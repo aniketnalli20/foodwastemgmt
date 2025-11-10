@@ -68,7 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <button type="submit" class="login-button">Sign In</button>
             </form>
             
-            <span class="agreement"><a href="#">Learn user licence agreement</a></span>
         </div>
     </main>
 

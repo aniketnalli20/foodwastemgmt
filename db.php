@@ -30,6 +30,20 @@ $pdo->exec('CREATE TABLE IF NOT EXISTS users (
     password_hash VARCHAR(255) NOT NULL,
     created_at DATETIME NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=' . $DB_CHARSET);
+// Seed demo users if none exist
+try {
+    $userCount = (int)$pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
+    if ($userCount === 0) {
+        $now = gmdate('Y-m-d H:i:s');
+        $stmt = $pdo->prepare('INSERT INTO users (username, email, password_hash, created_at) VALUES (?, ?, ?, ?)');
+        $demoPassword = 'demo1234';
+        $stmt->execute(['Donor', 'donor@example.com', password_hash($demoPassword, PASSWORD_DEFAULT), $now]);
+        $stmt->execute(['NGO Lead', 'ngo@example.com', password_hash($demoPassword, PASSWORD_DEFAULT), $now]);
+        $stmt->execute(['Volunteer', 'volunteer@example.com', password_hash($demoPassword, PASSWORD_DEFAULT), $now]);
+    }
+} catch (Throwable $e) {
+    // Silently ignore seeding errors to avoid breaking page loads
+}
 $pdo->exec('CREATE TABLE IF NOT EXISTS reports (
     id INT AUTO_INCREMENT PRIMARY KEY,
     reporter_name VARCHAR(255) NOT NULL,
