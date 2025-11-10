@@ -126,9 +126,7 @@ $listings = $listingsStmt->fetchAll();
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Food Waste Management</title>
     <link rel="stylesheet" href="style.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Using local Inter font from /fonts; external font links removed -->
     <meta name="description" content="Connect donors with NGOs to rescue surplus food in India." />
 </head>
 <body>
