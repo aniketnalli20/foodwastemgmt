@@ -159,8 +159,8 @@ $listings = $listingsStmt->fetchAll();
         </div>
     </section>
 
-    <main class="container">
-        <section class="card">
+    <main>
+        <section id="welcome">
             <h2>Welcome</h2>
             <p class="muted">Homepage content will be redesigned step by step.</p>
         </section>
