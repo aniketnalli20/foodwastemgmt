@@ -149,6 +149,7 @@ $listings = $listingsStmt->fetchAll();
             </button>
             <nav id="primary-navigation" class="nav-links" role="navigation" aria-label="Primary">
                 <a href="#hero">Home</a>
+                <a href="/create_campaign.php">Create Campaign</a>
             </nav>
         </div>
     </header>

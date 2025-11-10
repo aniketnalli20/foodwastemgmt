@@ -70,3 +70,10 @@ $pdo->exec('CREATE TABLE IF NOT EXISTS campaigns (
     status TEXT NOT NULL DEFAULT "draft", -- draft | active | completed | archived
     created_at TEXT NOT NULL
 )');
+
+// Extend campaigns with additional fields if they are missing
+try { $pdo->exec('ALTER TABLE campaigns ADD COLUMN contributor_name TEXT'); } catch (Throwable $e) {}
+try { $pdo->exec('ALTER TABLE campaigns ADD COLUMN location TEXT'); } catch (Throwable $e) {}
+try { $pdo->exec('ALTER TABLE campaigns ADD COLUMN crowd_size INTEGER'); } catch (Throwable $e) {}
+try { $pdo->exec('ALTER TABLE campaigns ADD COLUMN image_url TEXT'); } catch (Throwable $e) {}
+try { $pdo->exec('ALTER TABLE campaigns ADD COLUMN closing_time TEXT'); } catch (Throwable $e) {}

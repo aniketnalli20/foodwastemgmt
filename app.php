@@ -43,25 +43,44 @@ function time_ago($datetime): string {
  * Optional: area, target_meals (int), start_date (YYYY-MM-DD), end_date (YYYY-MM-DD), status.
  * Returns inserted campaign ID.
  */
-function create_campaign(array $data): int {
+function create_campaign(array $data, ?array $imageFile = null): int {
     global $pdo;
 
-    $title = trim($data['title'] ?? '');
-    $summary = trim($data['summary'] ?? '');
-    if ($title === '' || $summary === '') {
-        throw new InvalidArgumentException('title and summary are required');
+    $contributorName = trim((string)($data['contributor_name'] ?? ''));
+    $location = trim((string)($data['location'] ?? ''));
+    $crowdSize = isset($data['crowd_size']) && $data['crowd_size'] !== '' ? (int)$data['crowd_size'] : null;
+    $closingTime = isset($data['closing_time']) ? trim((string)$data['closing_time']) : null;
+
+    if ($contributorName === '' || $location === '' || $crowdSize === null || $closingTime === null) {
+        throw new InvalidArgumentException('contributor_name, location, crowd_size, and closing_time are required');
     }
 
-    $area = isset($data['area']) ? trim((string)$data['area']) : null;
-    $targetMeals = isset($data['target_meals']) && $data['target_meals'] !== ''
-        ? (int)$data['target_meals']
-        : null;
+    $title = trim((string)($data['title'] ?? 'Campaign by ' . $contributorName));
+    $summary = trim((string)($data['summary'] ?? ('Crowd size ' . $crowdSize . ' at ' . $location . '. Closing: ' . $closingTime)));
+
+    $area = isset($data['area']) ? trim((string)$data['area']) : $location;
+    $targetMeals = isset($data['target_meals']) && $data['target_meals'] !== '' ? (int)$data['target_meals'] : null;
     $startDate = isset($data['start_date']) ? trim((string)$data['start_date']) : null;
     $endDate = isset($data['end_date']) ? trim((string)$data['end_date']) : null;
     $status = isset($data['status']) && $data['status'] !== '' ? trim((string)$data['status']) : 'draft';
 
-    $stmt = $pdo->prepare('INSERT INTO campaigns (title, summary, area, target_meals, start_date, end_date, status, created_at)
-                           VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+    $imageUrl = isset($data['image_url']) ? trim((string)$data['image_url']) : null;
+    if (!$imageUrl && $imageFile && isset($imageFile['tmp_name']) && is_uploaded_file($imageFile['tmp_name'])) {
+        $uploadsDir = __DIR__ . DIRECTORY_SEPARATOR . 'uploads';
+        if (!is_dir($uploadsDir)) {
+            mkdir($uploadsDir, 0777, true);
+        }
+        $ext = strtolower(pathinfo($imageFile['name'] ?? '', PATHINFO_EXTENSION));
+        $fname = 'campaign_' . uniqid('', true) . ($ext ? ('.' . $ext) : '');
+        $dest = $uploadsDir . DIRECTORY_SEPARATOR . $fname;
+        if (!move_uploaded_file($imageFile['tmp_name'], $dest)) {
+            throw new RuntimeException('failed to upload image');
+        }
+        $imageUrl = 'uploads/' . $fname;
+    }
+
+    $stmt = $pdo->prepare('INSERT INTO campaigns (title, summary, area, target_meals, start_date, end_date, status, created_at, contributor_name, location, crowd_size, image_url, closing_time)
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
     $stmt->execute([
         $title,
         $summary,
@@ -71,6 +90,11 @@ function create_campaign(array $data): int {
         $endDate,
         $status,
         gmdate('c'),
+        $contributorName,
+        $location,
+        $crowdSize,
+        $imageUrl,
+        $closingTime,
     ]);
 
     return (int)$pdo->lastInsertId();
