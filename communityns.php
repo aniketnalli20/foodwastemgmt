@@ -199,15 +199,15 @@ if (is_logged_in() && !empty($campaigns)) {
                     </div>
                 </div>
                 <div class="tweet-body">
-                    <strong>Campaign by <?= h($uname) ?></strong>
-                    <div>
-                        Crowd size <?= h((string)$p['crowd_size']) ?> at <?= h((string)$p['location']) ?>. Closing: <?= h((string)$p['closing_iso']) ?>
-                    </div>
-                    <div class="tweet-info">
-                        <div class="info-row"><strong>Category:</strong> <?= h((string)$p['category']) ?></div>
-                        <div class="info-row"><strong>Community:</strong> <?= h((string)$p['community']) ?></div>
-                        <div class="info-row"><strong>Closing:</strong> <?= h($closingFormatted) ?></div>
-                    </div>
+                    <p>Campaign by <?= h($uname) ?></p>
+                    <p>Crowd size <?= h((string)$p['crowd_size']) ?></p>
+                    <p><?= h((string)$p['location']) ?>.</p>
+                    <p>Category:</p>
+                    <p><?= h((string)$p['category']) ?></p>
+                    <p>Community:</p>
+                    <p><?= h((string)$p['community']) ?></p>
+                    <p>Closing:</p>
+                    <p><?= h($closingFormatted) ?></p>
                 </div>
                 <div class="tweet-actions">
                     <a href="<?= h($mapUrl) ?>" target="_blank" rel="noopener">

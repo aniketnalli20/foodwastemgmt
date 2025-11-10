@@ -880,3 +880,13 @@ ul { list-style: none; padding-left: 0; }
 @media (min-width: 640px) { #community-posts { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1100px) { #community-posts { grid-template-columns: repeat(3, 1fr); } }
 #community-posts .tweet-card { max-width: none; margin: 0; }
+/* Ensure same-sized cards within community posts grid */
+#community-posts { align-items: stretch; }
+#community-posts .tweet-card {
+  display: flex;
+  flex-direction: column;
+  height: 300px; /* uniform height for all cards */
+  overflow: hidden;
+}
+#community-posts .tweet-body { flex: 1 1 auto; }
+#community-posts .tweet-actions { margin-top: auto; }
