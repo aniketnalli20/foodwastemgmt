@@ -134,12 +134,12 @@ $listings = $listingsStmt->fetchAll();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Food Waste Management</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="<?= h($BASE_PATH) ?>style.css" />
     <!-- Using local Inter font from /fonts; external font links removed -->
     <meta name="description" content="Connect donors with NGOs to rescue surplus food in India." />
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/uploads/favicon.png" sizes="32x32">
-    <link rel="apple-touch-icon" href="/uploads/favicon.png">
+    <link rel="icon" type="image/png" href="<?= h($BASE_PATH) ?>uploads/favicon.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="<?= h($BASE_PATH) ?>uploads/favicon.png">
 </head>
 <body>
     <header class="site-header" role="banner">
@@ -153,8 +153,8 @@ $listings = $listingsStmt->fetchAll();
             <?php $currentPath = basename($_SERVER['SCRIPT_NAME'] ?? ''); ?>
             <nav id="primary-navigation" class="nav-links" role="navigation" aria-label="Primary">
                 <a href="#hero"<?= $currentPath === 'index.php' ? ' class="active"' : '' ?>>Home</a>
-                <a href="/create_campaign.php"<?= $currentPath === 'create_campaign.php' ? ' class="active"' : '' ?>>Create Campaign</a>
-                <a href="/communityns.php"<?= $currentPath === 'communityns.php' ? ' class="active"' : '' ?>>Community</a>
+                <a href="<?= h($BASE_PATH) ?>create_campaign.php"<?= $currentPath === 'create_campaign.php' ? ' class="active"' : '' ?>>Create Campaign</a>
+                <a href="<?= h($BASE_PATH) ?>communityns.php"<?= $currentPath === 'communityns.php' ? ' class="active"' : '' ?>>Community</a>
             </nav>
         </div>
     </header>

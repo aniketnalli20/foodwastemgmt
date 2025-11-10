@@ -19,21 +19,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Create Campaign · No Starve</title>
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="<?= h($BASE_PATH) ?>style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/uploads/favicon.png" sizes="32x32">
-    <link rel="apple-touch-icon" href="/uploads/favicon.png">
+    <link rel="icon" type="image/png" href="<?= h($BASE_PATH) ?>uploads/favicon.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="<?= h($BASE_PATH) ?>uploads/favicon.png">
 </head>
 <body>
     <header class="site-header" role="banner">
         <div class="container header-inner">
-            <a href="/index.php#hero" class="brand" aria-label="No Starve home">No Starve</a>
+            <a href="<?= h($BASE_PATH) ?>index.php#hero" class="brand" aria-label="No Starve home">No Starve</a>
             <?php $currentPath = basename($_SERVER['SCRIPT_NAME'] ?? ''); ?>
             <nav id="primary-navigation" class="nav-links" role="navigation" aria-label="Primary">
-                <a href="/index.php#hero"<?= $currentPath === 'index.php' ? ' class="active"' : '' ?>>Home</a>
-                <a href="/create_campaign.php"<?= $currentPath === 'create_campaign.php' ? ' class="active"' : '' ?>>Create Campaign</a>
-                <a href="/communityns.php"<?= $currentPath === 'communityns.php' ? ' class="active"' : '' ?>>Community</a>
+                <a href="<?= h($BASE_PATH) ?>index.php#hero"<?= $currentPath === 'index.php' ? ' class="active"' : '' ?>>Home</a>
+                <a href="<?= h($BASE_PATH) ?>create_campaign.php"<?= $currentPath === 'create_campaign.php' ? ' class="active"' : '' ?>>Create Campaign</a>
+                <a href="<?= h($BASE_PATH) ?>communityns.php"<?= $currentPath === 'communityns.php' ? ' class="active"' : '' ?>>Community</a>
             </nav>
         </div>
     </header>
@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (timer) clearTimeout(timer);
             if (!q) { hideSuggestions(); return; }
             timer = setTimeout(function(){
-                fetch('/geocode.php?q=' + encodeURIComponent(q))
+                fetch((window.BASE_PATH || '<?= h($BASE_PATH) ?>') + 'geocode.php?q=' + encodeURIComponent(q))
                   .then(function(r){ return r.json(); })
                   .then(function(json){ renderSuggestions(json.results || []); })
                   .catch(function(){ hideSuggestions(); });
@@ -202,7 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (label) {
                 locInput.value = label;
             } else {
-                fetch('/geocode.php?lat=' + encodeURIComponent(lat) + '&lon=' + encodeURIComponent(lon))
+                fetch((window.BASE_PATH || '<?= h($BASE_PATH) ?>') + 'geocode.php?lat=' + encodeURIComponent(lat) + '&lon=' + encodeURIComponent(lon))
                   .then(function(r){ return r.json(); })
                   .then(function(j){ if (j && j.label) locInput.value = j.label; })
                   .catch(function(){});
@@ -232,6 +232,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             setPosition(initLat, initLon, locInput.value || null);
         }
     })();
+    </script>
+    <script>
+      // Expose BASE_PATH to JS for building internal requests correctly under subfolder or vhost
+      window.BASE_PATH = '<?= h($BASE_PATH) ?>';
     </script>
 
     <footer class="site-footer">

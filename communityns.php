@@ -62,20 +62,20 @@ $campaigns = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Community · No Starve</title>
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="<?= h($BASE_PATH) ?>style.css">
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/uploads/favicon.png" sizes="32x32">
-    <link rel="apple-touch-icon" href="/uploads/favicon.png">
+    <link rel="icon" type="image/png" href="<?= h($BASE_PATH) ?>uploads/favicon.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="<?= h($BASE_PATH) ?>uploads/favicon.png">
 </head>
 <body>
     <header class="site-header" role="banner">
         <div class="container header-inner">
-            <a href="/index.php#hero" class="brand" aria-label="No Starve home">No Starve</a>
+            <a href="<?= h($BASE_PATH) ?>index.php#hero" class="brand" aria-label="No Starve home">No Starve</a>
             <?php $currentPath = basename($_SERVER['SCRIPT_NAME'] ?? ''); ?>
             <nav id="primary-navigation" class="nav-links" role="navigation" aria-label="Primary">
-                <a href="/index.php#hero"<?= $currentPath === 'index.php' ? ' class="active"' : '' ?>>Home</a>
-                <a href="/create_campaign.php"<?= $currentPath === 'create_campaign.php' ? ' class="active"' : '' ?>>Create Campaign</a>
-                <a href="/communityns.php"<?= $currentPath === 'communityns.php' ? ' class="active"' : '' ?>>Community</a>
+                <a href="<?= h($BASE_PATH) ?>index.php#hero"<?= $currentPath === 'index.php' ? ' class="active"' : '' ?>>Home</a>
+                <a href="<?= h($BASE_PATH) ?>create_campaign.php"<?= $currentPath === 'create_campaign.php' ? ' class="active"' : '' ?>>Create Campaign</a>
+                <a href="<?= h($BASE_PATH) ?>communityns.php"<?= $currentPath === 'communityns.php' ? ' class="active"' : '' ?>>Community</a>
             </nav>
         </div>
     </header>
@@ -98,7 +98,7 @@ $campaigns = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 <div class="actions">
                     <button class="btn secondary" type="submit">Apply</button>
                     <?php if ($filterCommunity !== ''): ?>
-                        <a class="btn" href="/communityns.php">Reset</a>
+                        <a class="btn" href="<?= h($BASE_PATH) ?>communityns.php">Reset</a>
                     <?php endif; ?>
                 </div>
             </form>
@@ -180,7 +180,7 @@ $campaigns = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
     <script>
     function shareCampaign(id){
-        const url = window.location.origin + '/communityns.php#campaign-' + id;
+        const url = window.location.origin + (window.BASE_PATH || '<?= h($BASE_PATH) ?>') + 'communityns.php#campaign-' + id;
         const title = 'No Starve Campaign #' + id;
         if (navigator.share) {
             navigator.share({ title: title, text: 'Support this campaign', url: url }).catch(function(){});
@@ -190,6 +190,9 @@ $campaigns = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
             }).catch(function(){ window.prompt('Copy this link', url); });
         }
     }
+    </script>
+    <script>
+      window.BASE_PATH = '<?= h($BASE_PATH) ?>';
     </script>
 
     <footer class="site-footer">
