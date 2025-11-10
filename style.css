@@ -36,6 +36,11 @@ body {
 .site-header h1 { margin: 0 0 6px; font-size: 24px; }
 .tagline { margin: 0; color: var(--muted); }
 
+/* Global: remove underlines and bullets project-wide */
+a { text-decoration: none !important; }
+a:hover, a:focus, a:focus-visible { text-decoration: none !important; }
+ul { list-style: none; padding-left: 0; }
+
 .hero {
   background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), var(--hero-img, none);
   background-size: cover;

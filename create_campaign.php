@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="actions" style="margin-top: 8px;">
                         <button class="btn" id="use-my-location" type="button">Use My Location</button>
                     </div>
-                    <div id="map" class="card-plain" style="height: 320px; margin-top: 12px;"></div>
+                    <div id="map" class="card-plain" style="width: 100%; aspect-ratio: 1 / 1; max-width: 640px; margin-top: 12px;"></div>
                 </div>
 
                 <div class="form-field">
@@ -158,12 +158,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
-        let marker = null;
+        let markerLayer = null;
 
         function setPosition(lat, lon, label){
-            if (marker) { map.removeLayer(marker); }
-            marker = L.marker([lat, lon]).addTo(map);
-            map.setView([lat, lon], 15);
+            if (markerLayer) { map.removeLayer(markerLayer); }
+            markerLayer = L.layerGroup().addTo(map);
+
+            // Outer ring for contrast
+            L.circleMarker([lat, lon], {
+                radius: 14,
+                color: '#ffffff',
+                weight: 4,
+                opacity: 0.95,
+                fillOpacity: 0
+            }).addTo(markerLayer);
+
+            // Inner dot: bold, high-contrast
+            L.circleMarker([lat, lon], {
+                radius: 10,
+                color: '#0a62ff',
+                weight: 2,
+                fillColor: '#1a7aff',
+                fillOpacity: 0.95
+            }).addTo(markerLayer).bindPopup(label || 'Selected location').openPopup();
+
+            map.setView([lat, lon], 17);
             latEl.value = lat;
             lonEl.value = lon;
             if (label) {
@@ -177,6 +196,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         map.on('click', function(e){ setPosition(e.latlng.lat, e.latlng.lng); });
+        // Ensure map resizes correctly when container size changes
+        setTimeout(function(){ map.invalidateSize(); }, 200);
+        window.addEventListener('resize', function(){ map.invalidateSize(); });
 
         if (useBtn) {
             useBtn.addEventListener('click', function(){
