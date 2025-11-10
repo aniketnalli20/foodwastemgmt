@@ -10,6 +10,8 @@
   /* Accent inspired by reference UI */
   --accent: #b8ff35;    /* Lime accent */
   --accentText: #0c1a2b;/* Deep navy for contrast */
+  --navy: #0c1a2b;      /* Dark section background */
+  --navy-ghost: #0f2238;/* Slightly lighter navy */
 }
 
 * { box-sizing: border-box; }
@@ -75,15 +77,33 @@ body {
 .btn.secondary:hover { border-color: #3a3a3a; }
 
 .container { width: 100%; max-width: none; margin: 24px 0; padding: 0 20px; }
-.card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); transition: box-shadow 200ms ease, transform 200ms ease; }
-.card:hover, .card:focus-within { box-shadow: 0 10px 28px rgba(0,0,0,0.12); transform: translateY(-2px); }
+.card { background: var(--panel); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); transition: none; background-image: linear-gradient(180deg, rgba(184,255,53,0.07), rgba(184,255,53,0)); background-origin: border-box; }
 .card h2 { margin: 0 0 12px; font-size: 20px; }
 
 /* Overview cards with subtle accent and improved spacing */
 #home-panels .card { position: relative; overflow: hidden; }
 #home-panels .card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; background: linear-gradient(90deg, var(--text), var(--muted)); opacity: 0.12; }
 #home-panels .card p { margin: 0; color: var(--muted); }
-.card h2 { margin: 0 0 12px; font-size: 18px; }
+
+/* Logos strip */
+.logos-strip .logos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+@media (min-width: 720px) { .logos-strip .logos { grid-template-columns: repeat(6, 1fr); } }
+.logo-chip { display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: 999px; padding: 8px 12px; background: #fafafa; color: var(--text); font-weight: 600; }
+
+/* Dark metrics banner */
+.section-dark { background: linear-gradient(180deg, var(--navy), var(--navy-ghost)); color: #ffffff; border: none; }
+.section-dark .headline { margin: 0 0 12px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 800; font-size: clamp(1.25rem, 1.8vw + 0.8rem, 2rem); }
+.metric-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+@media (min-width: 720px) { .metric-grid { grid-template-columns: repeat(3, 1fr); } }
+.metric { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 12px; text-align: center; }
+.metric-value { font-size: 1.25rem; font-weight: 800; }
+.metric-label { color: #c9d6e6; font-size: 0.9rem; }
+
+/* Testimonial */
+.quote { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; }
+.quote p { grid-column: 1 / -1; margin: 0 0 8px; }
+.quote footer { display: flex; align-items: center; gap: 8px; }
+.avatar { width: 44px; height: 44px; border-radius: 50%; background: #e8e8e8; border: 1px solid var(--border); }
 
 .alert { padding: 10px 12px; border-radius: 8px; margin-bottom: 12px; }
 .alert.success { background: #f9f9f9; border: 1px solid var(--border); }
@@ -192,8 +212,7 @@ body {
 
 .blog-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
 @media (min-width: 720px) { .blog-grid { grid-template-columns: repeat(3, 1fr); } }
-.blog-grid .post { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); transition: box-shadow 200ms ease, transform 200ms ease; }
-.blog-grid .post:hover, .blog-grid .post:focus-within { box-shadow: 0 8px 24px rgba(0,0,0,0.1); transform: translateY(-2px); }
+.blog-grid .post { background: var(--panel); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); transition: none; background-image: linear-gradient(180deg, rgba(184,255,53,0.05), rgba(184,255,53,0)); background-origin: border-box; }
 .blog-grid .post h3 { margin: 0 0 8px; font-size: 18px; color: var(--text); }
 .blog-grid .post p { margin: 0; color: var(--muted); }
 

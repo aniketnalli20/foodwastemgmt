@@ -166,11 +166,21 @@ $listings = $listingsStmt->fetchAll();
     </section>
 
     <main class="container">
+        <!-- Partner logos strip -->
+        <section id="partners" class="card logos-strip" aria-label="Trusted partners">
+            <div class="logos">
+                <span class="logo-chip">Swiggy</span>
+                <span class="logo-chip">Zomato</span>
+                <span class="logo-chip">DHL</span>
+                <span class="logo-chip">UPS</span>
+                <span class="logo-chip">BlueDart</span>
+                <span class="logo-chip">Delhivery</span>
+            </div>
+        </section>
         <section id="home-panels" class="grid">
             <div class="card">
                 <h2>Our Mission</h2>
-                <p>Our Mission
-We reduce food waste and hunger in India by connecting surplus food from donors to NGOs and communities in need — quickly, safely, and locally.</p>
+                <p>We reduce food waste and hunger in India by connecting surplus food from donors to NGOs and communities in need — quickly, safely, and locally.</p>
             </div>
             <div class="card">
                 <h2>How It Works</h2>
@@ -189,6 +199,39 @@ We reduce food waste and hunger in India by connecting surplus food from donors 
                     <a href="#contact" class="btn secondary pill">Contact Us</a>
                 </div>
             </div>
+        </section>
+
+        <!-- Dark metrics banner inspired by reference UI -->
+        <section id="impact" class="section-dark card" aria-label="Impact metrics">
+            <h2 class="headline">A Winning Impact Record</h2>
+            <div class="metric-grid">
+                <div class="metric">
+                    <div class="metric-value">1.8 Days</div>
+                    <div class="metric-label">Avg. redistribution time</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">75%+</div>
+                    <div class="metric-label">Listings matched</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">97%</div>
+                    <div class="metric-label">Food safety compliance</div>
+                </div>
+            </div>
+            <div class="hero-actions" style="margin-top:12px;">
+                <a href="#home-panels" class="btn accent pill">Get Started</a>
+            </div>
+        </section>
+
+        <!-- Testimonial card -->
+        <section id="testimonial" class="card" aria-label="Community testimonial">
+            <blockquote class="quote">
+                <p>“This platform helped our community redistribute surplus meals in hours, not days. The coordination with local NGOs has been a game-changer.”</p>
+                <footer>
+                    <span class="avatar" aria-hidden="true"></span>
+                    <cite class="muted">Community Volunteer, Mumbai</cite>
+                </footer>
+            </blockquote>
         </section>
 
         <section id="blog" class="card">
