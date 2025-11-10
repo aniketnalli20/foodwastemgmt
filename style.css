@@ -105,7 +105,7 @@ body {
 /* Plain card: simple panel, no accent border */
 .card-plain {
   max-width: 72ch;
-  margin-top: 16px;
+  margin-top: 12px; /* closer to hero */
   margin-left: 20px;
   margin-right: auto;
   background: var(--panel);
@@ -114,7 +114,8 @@ body {
   padding: 14px 16px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
-.card-plain p { margin: 0 0 8px; line-height: 1.6; }
+.card-plain .card-title { margin: 0 0 8px; font-weight: 800; letter-spacing: -0.01em; font-size: clamp(1.1rem, 1.2vw + 0.7rem, 1.5rem); }
+.card-plain p { margin: 0 0 8px; line-height: 1.6; font-size: clamp(1.05rem, 0.9vw + 0.7rem, 1.25rem); }
 .card-plain p:last-child { margin-bottom: 0; }
 @media (min-width: 720px) { .card-plain { padding: 16px 18px; margin-left: 24px; } }
 

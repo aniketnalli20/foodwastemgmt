@@ -161,6 +161,7 @@ $listings = $listingsStmt->fetchAll();
 
     <main>
         <section id="info-card" class="card-plain" aria-label="Key points">
+            <h3 class="card-title">Key Points</h3>
             <p>Reduce food waste across communities.</p>
             <p>Support those in need with timely action.</p>
             <p>Build a better future together.</p>
