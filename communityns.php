@@ -123,12 +123,27 @@ $campaigns = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                                 <p><?= h($summaryText) ?></p>
                             <?php endif; ?>
                             <?php 
-                              $metaLine = 'Crowd Size: ' . (string)$c['crowd_size'] . ' · Location: ' . (string)$c['location'] . ' · Closing: ' . (string)$c['closing_time'];
-                              $hasDuplicateMeta = stripos($summaryText, 'crowd') !== false || stripos($summaryText, 'closing') !== false || stripos($summaryText, 'location') !== false;
+                              // Build meta without closing; closing gets its own indicator line
+                              $metaLine = 'Crowd Size: ' . (string)$c['crowd_size'] . ' · Location: ' . (string)$c['location'];
+                              $hasDuplicateMeta = stripos($summaryText, 'crowd') !== false || stripos($summaryText, 'location') !== false;
                             ?>
                             <?php if (!$hasDuplicateMeta): ?>
                                 <p class="muted"><?= h($metaLine) ?></p>
                             <?php endif; ?>
+                            <?php 
+                              $closingTs = strtotime((string)$c['closing_time']);
+                              $nowTs = time();
+                              $diff = $closingTs !== false ? ($closingTs - $nowTs) : null;
+                              $closingCls = 'ok';
+                              $closingText = (string)$c['closing_time'];
+                              if ($diff !== null) {
+                                if ($diff <= 0) { $closingCls = 'closed'; $closingText = 'Closed'; }
+                                else if ($diff <= 2 * 3600) { $closingCls = 'soon'; $closingText = 'in ' . max(1, floor($diff/60)) . 'm'; }
+                                else if ($diff < 48 * 3600) { $closingText = 'in ' . floor($diff/3600) . 'h'; }
+                                else { $closingText = 'in ' . floor($diff/86400) . 'd'; }
+                              }
+                            ?>
+                            <p class="closing-indicator <?= h($closingCls) ?>"><strong>Closing:</strong> <?= h($closingText) ?></p>
                             <div class="actions" style="justify-content:flex-start; gap:8px;">
                                 <?php
                                 $hasCoords = isset($c['latitude']) && $c['latitude'] !== null && isset($c['longitude']) && $c['longitude'] !== null;

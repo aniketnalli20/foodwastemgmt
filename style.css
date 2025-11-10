@@ -277,6 +277,12 @@ ul { list-style: none; padding-left: 0; }
   font-size: clamp(0.95rem, 0.8vw + 0.7rem, 1.1rem);
 }
 
+/* Closing time indicator: bold label with contextual color */
+.closing-indicator { margin: 6px 0 0; font-weight: 700; }
+.closing-indicator.ok { color: #1a7f37; }
+.closing-indicator.soon { color: #b45309; }
+.closing-indicator.closed { color: #b91c1c; }
+
 /* Trendy filter toolbar for Community */
 .section-subtitle { margin: 4px 0 12px; color: var(--muted); font-size: 0.95rem; }
 .filter-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
