@@ -25,10 +25,10 @@ body {
 .tagline { margin: 0; color: var(--muted); }
 
 .hero { background: var(--bg); border-bottom: 1px solid var(--border); }
-.hero .wrap { width: 100%; max-width: none; margin: 0; padding: 24px 20px; }
+.hero .wrap { width: 100%; max-width: none; margin: 0; padding: 24px 20px; text-align: center; }
 .hero-title { margin: 0 0 8px; font-size: 28px; }
 .hero-sub { margin: 0 0 12px; color: var(--muted); }
-.hero-actions { display: flex; gap: 10px; }
+.hero-actions { display: flex; gap: 10px; justify-content: center; }
 .btn { display: inline-block; background: var(--primary); color: #000; padding: 10px 14px; border-radius: 8px; text-decoration: none; border: 1px solid var(--border); }
 .btn:hover { background: #eaeaea; }
 .btn.secondary { background: transparent; color: var(--text); border-color: var(--border); }
