@@ -37,9 +37,9 @@ try {
         $now = gmdate('Y-m-d H:i:s');
         $stmt = $pdo->prepare('INSERT INTO users (username, email, password_hash, created_at) VALUES (?, ?, ?, ?)');
         $demoPassword = 'demo1234';
-        $stmt->execute(['Donor', 'donor@example.com', password_hash($demoPassword, PASSWORD_DEFAULT), $now]);
-        $stmt->execute(['NGO Lead', 'ngo@example.com', password_hash($demoPassword, PASSWORD_DEFAULT), $now]);
-        $stmt->execute(['Volunteer', 'volunteer@example.com', password_hash($demoPassword, PASSWORD_DEFAULT), $now]);
+        $stmt->execute(['Donor', 'donor@nostrv.com', password_hash($demoPassword, PASSWORD_DEFAULT), $now]);
+        $stmt->execute(['NGO Lead', 'ngo@nostrv.com', password_hash($demoPassword, PASSWORD_DEFAULT), $now]);
+        $stmt->execute(['Volunteer', 'volunteer@nostrv.com', password_hash($demoPassword, PASSWORD_DEFAULT), $now]);
     }
 } catch (Throwable $e) {
     // Silently ignore seeding errors to avoid breaking page loads

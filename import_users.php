@@ -18,7 +18,7 @@ function slugify($str): string {
 function gen_email(string $name, int $idx = 0): string {
     $slug = slugify($name);
     $suffix = $idx > 0 ? ('.' . $idx) : '';
-    return $slug . $suffix . '@example.com';
+    return $slug . $suffix . '@nostrv.com';
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
