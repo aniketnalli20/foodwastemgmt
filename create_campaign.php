@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </header>
 
     <main class="container" style="max-width: var(--content-max); padding: var(--content-pad);">
-        <section class="card-plain card-fullbleed" aria-label="Create Campaign">
+        <section class="card-plain card-fullbleed create-page" aria-label="Create Campaign">
             <h2 class="section-title">Create Campaign</h2>
 
             <?php if (!empty($errors)): ?>

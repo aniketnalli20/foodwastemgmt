@@ -239,8 +239,8 @@ ul { list-style: none; padding-left: 0; }
   box-shadow: 0 0 0 2px rgba(0,0,0,0.04);
 }
 .actions { display: flex; justify-content: flex-end; margin-top: 6px; }
-/* Default action buttons, except those using the special .btn style */
-.actions button:not(.btn) {
+/* Default action button style (site-wide baseline) */
+.actions button {
   background: var(--bg);
   color: var(--text);
   border: 1px solid var(--border);
@@ -248,7 +248,7 @@ ul { list-style: none; padding-left: 0; }
   border-radius: 8px;
   cursor: pointer;
 }
-.actions button:not(.btn):hover { background: #f5f5f5; }
+.actions button:hover { background: #f5f5f5; }
 
 /* Attractive primary CTA button */
 .btn.cta {
@@ -260,8 +260,8 @@ ul { list-style: none; padding-left: 0; }
 .btn.cta:hover { filter: brightness(1.05); box-shadow: 0 12px 28px rgba(26,122,255,0.4); }
 .btn.cta .icon { display: inline-block; margin-right: 8px; font-weight: 700; }
 
-/* From Uiverse.io by CristianMontoya98 */
-.btn {
+/* From Uiverse.io by CristianMontoya98 — scoped to Create page only */
+.create-page .btn {
   width: 6.5em;
   height: 2.3em;
   margin: 0.5em;
@@ -276,8 +276,8 @@ ul { list-style: none; padding-left: 0; }
   z-index: 1;
   overflow: hidden;
 }
-.btn:hover { color: black; }
-.btn::after {
+.create-page .btn:hover { color: black; }
+.create-page .btn::after {
   content: "";
   background: white;
   position: absolute;
@@ -289,7 +289,7 @@ ul { list-style: none; padding-left: 0; }
   transform: skewX(-45deg) scale(0, 1);
   transition: all 0.5s;
 }
-.btn:hover::after {
+.create-page .btn:hover::after {
   transform: skewX(-45deg) scale(1, 1);
   transition: all 0.5s;
 }
