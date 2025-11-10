@@ -1,6 +1,13 @@
 <?php
 require_once __DIR__ . '/app.php';
 
+$next = '';
+if (isset($_GET['next'])) {
+    $next = trim((string)$_GET['next']);
+} elseif (isset($_POST['next'])) {
+    $next = trim((string)$_POST['next']);
+}
+
 $error = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim((string)($_POST['email'] ?? ''));
@@ -18,7 +25,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'Incorrect password';
             } else {
                 $_SESSION['user_id'] = (int)$user['id'];
-                header('Location: ' . $BASE_PATH . 'index.php#hero');
+                $dest = 'index.php#hero';
+                if ($next !== '') {
+                    if (preg_match('/^[A-Za-z0-9_\-]+(\.php)?(\?.*)?$/', $next)) {
+                        $dest = $next;
+                    }
+                }
+                header('Location: ' . $BASE_PATH . $dest);
                 exit;
             }
         } catch (Throwable $e) {
@@ -42,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php $currentPath = basename($_SERVER['SCRIPT_NAME'] ?? ''); ?>
             <nav id="primary-navigation" class="nav-links" role="navigation" aria-label="Primary">
                 <a href="<?= h($BASE_PATH) ?>index.php#hero"<?= $currentPath === 'index.php' ? ' class="active"' : '' ?>>Home</a>
-                <a href="<?= h($BASE_PATH) ?>create_campaign.php"<?= $currentPath === 'create_campaign.php' ? ' class="active"' : '' ?>>Create Campaign</a>
+                <a href="<?= h(is_logged_in() ? ($BASE_PATH . 'create_campaign.php') : ($BASE_PATH . 'login.php?next=create_campaign.php')) ?>"<?= $currentPath === 'create_campaign.php' ? ' class="active"' : '' ?>>Create Campaign</a>
                 <a href="<?= h($BASE_PATH) ?>communityns.php"<?= $currentPath === 'communityns.php' ? ' class="active"' : '' ?>>Community</a>
                 <?php if (is_logged_in()): ?>
                     <a href="<?= h($BASE_PATH) ?>logout.php">Logout</a>
@@ -62,6 +75,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             <?php endif; ?>
             <form class="form" method="post" action="<?= h($BASE_PATH) ?>login.php">
+                <?php if ($next !== ''): ?>
+                    <input type="hidden" name="next" value="<?= h($next) ?>">
+                <?php endif; ?>
                 <input placeholder="E-mail" id="email" name="email" type="email" class="input" required />
                 <input placeholder="Password" id="password" name="password" type="password" class="input" required />
                 <span class="forgot-password"><a href="#">Forgot Password ?</a></span>

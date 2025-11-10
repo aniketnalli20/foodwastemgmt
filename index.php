@@ -153,7 +153,7 @@ $listings = $listingsStmt->fetchAll();
             <?php $currentPath = basename($_SERVER['SCRIPT_NAME'] ?? ''); ?>
             <nav id="primary-navigation" class="nav-links" role="navigation" aria-label="Primary">
                 <a href="#hero"<?= $currentPath === 'index.php' ? ' class="active"' : '' ?>>Home</a>
-                <a href="<?= h($BASE_PATH) ?>create_campaign.php"<?= $currentPath === 'create_campaign.php' ? ' class="active"' : '' ?>>Create Campaign</a>
+                <a href="<?= h(is_logged_in() ? ($BASE_PATH . 'create_campaign.php') : ($BASE_PATH . 'login.php?next=create_campaign.php')) ?>"<?= $currentPath === 'create_campaign.php' ? ' class="active"' : '' ?>>Create Campaign</a>
                 <a href="<?= h($BASE_PATH) ?>communityns.php"<?= $currentPath === 'communityns.php' ? ' class="active"' : '' ?>>Community</a>
                 <?php if (is_logged_in()): ?>
                   <a href="<?= h($BASE_PATH) ?>logout.php">Logout</a>
@@ -168,7 +168,7 @@ $listings = $listingsStmt->fetchAll();
             <h1 class="hero-title break-100">We face challenges to create real change, cutting food waste and feeding those in need.</h1>
             <p class="hero-sub break-100">Together Against Food Waste</p>
             <div class="hero-actions">
-              <a class="btn accent pill" href="<?= h($BASE_PATH) ?>create_campaign.php">Get Started</a>
+              <a class="btn accent pill" href="<?= h(is_logged_in() ? ($BASE_PATH . 'create_campaign.php') : ($BASE_PATH . 'login.php?next=create_campaign.php')) ?>">Get Started</a>
               <a class="btn secondary pill" href="<?= h($BASE_PATH) ?>communityns.php">Explore Community</a>
             </div>
             <form class="search-bar" role="search" method="get" action="<?= h($BASE_PATH) ?>index.php">
