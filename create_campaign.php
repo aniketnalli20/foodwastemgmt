@@ -61,15 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <div class="form-field">
-                    <label for="location">Location</label>
-                    <input type="text" id="location" name="location" required autocomplete="off" aria-autocomplete="list" aria-controls="location-suggestions">
-                    <input type="hidden" id="latitude" name="latitude">
-                    <input type="hidden" id="longitude" name="longitude">
-                    <div id="location-suggestions" class="card-plain" role="listbox" style="position: absolute; z-index: 10; display: none; max-height: 220px; overflow: auto;"></div>
-                    <div class="actions" style="margin-top: 8px;">
-                        <button class="btn" id="use-my-location" type="button">Use My Location</button>
-                    </div>
-                    <div id="map" class="card-plain" style="width: 100%; aspect-ratio: 1 / 1; max-width: 640px; margin-top: 12px;"></div>
+                    <label for="community">Community Suitable For</label>
+                    <input type="text" id="community" name="community" required>
                 </div>
 
                 <div class="form-field">
@@ -85,6 +78,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="form-field">
                     <label for="image">Upload Image</label>
                     <input type="file" id="image" name="image" accept="image/*">
+                </div>
+
+                <div class="form-field">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" name="location" required autocomplete="off" aria-autocomplete="list" aria-controls="location-suggestions">
+                    <input type="hidden" id="latitude" name="latitude">
+                    <input type="hidden" id="longitude" name="longitude">
+                    <div id="location-suggestions" class="card-plain" role="listbox" style="position: absolute; z-index: 10; display: none; max-height: 220px; overflow: auto;"></div>
+                    <div class="actions" style="margin-top: 8px;">
+                        <button class="btn" id="use-my-location" type="button">Use My Location</button>
+                    </div>
+                    <div id="map" class="card-plain" style="width: 100%; aspect-ratio: 1 / 1; max-width: 640px; margin-top: 12px;"></div>
                 </div>
 
                 <div class="actions">

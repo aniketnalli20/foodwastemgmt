@@ -45,7 +45,6 @@ ul { list-style: none; padding-left: 0; }
   background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), var(--hero-img, none);
   background-size: cover;
   background-position: center;
-  border-bottom: 1px solid var(--border);
   color: #ffffff;
 }
 
@@ -134,8 +133,7 @@ ul { list-style: none; padding-left: 0; }
 @media (min-width: 720px) { .card-plain { padding: 16px 18px; margin-left: 24px; } }
 
 /* Section titles and simple blocks */
-.section-title { margin: 0 0 10px; font-weight: 800; letter-spacing: -0.01em; font-size: clamp(1.2rem, 1.6vw + 0.8rem, 1.8rem); position: relative; }
-.section-title::after { content: ""; position: relative; display: block; width: 48px; height: 3px; background: #e2e2e2; border-radius: 2px; margin-top: 8px; }
+.section-title { margin: 0 0 10px; font-weight: 800; letter-spacing: -0.01em; font-size: clamp(1.2rem, 1.6vw + 0.8rem, 1.8rem); }
 
 .steps-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
 @media (min-width: 840px) { .steps-grid { grid-template-columns: 1fr 1fr; } }
