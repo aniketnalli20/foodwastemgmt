@@ -25,7 +25,7 @@ body {
 .tagline { margin: 0; color: var(--muted); }
 
 .hero {
-  background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('uploads/hero.jpg');
+  background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), var(--hero-img, none);
   background-size: cover;
   background-position: center;
   border-bottom: 1px solid var(--border);

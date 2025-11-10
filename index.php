@@ -10,6 +10,13 @@ if (!is_dir($uploadsDir)) {
     @mkdir($uploadsDir, 0775, true);
 }
 
+// Resolve hero background image from uploads (jpg/png/webp)
+$heroUrl = null;
+foreach (['hero.jpg','hero.png','hero.webp'] as $name) {
+    $candidate = $uploadsDir . DIRECTORY_SEPARATOR . $name;
+    if (is_file($candidate)) { $heroUrl = 'uploads/' . $name; break; }
+}
+
 // Handle create listing
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'create_listing') {
     $donor_type = trim($_POST['donor_type'] ?? '');
@@ -145,7 +152,7 @@ $listings = $listingsStmt->fetchAll();
             </nav>
         </div>
     </header>
-<section id="hero" class="hero">
+<section id="hero" class="hero"<?= $heroUrl ? ' style="--hero-img: url(' . h($heroUrl) . ');"' : '' ?> >
         <div class="wrap">
             <h2 class="hero-title">Rescue surplus food. Feed communities.</h2>
             <p class="hero-sub">A simple platform connecting Indian donors with verified NGOs and volunteers for timely redistribution.</p>
