@@ -125,10 +125,9 @@ if (is_logged_in() && !empty($campaigns)) {
         <section class="card-plain">
             <h2 class="section-title">Explore Community</h2>
             <p class="section-subtitle muted">Showing <?= h((string)count($campaigns)) ?> campaigns<?= $filterCommunity !== '' ? (' in ' . h($filterCommunity)) : '' ?></p>
-            <form method="get" class="filter-bar" aria-label="Filter campaigns">
+            <form method="get" class="filter-bar compact" aria-label="Filter campaigns">
                 <label for="community" class="sr-only">Filter by Community</label>
                 <div class="control-group">
-                    <span class="control-label">Filter by Community</span>
                     <select id="community" name="community" class="select">
                         <option value="">All</option>
                         <?php foreach ($communities as $c): ?>
@@ -176,9 +175,26 @@ if (is_logged_in() && !empty($campaigns)) {
                               $metaLine = 'Crowd Size: ' . (string)$c['crowd_size'] . ' · Location: ' . (string)$c['location'] . ' · Community: ' . ((string)($c['community'] ?: 'General'));
                               $hasDuplicateMeta = stripos($summaryText, 'crowd') !== false || stripos($summaryText, 'location') !== false;
                             ?>
-                            <?php if (!$hasDuplicateMeta): ?>
-                                <div class="muted" style="margin-top:4px;"><?= h($metaLine) ?></div>
-                            <?php endif; ?>
+                            <div class="tweet-info">
+                                <div class="info-row">
+                                    <svg class="icon" viewBox="0 0 24 24"><path d="M7 2h10v3H7z"/><path d="M5 5h14v17H5z"/><path d="M8 10h3v3H8zM13 10h3v3h-3zM8 15h3v3H8zM13 15h3v3h-3z"/></svg>
+                                    <strong>Closing:</strong> <?= h($closingText) ?>
+                                </div>
+                                <?php if (!$hasDuplicateMeta): ?>
+                                <div class="info-row">
+                                    <svg class="icon" viewBox="0 0 24 24"><path d="M12 21s-6-5.33-6-10a6 6 0 1 1 12 0c0 4.67-6 10-6 10Z"/><circle cx="12" cy="11" r="2.5"/></svg>
+                                    <strong>Location:</strong> <?= h((string)$c['location']) ?>
+                                </div>
+                                <div class="info-row">
+                                    <svg class="icon" viewBox="0 0 24 24"><path d="M4 20a8 8 0 0 1 16 0"/><circle cx="12" cy="8" r="3.5"/></svg>
+                                    <strong>Crowd:</strong> <?= h((string)$c['crowd_size']) ?>
+                                </div>
+                                <div class="info-row">
+                                    <svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M6 10h6v2H6zM6 14h10v2H6z"/></svg>
+                                    <strong>Community:</strong> <?= h((string)($c['community'] ?: 'General')) ?>
+                                </div>
+                                <?php endif; ?>
+                            </div>
                             <?php 
                               $closingTs = strtotime((string)$c['closing_time']);
                               $nowTs = time();
@@ -191,7 +207,7 @@ if (is_logged_in() && !empty($campaigns)) {
                               }
                               if ($closingTs !== false) { $closingText = date('M j, Y g:i A', $closingTs); }
                             ?>
-                            <div class="closing-indicator <?= h($closingCls) ?>" style="margin-top:4px;"><strong>Closing:</strong> <?= h($closingText) ?></div>
+                            <div class="closing-indicator <?= h($closingCls) ?>" style="margin-top:4px;"><strong>Status:</strong> <?= h($closingText) ?></div>
                         </div>
                         <?php if (!empty($c['image_url'])): ?>
                             <div class="tweet-media">
@@ -214,8 +230,13 @@ if (is_logged_in() && !empty($campaigns)) {
                                 <input type="hidden" name="type" value="campaign"/>
                                 <input type="hidden" name="id" value="<?= h((string)$c['id']) ?>"/>
                                 <button type="submit" aria-label="Endorse campaign"<?= isset($userEndorsed['campaign'][(int)$c['id']]) ? ' class="active" title="Undo endorsement"' : '' ?>>
-                                    <svg class="icon" viewBox="0 0 24 24"><path d="M12 21s-7.19-5.19-9-9.5C1.88 8.7 3.92 6.5 6.5 6.5c1.7 0 3.3.86 4.25 2.22C11.7 7.36 13.3 6.5 15 6.5c2.58 0 4.62 2.2 3.5 5C19.19 15.81 12 21 12 21Z"/></svg>
-                                    <?= isset($userEndorsed['campaign'][(int)$c['id']]) ? 'Endorsed' : 'Campaign' ?> <span class="count">(<?= h((string)($c['endorse_campaign'] ?? 0)) ?>)</span>
+                                    <?php if (isset($userEndorsed['campaign'][(int)$c['id']])): ?>
+                                        <img class="icon-img" src="<?= h($BASE_PATH) ?>uploads/icons/thumb_down_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.png" alt="Undo" />
+                                        Undo <span class="count">(<?= h((string)($c['endorse_campaign'] ?? 0)) ?>)</span>
+                                    <?php else: ?>
+                                        <img class="icon-img" src="<?= h($BASE_PATH) ?>uploads/icons/thumb_up_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.png" alt="Endorse" />
+                                        Endorse <span class="count">(<?= h((string)($c['endorse_campaign'] ?? 0)) ?>)</span>
+                                    <?php endif; ?>
                                 </button>
                             </form>
                             <form method="post">
@@ -223,8 +244,13 @@ if (is_logged_in() && !empty($campaigns)) {
                                 <input type="hidden" name="type" value="contributor"/>
                                 <input type="hidden" name="id" value="<?= h((string)$c['id']) ?>"/>
                                 <button type="submit" aria-label="Endorse contributor"<?= isset($userEndorsed['contributor'][(int)$c['id']]) ? ' class="active" title="Undo endorsement"' : '' ?>>
-                                    <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>
-                                    <?= isset($userEndorsed['contributor'][(int)$c['id']]) ? 'Endorsed' : 'Contributor' ?> <span class="count">(<?= h((string)($c['endorse_contributor'] ?? 0)) ?>)</span>
+                                    <?php if (isset($userEndorsed['contributor'][(int)$c['id']])): ?>
+                                        <img class="icon-img" src="<?= h($BASE_PATH) ?>uploads/icons/thumb_down_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.png" alt="Undo" />
+                                        Undo <span class="count">(<?= h((string)($c['endorse_contributor'] ?? 0)) ?>)</span>
+                                    <?php else: ?>
+                                        <img class="icon-img" src="<?= h($BASE_PATH) ?>uploads/icons/thumbs_up_double_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.png" alt="Endorse" />
+                                        Endorse <span class="count">(<?= h((string)($c['endorse_contributor'] ?? 0)) ?>)</span>
+                                    <?php endif; ?>
                                 </button>
                             </form>
                             <button type="button" onclick="shareCampaign(<?= h((string)$c['id']) ?>)" aria-label="Share">
