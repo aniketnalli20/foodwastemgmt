@@ -212,7 +212,7 @@ ul { list-style: none; padding-left: 0; }
   box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 30px 30px -20px;
   margin: 20px auto;
 }
-.login-page .heading { text-align: center; font-weight: 900; font-size: 30px; color: rgb(16, 137, 211); }
+.login-page .heading { text-align: center; font-weight: 900; font-size: 30px; color: #00A693; }
 .login-page .form { margin-top: 20px; }
 .login-page .form .input {
   width: 100%;
@@ -225,14 +225,14 @@ ul { list-style: none; padding-left: 0; }
   border-inline: 2px solid transparent;
 }
 .login-page .form .input::placeholder { color: rgb(170, 170, 170); }
-.login-page .form .input:focus { outline: none; border-inline: 2px solid #12b1d1; }
+.login-page .form .input:focus { outline: none; border-inline: 2px solid #00A693; }
 .login-page .form .forgot-password { display: block; margin-top: 10px; margin-left: 10px; }
-.login-page .form .forgot-password a { font-size: 11px; color: #0099ff; text-decoration: none; }
+.login-page .form .forgot-password a { font-size: 11px; color: #00A693; text-decoration: none; }
 .login-page .form .login-button {
   display: block;
   width: 100%;
   font-weight: bold;
-  background: linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%);
+  background: linear-gradient(45deg, #00A693 0%, #00A693 100%);
   color: white;
   padding-block: 15px;
   margin: 20px auto;
