@@ -874,3 +874,9 @@ ul { list-style: none; padding-left: 0; }
 
 /* Constrain tweet cards in grid */
 .cards-grid .tweet-card { max-width: 640px; margin: 0 auto; }
+/* Community posts: display in responsive multi-column grid */
+#community-posts.card-plain { max-width: none; padding: 0; border-radius: 0; box-shadow: none; }
+#community-posts { grid-template-columns: 1fr; }
+@media (min-width: 640px) { #community-posts { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1100px) { #community-posts { grid-template-columns: repeat(3, 1fr); } }
+#community-posts .tweet-card { max-width: none; margin: 0; }
