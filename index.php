@@ -160,9 +160,6 @@ $listings = $listingsStmt->fetchAll();
     </section>
 
     <main>
-        <section id="challenge" class="section-left" aria-label="Challenge statement">
-            <p>We face challenges to create real change, cutting food waste and feeding those in need, building a better future one step at a time.</p>
-        </section>
         <section id="info-card" class="card-plain" aria-label="Key points">
             <p>Reduce food waste across communities.</p>
             <p>Support those in need with timely action.</p>
