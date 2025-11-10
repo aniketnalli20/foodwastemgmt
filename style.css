@@ -139,3 +139,13 @@ body {
 @media (orientation: landscape) and (max-width: 767px) {
   .nav-links.open { flex-direction: row; flex-wrap: wrap; justify-content: flex-end; }
 }
+/* Homepage panels and blog */
+.grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 720px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+
+.blog-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 720px) { .blog-grid { grid-template-columns: repeat(3, 1fr); } }
+.post { border-top: 1px solid var(--border); padding: 12px 0; }
+.post:first-child { border-top: none; }
+.post h3 { margin: 0 0 6px; font-size: 16px; color: var(--text); }
+.post p { margin: 0 0 6px; }

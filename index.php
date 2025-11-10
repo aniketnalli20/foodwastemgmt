@@ -140,8 +140,8 @@ $listings = $listingsStmt->fetchAll();
             </button>
             <nav id="primary-navigation" class="nav-links" role="navigation" aria-label="Primary">
                 <a href="#hero">Home</a>
-                <a href="#publish">Publish</a>
-                <a href="#listings">Listings</a>
+                <a href="#home-panels">Overview</a>
+                <a href="#blog">Blog</a>
             </nav>
         </div>
     </header>
@@ -150,178 +150,56 @@ $listings = $listingsStmt->fetchAll();
             <h2 class="hero-title">Rescue surplus food. Feed communities.</h2>
             <p class="hero-sub">A simple platform connecting Indian donors with verified NGOs and volunteers for timely redistribution.</p>
             <div class="hero-actions">
-                <a href="#publish" class="btn">Publish a Listing</a>
-                <a href="#listings" class="btn secondary">Browse Listings</a>
+                <a href="#blog" class="btn">Read the Blog</a>
+                <a href="#home-panels" class="btn secondary">Explore Overview</a>
             </div>
         </div>
     </section>
 
     <main class="container">
-        <section id="publish" class="card">
-            <h2>Create Food Listing (Donors)</h2>
-            <?php if ($message): ?>
-                <div class="alert success"><?= h($message) ?></div>
-            <?php endif; ?>
-            <?php if ($errors): ?>
-                <div class="alert error">
-                    <?php foreach ($errors as $err): ?>
-                        <div><?= h($err) ?></div>
-                    <?php endforeach; ?>
+        <section id="home-panels" class="grid">
+            <div class="card">
+                <h2>Our Mission</h2>
+                <p>We reduce food waste and hunger in India by connecting surplus food from donors to NGOs and communities in need — quickly, safely, and locally.</p>
+            </div>
+            <div class="card">
+                <h2>How It Works</h2>
+                <p>Donors share surplus food; NGOs and volunteers coordinate pickup and distribution. Expiry-aware matching ensures timely delivery.</p>
+                <ul class="muted">
+                    <li>Share surplus and location</li>
+                    <li>Match with nearby NGOs</li>
+                    <li>Pickup and redistribute</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h2>Get Involved</h2>
+                <p>Join us as an NGO partner or volunteer to help redistribute food safely and efficiently.</p>
+                <div class="hero-actions" style="margin-top:8px;">
+                    <a href="#blog" class="btn">Read the Blog</a>
+                    <a href="#contact" class="btn secondary">Contact Us</a>
                 </div>
-            <?php endif; ?>
-            <form method="post" class="form-grid" autocomplete="off" enctype="multipart/form-data">
-                <input type="hidden" name="action" value="create_listing" />
-                <div class="form-field">
-                    <label for="donor_type">Donor Type*</label>
-                    <select id="donor_type" name="donor_type" required>
-                        <option value="">Select...</option>
-                        <option value="Restaurant">Restaurant</option>
-                        <option value="Caterer">Caterer</option>
-                        <option value="Individual">Individual</option>
-                    </select>
-                </div>
-                <div class="form-field">
-                    <label for="donor_name">Donor Name*</label>
-                    <input type="text" id="donor_name" name="donor_name" required />
-                </div>
-                <div class="form-field">
-                    <label for="contact">Contact (email or phone)</label>
-                    <input type="text" id="contact" name="contact" />
-                </div>
-                <div class="form-field">
-                    <label for="item">Item*</label>
-                    <input type="text" id="item" name="item" required />
-                </div>
-                <div class="form-field">
-                    <label for="quantity">Quantity*</label>
-                    <input type="text" id="quantity" name="quantity" placeholder="e.g., 5 kg, 20 portions" required />
-                </div>
-                <div class="form-field">
-                    <label for="category">Category*</label>
-                    <select id="category" name="category" required>
-                        <option value="">Select...</option>
-                        <option value="Perishable">Perishable</option>
-                        <option value="Non-perishable">Non-perishable</option>
-                        <option value="Cooked">Cooked</option>
-                        <option value="Raw">Raw</option>
-                    </select>
-                </div>
-                <div class="form-field">
-                    <label for="city">City</label>
-                    <input type="text" id="city" name="city" />
-                </div>
-                <div class="form-field">
-                    <label for="pincode">Pincode</label>
-                    <input type="text" id="pincode" name="pincode" />
-                </div>
-                <div class="form-field full">
-                    <label for="address">Address</label>
-                    <input type="text" id="address" name="address" placeholder="Pickup address or area" />
-                </div>
-                <div class="form-field">
-                    <label for="expires_at">Best Before (datetime)</label>
-                    <input type="datetime-local" id="expires_at" name="expires_at" />
-                </div>
-                <div class="form-field">
-                    <label for="image">Image (JPG/PNG/WEBP, max 3MB)</label>
-                    <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/webp" />
-                </div>
-                <div class="actions">
-                    <button type="submit">Publish Listing</button>
-                </div>
-            </form>
+            </div>
         </section>
 
-        <section id="listings" class="card">
-            <h2>Available Listings</h2>
-            <form method="get" class="form-grid" style="margin-bottom: 10px;">
-                <div class="form-field">
-                    <label for="f_city">City</label>
-                    <input type="text" id="f_city" name="city" value="<?= h($cityFilter) ?>" />
-                </div>
-                <div class="form-field">
-                    <label for="f_pincode">Pincode</label>
-                    <input type="text" id="f_pincode" name="pincode" value="<?= h($pincodeFilter) ?>" />
-                </div>
-                <div class="form-field">
-                    <label for="f_category">Category</label>
-                    <select id="f_category" name="category">
-                        <option value="">All</option>
-                        <option value="Perishable" <?= $categoryFilter==='Perishable'?'selected':'' ?>>Perishable</option>
-                        <option value="Non-perishable" <?= $categoryFilter==='Non-perishable'?'selected':'' ?>>Non-perishable</option>
-                        <option value="Cooked" <?= $categoryFilter==='Cooked'?'selected':'' ?>>Cooked</option>
-                        <option value="Raw" <?= $categoryFilter==='Raw'?'selected':'' ?>>Raw</option>
-                    </select>
-                </div>
-                <div class="actions">
-                    <button type="submit">Filter</button>
-                </div>
-            </form>
-
-            <?php if (!$listings): ?>
-                <p class="muted">No listings yet. Publish one above.</p>
-            <?php else: ?>
-                <ul class="reports">
-                    <?php foreach ($listings as $l): 
-                        $expiresSoon = $l['expires_at'] && (strtotime($l['expires_at']) - time() < 2*3600) && (strtotime($l['expires_at']) > time());
-                        $expired = $l['expires_at'] && (strtotime($l['expires_at']) <= time());
-                    ?>
-                        <li class="report">
-                            <div class="report-main">
-                                <?php if ($l['image_url']): ?>
-                                    <img src="<?= h($l['image_url']) ?>" alt="<?= h($l['item']) ?>" class="thumb" />
-                                <?php endif; ?>
-                                <strong><?= h($l['item']) ?></strong>
-                                <span class="chip"><?= h($l['category']) ?></span>
-                                <span class="muted"><?= h($l['quantity']) ?></span>
-                                <?php if ($expired): ?>
-                                    <span class="chip danger">Expired</span>
-                                <?php elseif ($expiresSoon): ?>
-                                    <span class="chip warn">Expiring soon</span>
-                                <?php elseif ($l['expires_at']): ?>
-                                    <span class="chip">Best before <?= h(date('d M H:i', strtotime($l['expires_at']))) ?></span>
-                                <?php endif; ?>
-                            </div>
-                            <div class="report-meta">
-                                <span><?= h($l['donor_type']) ?> • <?= h($l['donor_name']) ?></span>
-                                <?php if ($l['city']): ?>
-                                    <span>• <?= h($l['city']) ?> <?= h($l['pincode']) ?></span>
-                                <?php endif; ?>
-                                <?php if ($l['address']): ?>
-                                    <span>• <?= h($l['address']) ?></span>
-                                <?php endif; ?>
-                                <span>• Posted <?= h(time_ago($l['created_at'])) ?></span>
-                                <span class="status <?= h(strtolower($l['status'])) ?>"><?= h($l['status']) ?></span>
-                            </div>
-                            <?php if (!$expired && $l['status'] === 'open'): ?>
-                            <form method="post" class="form-grid" style="margin-top:8px;">
-                                <input type="hidden" name="action" value="claim_listing" />
-                                <input type="hidden" name="listing_id" value="<?= h($l['id']) ?>" />
-                                <div class="form-field">
-                                    <label>NGO Name</label>
-                                    <input type="text" name="ngo_name" />
-                                </div>
-                                <div class="form-field">
-                                    <label>Your Name*</label>
-                                    <input type="text" name="claimer_name" required />
-                                </div>
-                                <div class="form-field">
-                                    <label>Contact</label>
-                                    <input type="text" name="claimer_contact" />
-                                </div>
-                                <div class="form-field">
-                                    <label>Notes</label>
-                                    <input type="text" name="notes" />
-                                </div>
-                                <div class="actions">
-                                    <button type="submit">Claim</button>
-                                </div>
-                            </form>
-                            <?php endif; ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php endif; ?>
+        <section id="blog" class="card">
+            <h2>Latest Articles</h2>
+            <div class="blog-grid">
+                <article class="post">
+                    <h3>Fighting Hunger with Surplus Food</h3>
+                    <p class="muted">A look at how communities can rescue surplus food and deliver it to those who need it most.</p>
+                    <small class="muted">By Team • <?= date('M j, Y') ?></small>
+                </article>
+                <article class="post">
+                    <h3>Best Practices for Safe Food Redistribution</h3>
+                    <p class="muted">Tips on handling, storage, and timing when redistributing cooked and perishable items.</p>
+                    <small class="muted">By Team • <?= date('M j, Y', strtotime('-2 days')) ?></small>
+                </article>
+                <article class="post">
+                    <h3>Volunteer Spotlight: Stories from the Field</h3>
+                    <p class="muted">Experiences from volunteers who’ve helped bridge donors and recipients.</p>
+                    <small class="muted">By Team • <?= date('M j, Y', strtotime('-5 days')) ?></small>
+                </article>
+            </div>
         </section>
     </main>
 
