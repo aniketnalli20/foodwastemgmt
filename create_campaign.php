@@ -90,6 +90,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <button id="use-my-location" type="button">Use My Location</button>
                     </div>
                     <div id="map" class="card-plain" style="width: 100%; aspect-ratio: 1 / 1; max-width: 360px; margin-top: 12px;"></div>
+                </div>
+
+                <!-- Bottom-left submit button as the final form row -->
+                <div class="form-field">
                     <div class="actions" style="margin-top: 10px; justify-content: flex-start;">
                         <button class="btn btn-bhargav" type="submit"><span>Create Campaign</span></button>
                     </div>
