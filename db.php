@@ -88,3 +88,5 @@ try { $pdo->exec('ALTER TABLE campaigns ADD COLUMN closing_time TEXT'); } catch 
 try { $pdo->exec('ALTER TABLE campaigns ADD COLUMN latitude DOUBLE'); } catch (Throwable $e) {}
 try { $pdo->exec('ALTER TABLE campaigns ADD COLUMN longitude DOUBLE'); } catch (Throwable $e) {}
 try { $pdo->exec('ALTER TABLE campaigns ADD COLUMN community VARCHAR(255)'); } catch (Throwable $e) {}
+try { $pdo->exec('ALTER TABLE campaigns ADD COLUMN endorse_campaign INT DEFAULT 0'); } catch (Throwable $e) {}
+try { $pdo->exec('ALTER TABLE campaigns ADD COLUMN endorse_contributor INT DEFAULT 0'); } catch (Throwable $e) {}

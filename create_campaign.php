@@ -56,6 +56,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <form class="form-grid" method="post" enctype="multipart/form-data">
                 <div class="form-field">
+                    <button class="btn cta pill" type="submit"><span class="icon">⟶</span>Create Campaign</button>
+                </div>
+                <div class="form-field">
+                    <div id="map" class="card-plain" style="width: 100%; aspect-ratio: 1 / 1; max-width: 640px;"></div>
+                </div>
+                <div class="form-field">
                     <label for="contributor_name">Contributor Name</label>
                     <input type="text" id="contributor_name" name="contributor_name" required>
                 </div>
@@ -86,12 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="hidden" id="latitude" name="latitude">
                     <input type="hidden" id="longitude" name="longitude">
                     <div id="location-suggestions" class="card-plain" role="listbox" style="position: absolute; z-index: 10; display: none; max-height: 220px; overflow: auto;"></div>
-                    <div class="actions" style="margin-top: 8px;">
+                    <div class="actions" style="margin-top: 8px; justify-content: flex-start;">
                         <button class="btn" id="use-my-location" type="button">Use My Location</button>
-                    </div>
-                    <div id="map" class="card-plain" style="width: 100%; aspect-ratio: 1 / 1; max-width: 640px; margin-top: 12px;"></div>
-                    <div class="actions" style="margin-top: 12px; display: flex; justify-content: flex-start;">
-                        <button class="btn" type="submit">Create</button>
                     </div>
                 </div>
 
