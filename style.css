@@ -179,7 +179,31 @@ ul { list-style: none; padding-left: 0; }
 }
 
 /* Featured cards container centering */
-.cards-grid { max-width: var(--content-max); margin: 24px auto; padding: 0 var(--content-pad); }
+.cards-grid { 
+  max-width: var(--content-max);
+  margin: 24px auto;
+  padding: 0 var(--content-pad);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 720px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+/* Cards inside the community grid should align flush without extra margins */
+.cards-grid .card-plain {
+  max-width: none;
+  margin: 0;
+}
+/* Slightly tighter typography within community cards to utilize space */
+.cards-grid .card-plain .card-title {
+  font-size: clamp(1rem, 1vw + 0.6rem, 1.25rem);
+}
+.cards-grid .card-plain p {
+  font-size: clamp(0.95rem, 0.8vw + 0.7rem, 1.1rem);
+}
 
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
