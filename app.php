@@ -57,7 +57,8 @@ function create_campaign(array $data, ?array $imageFile = null): int {
     }
 
     $title = trim((string)($data['title'] ?? 'Campaign by ' . $contributorName));
-    $summary = trim((string)($data['summary'] ?? ('Crowd size ' . $crowdSize . ' at ' . $location . '. Closing: ' . $closingTime)));
+    // Keep default summary generic to avoid duplicating meta details on the community page
+    $summary = trim((string)($data['summary'] ?? 'Surplus food available; volunteers needed.'));
 
     $area = isset($data['area']) ? trim((string)$data['area']) : $location;
     $targetMeals = isset($data['target_meals']) && $data['target_meals'] !== '' ? (int)$data['target_meals'] : null;

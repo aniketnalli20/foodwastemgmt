@@ -118,8 +118,17 @@ $campaigns = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                                 <div class="card-title"><?= h($c['title'] ?: ('Campaign #' . $c['id'])) ?></div>
                             </div>
                             <p class="muted">By <?= h($c['contributor_name'] ?: 'Unknown') ?> · Community: <span class="chip"><?= h($c['community'] ?: 'General') ?></span> · Uploaded <?= h(time_ago($c['created_at'])) ?></p>
-                            <p><?= h($c['summary']) ?></p>
-                            <p class="muted">Crowd Size: <?= h((string)$c['crowd_size']) ?> · Location: <?= h($c['location']) ?> · Closing: <?= h($c['closing_time']) ?></p>
+                            <?php $summaryText = trim((string)$c['summary']); ?>
+                            <?php if ($summaryText !== ''): ?>
+                                <p><?= h($summaryText) ?></p>
+                            <?php endif; ?>
+                            <?php 
+                              $metaLine = 'Crowd Size: ' . (string)$c['crowd_size'] . ' · Location: ' . (string)$c['location'] . ' · Closing: ' . (string)$c['closing_time'];
+                              $hasDuplicateMeta = stripos($summaryText, 'crowd') !== false || stripos($summaryText, 'closing') !== false || stripos($summaryText, 'location') !== false;
+                            ?>
+                            <?php if (!$hasDuplicateMeta): ?>
+                                <p class="muted"><?= h($metaLine) ?></p>
+                            <?php endif; ?>
                             <div class="actions" style="justify-content:flex-start; gap:8px;">
                                 <?php
                                 $hasCoords = isset($c['latitude']) && $c['latitude'] !== null && isset($c['longitude']) && $c['longitude'] !== null;
