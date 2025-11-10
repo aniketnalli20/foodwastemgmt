@@ -163,18 +163,8 @@ $listings = $listingsStmt->fetchAll();
         <!-- Inspo cards layout -->
         <section id="cards" class="cards-frame" aria-label="Featured cards">
           <div class="cards-grid">
-            <!-- Left feature card -->
+            <!-- Left feature card (text removed per request) -->
             <article class="card-feature" aria-label="Feature">
-              <div class="feature-top">
-                <span class="badge-num" aria-hidden="true">9</span>
-                <button class="chip-arrow" aria-label="Next">
-                  <span class="arrow" aria-hidden="true">→</span>
-                </button>
-              </div>
-              <h3 class="headline">
-                Bring your impact projects
-                <br>to life with this platform.
-              </h3>
             </article>
 
             <!-- Right media card -->
@@ -187,10 +177,8 @@ $listings = $listingsStmt->fetchAll();
               </div>
             </article>
 
-            <!-- Bottom dark theme card -->
+            <!-- Bottom dark theme card (text removed per request) -->
             <article class="card-theme" aria-label="Theme options">
-              <small class="eyebrow">2 themes</small>
-              <div class="theme-title">Colorful, Black & White</div>
               <div class="theme-art" aria-hidden="true"></div>
             </article>
           </div>
@@ -199,7 +187,7 @@ $listings = $listingsStmt->fetchAll();
 
     <footer class="site-footer">
         <div class="wrap">
-            <small>&copy; <?= date('Y') ?> Food Waste Management</small>
+            
         </div>
     </footer>
     <script>
