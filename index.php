@@ -130,13 +130,22 @@ $listings = $listingsStmt->fetchAll();
     <meta name="description" content="Connect donors with NGOs to rescue surplus food in India." />
 </head>
 <body>
-    <header class="site-header">
-        <div class="wrap">
-            <h1>Food Waste Management</h1>
-            <p class="tagline">Connect surplus food with NGOs and recipients.</p>
+    <header class="site-header" role="banner">
+        <div class="container header-inner">
+            <a href="#hero" class="brand" aria-label="Food Waste Management home">FoodWasteMgmt</a>
+            <button class="nav-toggle" aria-controls="primary-navigation" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="nav-toggle-bar" aria-hidden="true"></span>
+                <span class="nav-toggle-bar" aria-hidden="true"></span>
+                <span class="nav-toggle-bar" aria-hidden="true"></span>
+            </button>
+            <nav id="primary-navigation" class="nav-links" role="navigation" aria-label="Primary">
+                <a href="#hero">Home</a>
+                <a href="#publish">Publish</a>
+                <a href="#listings">Listings</a>
+            </nav>
         </div>
     </header>
-    <section class="hero">
+<section id="hero" class="hero">
         <div class="wrap">
             <h2 class="hero-title">Rescue surplus food. Feed communities.</h2>
             <p class="hero-sub">A simple platform connecting Indian donors with verified NGOs and volunteers for timely redistribution.</p>
@@ -321,5 +330,17 @@ $listings = $listingsStmt->fetchAll();
             <small>&copy; <?= date('Y') ?> Food Waste Management</small>
         </div>
     </footer>
+    <script>
+  (function() {
+    const toggle = document.querySelector('.nav-toggle');
+    const nav = document.getElementById('primary-navigation');
+    if (!toggle || !nav) return;
+    toggle.addEventListener('click', function() {
+      const expanded = this.getAttribute('aria-expanded') === 'true';
+      this.setAttribute('aria-expanded', String(!expanded));
+      nav.classList.toggle('open');
+    });
+  })();
+    </script>
 </body>
 </html>
