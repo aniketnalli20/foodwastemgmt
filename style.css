@@ -168,6 +168,14 @@ body {
   margin: 0;
 }
 
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
 /* Overview cards with subtle accent and improved spacing */
 #home-panels .card { position: relative; overflow: hidden; }
 #home-panels .card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; background: linear-gradient(90deg, var(--text), var(--muted)); opacity: 0.12; }
