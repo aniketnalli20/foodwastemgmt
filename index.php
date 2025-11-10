@@ -160,10 +160,40 @@ $listings = $listingsStmt->fetchAll();
     </section>
 
     <main>
-        <section id="info-card" class="card-plain" aria-label="Key points">
-            <p>Reduce food waste across communities.</p>
-            <p>Support those in need with timely action.</p>
-            <p>Build a better future together.</p>
+        <!-- Inspo cards layout -->
+        <section id="cards" class="cards-frame" aria-label="Featured cards">
+          <div class="cards-grid">
+            <!-- Left feature card -->
+            <article class="card-feature" aria-label="Feature">
+              <div class="feature-top">
+                <span class="badge-num" aria-hidden="true">9</span>
+                <button class="chip-arrow" aria-label="Next">
+                  <span class="arrow" aria-hidden="true">→</span>
+                </button>
+              </div>
+              <h3 class="headline">
+                Bring your impact projects
+                <br>to life with this platform.
+              </h3>
+            </article>
+
+            <!-- Right media card -->
+            <article class="card-media" aria-label="Illustration">
+              <div class="phone-illustration" aria-hidden="true">
+                <div class="phone"></div>
+                <div class="hand"></div>
+                <div class="decor a"></div>
+                <div class="decor b"></div>
+              </div>
+            </article>
+
+            <!-- Bottom dark theme card -->
+            <article class="card-theme" aria-label="Theme options">
+              <small class="eyebrow">2 themes</small>
+              <div class="theme-title">Colorful, Black & White</div>
+              <div class="theme-art" aria-hidden="true"></div>
+            </article>
+          </div>
         </section>
     </main>
 
