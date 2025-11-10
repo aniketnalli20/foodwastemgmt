@@ -45,7 +45,7 @@ try {
 } catch (Throwable $e) {}
 
 // Fetch campaigns
-$query = 'SELECT id, title, summary, contributor_name, community, crowd_size, location, image_url, closing_time, endorse_campaign, endorse_contributor, created_at FROM campaigns';
+$query = 'SELECT id, title, summary, contributor_name, community, crowd_size, location, image_url, closing_time, endorse_campaign, endorse_contributor, created_at, latitude, longitude FROM campaigns';
 $params = [];
 if ($filterCommunity !== '') {
     $query .= ' WHERE community = ?';
@@ -107,11 +107,21 @@ $campaigns = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                             </div>
                         <?php endif; ?>
                         <div class="card-content">
-                            <div class="card-title"><?= h($c['title'] ?: ('Campaign #' . $c['id'])) ?></div>
-                            <p class="muted">By <?= h($c['contributor_name'] ?: 'Unknown') ?> · Community: <span class="chip"><?= h($c['community'] ?: 'General') ?></span></p>
+                            <div class="card-header">
+                                <span class="avatar avatar-sm" aria-hidden="true"><?php $initial = strtoupper(substr(trim((string)($c['contributor_name'] ?? 'U')), 0, 1)); echo h($initial); ?></span>
+                                <div class="card-title"><?= h($c['title'] ?: ('Campaign #' . $c['id'])) ?></div>
+                            </div>
+                            <p class="muted">By <?= h($c['contributor_name'] ?: 'Unknown') ?> · Community: <span class="chip"><?= h($c['community'] ?: 'General') ?></span> · Uploaded <?= h(time_ago($c['created_at'])) ?></p>
                             <p><?= h($c['summary']) ?></p>
                             <p class="muted">Crowd Size: <?= h((string)$c['crowd_size']) ?> · Location: <?= h($c['location']) ?> · Closing: <?= h($c['closing_time']) ?></p>
                             <div class="actions" style="justify-content:flex-start; gap:8px;">
+                                <?php
+                                $hasCoords = isset($c['latitude']) && $c['latitude'] !== null && isset($c['longitude']) && $c['longitude'] !== null;
+                                $mapUrl = $hasCoords
+                                    ? ('https://www.google.com/maps?q=' . rawurlencode($c['latitude'] . ',' . $c['longitude']))
+                                    : ('https://www.google.com/maps/search/?api=1&query=' . rawurlencode((string)$c['location']));
+                                ?>
+                                <a class="btn secondary" href="<?= h($mapUrl) ?>" target="_blank" rel="noopener">View Location</a>
                                 <form method="post" style="display:inline;">
                                     <input type="hidden" name="action" value="endorse"/>
                                     <input type="hidden" name="type" value="campaign"/>

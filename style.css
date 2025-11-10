@@ -293,7 +293,8 @@ ul { list-style: none; padding-left: 0; }
 .quote { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; }
 .quote p { grid-column: 1 / -1; margin: 0 0 8px; }
 .quote footer { display: flex; align-items: center; gap: 8px; }
-.avatar { width: 44px; height: 44px; border-radius: 50%; background: #e8e8e8; border: 1px solid var(--border); }
+.avatar { width: 44px; height: 44px; border-radius: 50%; background: #e8e8e8; border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-weight: 800; color: var(--text); }
+.avatar-sm { width: 32px; height: 32px; font-size: 0.9rem; }
 
 .alert { padding: 10px 12px; border-radius: 8px; margin-bottom: 12px; }
 .alert.success { background: #f9f9f9; border: 1px solid var(--border); }
@@ -537,3 +538,4 @@ ul { list-style: none; padding-left: 0; }
   overflow: hidden;
   margin-left: 0;
 }
+.cards-grid .card-horizontal .card-header { display: flex; align-items: center; gap: 10px; margin: 0 0 6px; }
