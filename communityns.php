@@ -76,6 +76,13 @@ $stmt = $pdo->prepare($query);
 $stmt->execute($params);
 $campaigns = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
+// Fetch a few recent users to render demo posts
+$recentUsers = [];
+try {
+    $uStmt = $pdo->query('SELECT id, username, email, created_at FROM users ORDER BY id DESC LIMIT 10');
+    $recentUsers = $uStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+} catch (Throwable $e) {}
+
 // Determine which campaigns current user has endorsed to adjust UI state
 $userEndorsed = ['campaign' => [], 'contributor' => []];
 if (is_logged_in() && !empty($campaigns)) {
@@ -143,6 +150,49 @@ if (is_logged_in() && !empty($campaigns)) {
                 </div>
             </form>
         </section>
+
+        <?php if (!empty($recentUsers)): ?>
+        <div id="community-posts" class="cards-grid card-plain" style="margin-top: 8px;">
+            <?php 
+            $demoMessages = [
+                'Shared an on-ground update: distributing meals near the market.',
+                'Reported surplus food pickup completed successfully.',
+                'Coordinated volunteers for evening distribution.',
+                'Verified location and prepared packaging materials.',
+                'Connected an NGO with a donor for bakery items.',
+                'Crowd is manageable; continued distribution planned.',
+                'Need extra hands tomorrow morning for sorting.',
+                'Fresh produce arriving; setting up temporary station.',
+                'Distribution paused due to rain; resuming shortly.',
+                'Collected feedback from recipients; improving flow.'
+            ];
+            ?>
+            <?php foreach ($recentUsers as $idx => $u): ?>
+                <?php 
+                    $uname = trim((string)($u['username'] ?? 'User'));
+                    $initial = strtoupper(substr($uname, 0, 1));
+                    $handleBase = strtolower(preg_replace('/[^a-z0-9]+/i', '', $uname));
+                    $handle = $handleBase !== '' ? $handleBase : 'user';
+                    $msg = $demoMessages[$idx % count($demoMessages)];
+                ?>
+                <div class="tweet-card" id="post-<?= h((string)$u['id']) ?>">
+                    <div class="tweet-header">
+                        <div class="tweet-avatar" aria-hidden="true"><?= h($initial) ?></div>
+                        <div class="tweet-meta">
+                            <div>
+                                <span class="tweet-name"><?= h($uname) ?></span>
+                                <span class="tweet-handle">@<?= h($handle) ?></span>
+                            </div>
+                            <div class="muted">Posted <?= h(time_ago($u['created_at'])) ?></div>
+                        </div>
+                    </div>
+                    <div class="tweet-body">
+                        <div><?= h($msg) ?></div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
 
         <section class="cards-grid card-plain card-fullbleed" id="community-campaigns">
             <?php if (empty($campaigns)): ?>
