@@ -10,6 +10,36 @@ if (!is_dir($uploadsDir)) {
     @mkdir($uploadsDir, 0775, true);
 }
 
+// Handle hero image upload (admin/simple settings)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'upload_hero') {
+    if (!empty($_FILES['hero_image']['name']) && $_FILES['hero_image']['error'] === UPLOAD_ERR_OK) {
+        $tmp = $_FILES['hero_image']['tmp_name'];
+        $size = (int)($_FILES['hero_image']['size'] ?? 0);
+        $mime = @mime_content_type($tmp) ?: '';
+        $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+        if (!isset($allowed[$mime])) {
+            $errors[] = 'Only JPG, PNG, or WEBP images are allowed for hero.';
+        } elseif ($size > 5 * 1024 * 1024) {
+            $errors[] = 'Hero image must be under 5MB.';
+        } else {
+            // Remove previous hero images
+            foreach (['hero.jpg','hero.png','hero.webp'] as $name) {
+                $path = $uploadsDir . DIRECTORY_SEPARATOR . $name;
+                if (is_file($path)) { @unlink($path); }
+            }
+            $ext = $allowed[$mime];
+            $dest = $uploadsDir . DIRECTORY_SEPARATOR . 'hero.' . $ext;
+            if (@move_uploaded_file($tmp, $dest)) {
+                $message = 'Hero image updated successfully.';
+            } else {
+                $errors[] = 'Failed to save the hero image.';
+            }
+        }
+    } else {
+        $errors[] = 'No hero image selected.';
+    }
+}
+
 // Resolve hero background image from uploads (jpg/png/webp)
 $heroUrl = null;
 foreach (['hero.jpg','hero.png','hero.webp'] as $name) {
@@ -164,6 +194,29 @@ $listings = $listingsStmt->fetchAll();
     </section>
 
     <main class="container">
+        <section id="settings" class="card">
+            <h2>Site Settings</h2>
+            <?php if ($message): ?>
+                <div class="alert success"><?= h($message) ?></div>
+            <?php endif; ?>
+            <?php if ($errors): ?>
+                <div class="alert error">
+                    <?php foreach ($errors as $err): ?>
+                        <div><?= h($err) ?></div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+            <form method="post" enctype="multipart/form-data" class="form-grid" autocomplete="off">
+                <input type="hidden" name="action" value="upload_hero" />
+                <div class="form-field full">
+                    <label for="hero_image">Hero Background Image (JPG/PNG/WEBP, max 5MB)</label>
+                    <input type="file" id="hero_image" name="hero_image" accept="image/jpeg,image/png,image/webp" />
+                </div>
+                <div class="actions">
+                    <button type="submit">Upload Hero</button>
+                </div>
+            </form>
+        </section>
         <section id="home-panels" class="grid">
             <div class="card">
                 <h2>Our Mission</h2>
