@@ -128,7 +128,7 @@ body {
 
 .steps-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
 @media (min-width: 840px) { .steps-grid { grid-template-columns: 1fr 1fr; } }
-.step { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; position: relative; }
+.step { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; position: relative; cursor: pointer; }
 .step { transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease; }
 .step::before { content: ""; position: absolute; left: 12px; top: 14px; width: 8px; height: 8px; border-radius: 50%; background: #d9d9d9; }
 .step h3 { margin: 0 0 6px; font-size: clamp(1rem, 0.8vw + 0.8rem, 1.25rem); }
@@ -137,7 +137,7 @@ body {
 
 .pillars-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
 @media (min-width: 840px) { .pillars-grid { grid-template-columns: repeat(2, 1fr); } }
-.pillar { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; position: relative; }
+.pillar { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; position: relative; cursor: pointer; }
 .pillar { transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease; }
 .pillar::before { content: ""; position: absolute; left: 12px; top: 14px; width: 8px; height: 8px; border-radius: 50%; background: #d9d9d9; }
 .pillar h3 { margin: 0 0 6px; font-size: clamp(1rem, 0.8vw + 0.8rem, 1.25rem); }
@@ -145,7 +145,8 @@ body {
 .pillar:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
 
 .list-clean { list-style: none; padding: 0; margin: 0; }
-.list-clean li { padding: 8px 0; border-top: 1px solid var(--border); }
+.list-clean li { padding: 8px 0; border-top: 1px solid var(--border); cursor: pointer; transition: background-color 150ms ease, transform 150ms ease; }
+.list-clean li:hover { background: #fafafa; transform: translateX(2px); }
 .list-clean li:first-child { border-top: none; }
 
 /* Full-screen distribution for content cards based on orientation */
