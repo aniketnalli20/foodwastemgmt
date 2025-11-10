@@ -7,8 +7,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $type = isset($_POST['type']) ? trim((string)$_POST['type']) : '';
     if ($id > 0 && in_array($type, ['campaign','contributor'], true)) {
         $col = $type === 'campaign' ? 'endorse_campaign' : 'endorse_contributor';
+        // Increment counters on campaign
         $stmt = $pdo->prepare("UPDATE campaigns SET $col = COALESCE($col,0) + 1 WHERE id = ?");
         $stmt->execute([$id]);
+
+        // Best-effort: record the endorsement event
+        try {
+            // Fetch contributor_name to store alongside the endorsement
+            $cnStmt = $pdo->prepare('SELECT contributor_name FROM campaigns WHERE id = ?');
+            $cnStmt->execute([$id]);
+            $row = $cnStmt->fetch(PDO::FETCH_ASSOC) ?: [];
+            $contributorName = isset($row['contributor_name']) ? (string)$row['contributor_name'] : null;
+
+            $ip = isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] !== ''
+                ? explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0]
+                : (isset($_SERVER['REMOTE_ADDR']) ? (string)$_SERVER['REMOTE_ADDR'] : null);
+            $ua = isset($_SERVER['HTTP_USER_AGENT']) ? (string)$_SERVER['HTTP_USER_AGENT'] : null;
+
+            $ins = $pdo->prepare('INSERT INTO endorsements (campaign_id, kind, contributor_name, ip, user_agent, created_at) VALUES (?, ?, ?, ?, ?, NOW())');
+            $ins->execute([$id, $type, $contributorName, $ip, $ua]);
+        } catch (Throwable $e) {
+            // Swallow errors to avoid breaking UX if table is missing or write fails
+        }
     }
     header('Location: /communityns.php#campaign-' . $id);
     exit;
