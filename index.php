@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'claim
         try {
             $pdo->prepare('INSERT INTO claims (listing_id, ngo_name, claimer_name, contact, notes, created_at) VALUES (?, ?, ?, ?, ?, ?)')
                 ->execute([$listing_id, $ngo_name ?: null, $claimer_name, $contact ?: null, $notes ?: null, date('c')]);
-            $pdo->prepare('UPDATE listings SET status = "claimed", claimed_at = ? WHERE id = ? AND status = "open"')
+            $pdo->prepare("UPDATE listings SET status = 'claimed', claimed_at = ? WHERE id = ? AND status = 'open'")
                 ->execute([date('c'), $listing_id]);
             $pdo->commit();
             $message = 'Listing claimed successfully.';
@@ -118,12 +118,15 @@ $cityFilter = trim($_GET['city'] ?? '');
 $pincodeFilter = trim($_GET['pincode'] ?? '');
 
 global $pdo;
+global $DB_DRIVER;
 $where = [];
 $params = [];
 if ($cityFilter !== '') { $where[] = 'city LIKE ?'; $params[] = '%' . $cityFilter . '%'; }
 if ($pincodeFilter !== '') { $where[] = 'pincode LIKE ?'; $params[] = '%' . $pincodeFilter . '%'; }
-$whereSql = $where ? ('WHERE ' . implode(' AND ', $where) . ' AND status = "open"') : 'WHERE status = "open"';
-$listingsStmt = $pdo->prepare("SELECT id, donor_type, donor_name, contact, item, quantity, address, city, pincode, expires_at, image_url, status, created_at, claimed_at FROM listings $whereSql ORDER BY COALESCE(expires_at, '9999-12-31T00:00:00') ASC, id DESC LIMIT 20");
+$whereSql = $where ? ('WHERE ' . implode(' AND ', $where) . " AND status = 'open'") : "WHERE status = 'open'";
+// Order by soonest expiry, handling NULLs; cast needed for PostgreSQL
+$orderExpr = ($DB_DRIVER === 'pgsql') ? "COALESCE(expires_at, TIMESTAMP '9999-12-31 00:00:00')" : "COALESCE(expires_at, '9999-12-31T00:00:00')";
+$listingsStmt = $pdo->prepare("SELECT id, donor_type, donor_name, contact, item, quantity, address, city, pincode, expires_at, image_url, status, created_at, claimed_at FROM listings $whereSql ORDER BY $orderExpr ASC, id DESC LIMIT 20");
 $listingsStmt->execute($params);
 $listings = $listingsStmt->fetchAll();
 ?>
