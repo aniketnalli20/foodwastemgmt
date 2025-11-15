@@ -183,9 +183,9 @@ $listings = $listingsStmt->fetchAll();
               <?php endif; ?>
             </form>
             <div class="stats">
-              <div class="stat"><span class="stat-num">0</span><span class="stat-label">Meals Saved</span></div>
-              <div class="stat"><span class="stat-num">0</span><span class="stat-label">Donors</span></div>
-              <div class="stat"><span class="stat-num">0</span><span class="stat-label">Partners</span></div>
+              <div class="stat"><span id="meals-count" class="stat-num">0</span><span class="stat-label">Meals Saved</span></div>
+              <div class="stat"><span id="donors-count" class="stat-num">0</span><span class="stat-label">Donors</span></div>
+              <div class="stat"><span id="partners-count" class="stat-num">0</span><span class="stat-label">Partners</span></div>
             </div>
         </div>
     </section>
@@ -216,7 +216,7 @@ $listings = $listingsStmt->fetchAll();
               <div class="theme-art" aria-hidden="true"></div>
             </article>
           </div>
-        </section>
+    </section>
     </main>
 
     <footer class="site-footer">
@@ -225,6 +225,26 @@ $listings = $listingsStmt->fetchAll();
         </div>
     </footer>
     <script>
+    // Live counters: fetch from server and update periodically
+    (function(){
+      function updateCounters(){
+        fetch((window.BASE_PATH || '<?= h($BASE_PATH) ?>') + 'stats.php')
+          .then(function(r){ return r.json(); })
+          .then(function(j){
+            if (!j) return;
+            var mealsEl = document.getElementById('meals-count');
+            var donorsEl = document.getElementById('donors-count');
+            var partnersEl = document.getElementById('partners-count');
+            if (mealsEl && typeof j.mealsSaved === 'number') mealsEl.textContent = j.mealsSaved.toString();
+            if (donorsEl && typeof j.donorsCount === 'number') donorsEl.textContent = j.donorsCount.toString();
+            if (partnersEl && typeof j.partnersCount === 'number') partnersEl.textContent = j.partnersCount.toString();
+          })
+          .catch(function(){ /* silent */ });
+      }
+      updateCounters();
+      setInterval(updateCounters, 10000);
+    })();
+    </script>
   (function() {
     const toggle = document.querySelector('.nav-toggle');
     const nav = document.getElementById('primary-navigation');

@@ -224,11 +224,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (useBtn) {
             useBtn.addEventListener('click', function(){
-                if (!navigator.geolocation) { alert('Geolocation not supported on this device/browser'); return; }
+                function fallbackIpLocation(){
+                    fetch('https://ipapi.co/json/')
+                      .then(function(r){ return r.json(); })
+                      .then(function(j){
+                          if (j && j.latitude && j.longitude) {
+                              var label = [j.city, j.region, j.country_name].filter(Boolean).join(', ');
+                              setPosition(parseFloat(j.latitude), parseFloat(j.longitude), label || null);
+                          } else {
+                              alert('Unable to retrieve location. Please allow location access, click on the map, or type your city.');
+                          }
+                      })
+                      .catch(function(){
+                          alert('Unable to retrieve location. Please allow location access, click on the map, or type your city.');
+                      });
+                }
+
+                if (!navigator.geolocation) { fallbackIpLocation(); return; }
                 navigator.geolocation.getCurrentPosition(function(pos){
                     setPosition(pos.coords.latitude, pos.coords.longitude);
                 }, function(err){
-                    alert('Unable to retrieve location');
+                    try {
+                        if (navigator.permissions && navigator.permissions.query) {
+                            navigator.permissions.query({ name: 'geolocation' }).then(function(result){
+                                if (result.state === 'denied') {
+                                    alert('Location permission denied. Please allow access, click on the map, or type your city.');
+                                } else {
+                                    fallbackIpLocation();
+                                }
+                            }).catch(function(){ fallbackIpLocation(); });
+                        } else {
+                            fallbackIpLocation();
+                        }
+                    } catch (e) {
+                        fallbackIpLocation();
+                    }
                 }, { enableHighAccuracy: true, timeout: 8000 });
             });
         }
