@@ -201,6 +201,17 @@ ul { list-style: none; padding-left: 0; }
 
 /* Traditional bulleted list for How You Can Help */
 .list-bullets { list-style: disc; padding-left: 22px; margin: 0; }
+/* Profile page styles */
+.page-profile .profile-card { max-width: var(--content-max); padding: var(--content-pad); margin: 0 auto; }
+.page-profile .profile-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; }
+.page-profile .profile-grid div { padding: 8px 0; border-bottom: 1px solid var(--border); }
+.page-profile .profile-grid .label { color: var(--muted); }
+.page-profile .profile-actions { margin-top: 16px; display: flex; gap: 10px; }
+.page-profile .input-hint { display: block; margin-top: 6px; color: var(--muted); font-size: 0.9em; }
+
+@media (max-width: 800px) {
+  .page-profile .profile-grid { grid-template-columns: 1fr; }
+}
 
 /* Login page styles (scoped to avoid global conflicts) */
 .page-login {

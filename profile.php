@@ -48,14 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'updat
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="<?= h($BASE_PATH) ?>uploads/favicon.png" sizes="32x32">
     <link rel="apple-touch-icon" href="<?= h($BASE_PATH) ?>uploads/favicon.png">
-    <style>
-      .profile-card { max-width: var(--content-max); padding: var(--content-pad); margin: 0 auto; }
-      .profile-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; }
-      .profile-grid div { padding: 8px 0; border-bottom: 1px solid var(--border); }
-      .profile-actions { margin-top: 16px; display: flex; gap: 10px; }
-    </style>
     </head>
-<body>
+<body class="page-profile">
     <header class="site-header" role="banner">
         <div class="container header-inner">
             <a href="<?= h($BASE_PATH) ?>index.php#hero" class="brand" aria-label="No Starve home">No Starve</a>
@@ -92,28 +86,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'updat
         <?php endif; ?>
         <div class="card-plain">
             <div class="profile-grid">
-                <div><strong>Username</strong></div>
+                <div class="label"><strong>Username</strong></div>
                 <div><?= h($user['username'] ?? '') ?></div>
 
-                <div><strong>Email</strong></div>
+                <div class="label"><strong>Email</strong></div>
                 <div><?= h($user['email'] ?? '') ?></div>
 
-                <div><strong>Phone</strong></div>
+                <div class="label"><strong>Phone</strong></div>
                 <div><?= h($user['phone'] ?? '') ?></div>
 
-                <div><strong>Address</strong></div>
+                <div class="label"><strong>Address</strong></div>
                 <div><?= h($user['address'] ?? '') ?></div>
 
-                <div><strong>Member Since</strong></div>
+                <div class="label"><strong>Member Since</strong></div>
                 <div><?= h($user['created_at'] ?? '') ?></div>
             </div>
             <form method="post" action="<?= h($BASE_PATH) ?>profile.php" class="form" style="margin-top:16px;">
                 <input type="hidden" name="action" value="update_profile">
                 <label for="phone"><strong>Phone</strong></label>
-                <input id="phone" name="phone" type="text" class="input" placeholder="Phone" value="<?= h($user['phone'] ?? '') ?>" pattern="[0-9+\-\s]{7,30}" />
+                <input id="phone" name="phone" type="text" class="input" placeholder="e.g., +91 98765 43210" value="<?= h($user['phone'] ?? '') ?>" pattern="[0-9+\-\s]{7,30}" autocomplete="tel" aria-describedby="phone-hint" />
+                <small id="phone-hint" class="input-hint">Use digits, +, -, spaces; 7–30 characters.</small>
 
                 <label for="address" style="margin-top:10px;"><strong>Address</strong></label>
-                <textarea id="address" name="address" class="input" placeholder="Address" rows="3" style="resize: vertical;"><?= h($user['address'] ?? '') ?></textarea>
+                <textarea id="address" name="address" class="input" placeholder="Street, City, State, PIN" rows="3" style="resize: vertical;" autocomplete="street-address"><?= h($user['address'] ?? '') ?></textarea>
 
                 <div class="profile-actions">
                     <button type="submit" class="btn accent pill">Save Changes</button>
