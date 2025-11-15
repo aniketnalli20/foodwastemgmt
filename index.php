@@ -30,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
     $contact = trim($_POST['contact'] ?? '');
     $item = trim($_POST['item'] ?? '');
     $quantity = trim($_POST['quantity'] ?? '');
-    $category = trim($_POST['category'] ?? '');
     $address = trim($_POST['address'] ?? '');
     $city = trim($_POST['city'] ?? '');
     $pincode = trim($_POST['pincode'] ?? '');
@@ -40,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
     if ($donor_name === '') $errors[] = 'Donor name is required.';
     if ($item === '') $errors[] = 'Item is required.';
     if ($quantity === '') $errors[] = 'Quantity is required.';
-    if ($category === '') $errors[] = 'Category is required.';
 
     // Optional image upload
     $imageUrl = null;
@@ -68,14 +66,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
 
     if (!$errors) {
         global $pdo;
-        $stmt = $pdo->prepare('INSERT INTO listings (donor_type, donor_name, contact, item, quantity, category, address, city, pincode, expires_at, image_url, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    $stmt = $pdo->prepare('INSERT INTO listings (donor_type, donor_name, contact, item, quantity, address, city, pincode, expires_at, image_url, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
         $stmt->execute([
             $donor_type,
             $donor_name,
             $contact,
             $item,
             $quantity,
-            $category,
             $address,
             $city,
             $pincode,
@@ -119,16 +116,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'claim
 // Filters
 $cityFilter = trim($_GET['city'] ?? '');
 $pincodeFilter = trim($_GET['pincode'] ?? '');
-$categoryFilter = trim($_GET['category'] ?? '');
 
 global $pdo;
 $where = [];
 $params = [];
 if ($cityFilter !== '') { $where[] = 'city LIKE ?'; $params[] = '%' . $cityFilter . '%'; }
 if ($pincodeFilter !== '') { $where[] = 'pincode LIKE ?'; $params[] = '%' . $pincodeFilter . '%'; }
-if ($categoryFilter !== '') { $where[] = 'category = ?'; $params[] = $categoryFilter; }
 $whereSql = $where ? ('WHERE ' . implode(' AND ', $where) . ' AND status = "open"') : 'WHERE status = "open"';
-$listingsStmt = $pdo->prepare("SELECT id, donor_type, donor_name, contact, item, quantity, category, address, city, pincode, expires_at, image_url, status, created_at, claimed_at FROM listings $whereSql ORDER BY COALESCE(expires_at, '9999-12-31T00:00:00') ASC, id DESC LIMIT 20");
+$listingsStmt = $pdo->prepare("SELECT id, donor_type, donor_name, contact, item, quantity, address, city, pincode, expires_at, image_url, status, created_at, claimed_at FROM listings $whereSql ORDER BY COALESCE(expires_at, '9999-12-31T00:00:00') ASC, id DESC LIMIT 20");
 $listingsStmt->execute($params);
 $listings = $listingsStmt->fetchAll();
 ?>
@@ -168,7 +163,7 @@ $listings = $listingsStmt->fetchAll();
     </header>
     <section id="hero" class="hero"<?= $heroUrl ? ' style="--hero-img: url(' . h($heroUrl) . ');"' : '' ?> >
         <div class="wrap">
-            <h1 class="hero-title break-100">We face challenges to create real change, cutting food waste and feeding those in need.</h1>
+            <h1 class="hero-title break-100">We strive to make a real difference by helping people find available meals nearby, reducing food waste, and supporting those in need.</h1>
             <p class="hero-sub break-100">Together Against Food Waste</p>
             <div class="hero-actions">
               <a class="btn accent pill" href="<?= h(is_logged_in() ? ($BASE_PATH . 'create_campaign.php') : ($BASE_PATH . 'login.php?next=create_campaign.php')) ?>">Get Started</a>
@@ -177,26 +172,13 @@ $listings = $listingsStmt->fetchAll();
               <div class="search-fields">
                 <input type="text" name="city" placeholder="Search by city" value="<?= h($cityFilter) ?>" aria-label="City" />
                 <input type="text" name="pincode" placeholder="Pincode" value="<?= h($pincodeFilter) ?>" aria-label="Pincode" />
-                <select name="category" aria-label="Category">
-                  <option value="">All categories</option>
-                  <?php foreach ([
-                    'grains' => 'Grains',
-                    'cooked_meals' => 'Cooked Meals',
-                    'fresh_produces' => 'Fresh Produces',
-                    'bakery' => 'Bakery',
-                    'feasts' => 'Feasts',
-                    'langar' => 'Langar',
-                  ] as $val => $label): ?>
-                    <option value="<?= h($val) ?>"<?= $categoryFilter === $val ? ' selected' : '' ?>><?= h($label) ?></option>
-                  <?php endforeach; ?>
-                </select>
+                <!-- Category filter removed -->
                 <button class="btn accent pill" type="submit">Search</button>
               </div>
-              <?php if ($cityFilter !== '' || $pincodeFilter !== '' || $categoryFilter !== ''): ?>
+              <?php if ($cityFilter !== '' || $pincodeFilter !== ''): ?>
                 <div class="search-meta" aria-live="polite">Showing results for 
                   <?= $cityFilter !== '' ? '<span class="chip">' . h($cityFilter) . '</span>' : '' ?>
                   <?= $pincodeFilter !== '' ? '<span class="chip">' . h($pincodeFilter) . '</span>' : '' ?>
-                  <?= $categoryFilter !== '' ? '<span class="chip">' . h($categoryFilter) . '</span>' : '' ?>
                 </div>
               <?php endif; ?>
             </form>

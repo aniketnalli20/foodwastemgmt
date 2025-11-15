@@ -67,18 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <form class="form-grid" method="post" enctype="multipart/form-data">
-                <div class="form-field">
-                    <label for="category">Category</label>
-                    <select id="category" name="category" required>
-                        <option value="">Select a category</option>
-                        <option value="grains">Grains</option>
-                        <option value="cooked_meals">Cooked Meals</option>
-                        <option value="fresh_produces">Fresh Produces</option>
-                        <option value="bakery">Bakery</option>
-                        <option value="feasts">Feasts</option>
-                        <option value="langar">Langar</option>
-                    </select>
-                </div>
+                <!-- Category field removed -->
                 <div class="form-field">
                     <label for="contributor_name">Contributor Name</label>
                     <input type="text" id="contributor_name" name="contributor_name" required>

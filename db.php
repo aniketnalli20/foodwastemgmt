@@ -55,7 +55,6 @@ $pdo->exec('CREATE TABLE IF NOT EXISTS reports (
     contact VARCHAR(255),
     item VARCHAR(255) NOT NULL,
     quantity VARCHAR(255) NOT NULL,
-    category VARCHAR(100) NOT NULL,
     location TEXT,
     status VARCHAR(50) NOT NULL DEFAULT "pending",
     created_at DATETIME NOT NULL
@@ -69,7 +68,6 @@ $pdo->exec('CREATE TABLE IF NOT EXISTS listings (
     contact VARCHAR(255),
     item VARCHAR(255) NOT NULL,
     quantity VARCHAR(255) NOT NULL,
-    category VARCHAR(100) NOT NULL,
     address TEXT,
     city VARCHAR(100),
     pincode VARCHAR(20),
@@ -116,7 +114,10 @@ try { $pdo->exec('ALTER TABLE campaigns ADD COLUMN longitude DOUBLE'); } catch (
 try { $pdo->exec('ALTER TABLE campaigns ADD COLUMN community VARCHAR(255)'); } catch (Throwable $e) {}
 try { $pdo->exec('ALTER TABLE campaigns ADD COLUMN endorse_campaign INT DEFAULT 0'); } catch (Throwable $e) {}
 try { $pdo->exec('ALTER TABLE campaigns ADD COLUMN endorse_contributor INT DEFAULT 0'); } catch (Throwable $e) {}
-try { $pdo->exec('ALTER TABLE campaigns ADD COLUMN category VARCHAR(100)'); } catch (Throwable $e) {}
+// Remove category column from legacy installs
+try { $pdo->exec('ALTER TABLE listings DROP COLUMN category'); } catch (Throwable $e) {}
+try { $pdo->exec('ALTER TABLE reports DROP COLUMN category'); } catch (Throwable $e) {}
+try { $pdo->exec('ALTER TABLE campaigns DROP COLUMN category'); } catch (Throwable $e) {}
 
 // Track individual endorsement events for auditing/analytics
 $pdo->exec('CREATE TABLE IF NOT EXISTS endorsements (
