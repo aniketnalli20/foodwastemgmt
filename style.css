@@ -1078,6 +1078,7 @@ ul { list-style: none; padding-left: 0; }
 }
 .footer-inspo { display: grid; grid-template-columns: 1fr; gap: 16px; align-items: start; justify-items: center; background-color: var(--inspoHeroBg); background-image: linear-gradient(to right, rgba(207,231,207,0.5) 1px, transparent 1px), linear-gradient(to bottom, rgba(207,231,207,0.5) 1px, transparent 1px); color: #4c3862; border-radius: 16px; padding: 18px 20px; }
 @media (min-width: 960px) { .footer-inspo { grid-template-columns: 1fr 1fr; } }
+.footer-inspo > :first-child { grid-column: 1 / -1; width: 100%; }
 .footer-brand { font-weight: 900; font-size: clamp(1.4rem, 1.4vw + 1rem, 2rem); letter-spacing: -0.01em; margin-bottom: 10px; }
 .footer-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; justify-items: start; }
 .footer-col h4 { margin: 0 0 8px; font-weight: 800; font-size: 16px; color: var(--inspoTitle); }
@@ -1090,11 +1091,11 @@ ul { list-style: none; padding-left: 0; }
 .footer-desc { margin-top: 12px; color: #6f628f; font-size: 0.95rem; }
 .footer-legal { margin-top: 8px; color: #6f628f; font-size: 0.9rem; }
 .footer-legal a { color: var(--inspoTitle); }
-.compact-card { max-width: 600px; margin: 0 auto 12px; text-align: left; }
+.compact-card { max-width: none; width: 100%; margin: 0 0 12px; text-align: left; }
 .compact-card .footer-brand { margin-bottom: 6px; text-align: left; }
 .compact-card .footer-cols { gap: 10px; }
 .compact-card .footer-links li { padding: 4px 0; }
-.cta-card { background: linear-gradient(180deg, #ffb161, #ff7a2f); color: #1f2023; border-radius: 16px; padding: 18px 20px; box-shadow: 0 12px 30px rgba(0,0,0,0.25); text-align: center; }
+.cta-card { background: #ffffff; color: var(--text); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px; box-shadow: none; text-align: center; }
 .cta-card h3 { margin: 0 0 10px; font-weight: 800; font-size: clamp(1.3rem, 1.6vw + 0.8rem, 1.9rem); }
 .cta-card .actions { display: flex; gap: 10px; margin-top: 10px; justify-content: flex-end; }
 .btn.dark { background: #1f2937; color: #ffffff; border-color: transparent; }
