@@ -1077,10 +1077,11 @@ ul { list-style: none; padding-left: 0; }
   padding-right: var(--content-pad);
 }
 .footer-inspo { display: grid; grid-template-columns: 1fr; gap: 16px; align-items: start; justify-items: center; background-color: var(--inspoHeroBg); background-image: linear-gradient(to right, rgba(207,231,207,0.5) 1px, transparent 1px), linear-gradient(to bottom, rgba(207,231,207,0.5) 1px, transparent 1px); color: #4c3862; border-radius: 16px; padding: 18px 20px; }
-@media (min-width: 960px) { .footer-inspo { grid-template-columns: 2fr 1.3fr; } }
+@media (min-width: 960px) { .footer-inspo { grid-template-columns: 1fr; } }
 .footer-brand { font-weight: 900; font-size: clamp(1.4rem, 1.4vw + 1rem, 2rem); letter-spacing: -0.01em; margin-bottom: 10px; }
-.footer-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.footer-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; justify-items: center; }
 .footer-col h4 { margin: 0 0 8px; font-weight: 800; font-size: 16px; color: var(--inspoTitle); }
+.footer-col { text-align: center; }
 .footer-links li { padding: 6px 0; }
 .footer-links a { color: var(--inspoTitle); }
 .footer-links a:hover { color: #2f2350; }
@@ -1089,8 +1090,8 @@ ul { list-style: none; padding-left: 0; }
 .footer-desc { margin-top: 12px; color: #6f628f; font-size: 0.95rem; }
 .footer-legal { margin-top: 8px; color: #6f628f; font-size: 0.9rem; }
 .footer-legal a { color: var(--inspoTitle); }
-.cta-card { background: linear-gradient(180deg, #ffb161, #ff7a2f); color: #1f2023; border-radius: 16px; padding: 18px 20px; box-shadow: 0 12px 30px rgba(0,0,0,0.25); }
+.cta-card { background: linear-gradient(180deg, #ffb161, #ff7a2f); color: #1f2023; border-radius: 16px; padding: 18px 20px; box-shadow: 0 12px 30px rgba(0,0,0,0.25); text-align: center; }
 .cta-card h3 { margin: 0 0 10px; font-weight: 800; font-size: clamp(1.3rem, 1.6vw + 0.8rem, 1.9rem); }
-.cta-card .actions { display: flex; gap: 10px; margin-top: 10px; }
+.cta-card .actions { display: flex; gap: 10px; margin-top: 10px; justify-content: center; }
 .btn.dark { background: #1f2937; color: #ffffff; border-color: transparent; }
 .btn.light { background: #ffffff; color: #000000; border-color: transparent; }

@@ -64,7 +64,7 @@ require_once __DIR__ . '/app.php';
     <footer class="site-footer">
         <div class="container footer-inner">
             <div class="footer-inspo">
-                <div>
+                <div style="max-width:640px; margin:0 auto; text-align:center;">
                     <div class="footer-brand" style="text-align:center;">No Starve</div>
                     <div class="footer-cols" style="display:block; max-width:600px; margin:0 auto; text-align:center;">
                         <div class="footer-col">
