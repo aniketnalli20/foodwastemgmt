@@ -326,28 +326,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
     <footer class="site-footer">
         <div class="container footer-inner">
             <div class="footer-inspo">
-                <div>
-                    <div class="faq" style="margin-top:10px;" id="faqs">
-                        <h4>FAQs</h4>
-                        <details>
-                            <summary><strong>What are Karma Coins?</strong></summary>
-                            <div>Karma Coins are rewards earned by contributors for community support on their campaigns.</div>
-                        </details>
-                        <details>
-                            <summary><strong>How do I earn Karma Coins?</strong></summary>
-                            <div>1 Karma Coin is awarded for every 100 endorsements across your campaigns.</div>
-                        </details>
-                        <details>
-                            <summary><strong>Where can I see my coins?</strong></summary>
-                            <div>Open your Profile to see your current Karma Coins and endorsement totals.</div>
-                        </details>
-                        <details>
-                            <summary><strong>Do I need to claim coins?</strong></summary>
-                            <div>No. Coins update automatically when you open your Profile.</div>
-                        </details>
-                    </div>
-                    <div class="footer-brand">No Starve</div>
-                    <div class="footer-cols">
+                <div style="max-width:640px; margin:0 auto; text-align:center;">
+                    <div class="footer-brand" style="text-align:center;">No Starve</div>
+                    <div class="footer-cols" id="faqs" style="display:block; max-width:600px; margin:0 auto; text-align:center;">
                         <div class="footer-col">
                             <h4>Resources</h4>
                             <ul class="footer-links list-clean">
@@ -365,14 +346,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
                             </ul>
                         </div>
                     </div>
-                    <div class="footer-social">
+                    <div class="footer-social" style="justify-content:center;">
                         <a href="#" aria-label="Twitter">t</a>
                         <a href="#" aria-label="Instagram">i</a>
                         <a href="#" aria-label="LinkedIn">in</a>
                         <a href="#" aria-label="YouTube">yt</a>
                     </div>
-                    <div class="footer-desc">No Starve helps people discover available meals nearby and connect safely for convenient access.</div>
-                    <div class="footer-legal">&copy; 2025 No Starve</div>
+                    <div class="footer-desc" style="text-align:center;">No Starve helps people discover available meals nearby and connect safely for convenient access.</div>
+                    <div class="footer-legal" style="text-align:center;">&copy; 2025 No Starve</div>
                 </div>
                 <div>
                     <div class="cta-card" aria-label="Call to action">

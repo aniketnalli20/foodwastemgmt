@@ -65,8 +65,8 @@ require_once __DIR__ . '/app.php';
         <div class="container footer-inner">
             <div class="footer-inspo">
                 <div>
-                    <div class="footer-brand">No Starve</div>
-                    <div class="footer-cols">
+                    <div class="footer-brand" style="text-align:center;">No Starve</div>
+                    <div class="footer-cols" style="display:block; max-width:600px; margin:0 auto; text-align:center;">
                         <div class="footer-col">
                             <h4>Resources</h4>
                             <ul class="footer-links list-clean">
@@ -84,14 +84,14 @@ require_once __DIR__ . '/app.php';
                             </ul>
                         </div>
                     </div>
-                    <div class="footer-social">
+                    <div class="footer-social" style="justify-content:center;">
                         <a href="#" aria-label="Twitter">t</a>
                         <a href="#" aria-label="Instagram">i</a>
                         <a href="#" aria-label="LinkedIn">in</a>
                         <a href="#" aria-label="YouTube">yt</a>
                     </div>
-                    <div class="footer-desc">No Starve helps people discover available meals nearby and connect safely for convenient access.</div>
-                    <div class="footer-legal">&copy; 2025 No Starve</div>
+                    <div class="footer-desc" style="text-align:center;">No Starve helps people discover available meals nearby and connect safely for convenient access.</div>
+                    <div class="footer-legal" style="text-align:center;">&copy; 2025 No Starve</div>
                 </div>
                 <div>
                     <div class="cta-card" aria-label="Call to action">

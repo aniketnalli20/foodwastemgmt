@@ -1076,7 +1076,7 @@ ul { list-style: none; padding-left: 0; }
   padding-left: var(--content-pad);
   padding-right: var(--content-pad);
 }
-.footer-inspo { display: grid; grid-template-columns: 1fr; gap: 16px; align-items: start; background-color: var(--inspoHeroBg); background-image: linear-gradient(to right, rgba(207,231,207,0.5) 1px, transparent 1px), linear-gradient(to bottom, rgba(207,231,207,0.5) 1px, transparent 1px); color: #4c3862; border-radius: 16px; padding: 18px 20px; }
+.footer-inspo { display: grid; grid-template-columns: 1fr; gap: 16px; align-items: start; justify-items: center; background-color: var(--inspoHeroBg); background-image: linear-gradient(to right, rgba(207,231,207,0.5) 1px, transparent 1px), linear-gradient(to bottom, rgba(207,231,207,0.5) 1px, transparent 1px); color: #4c3862; border-radius: 16px; padding: 18px 20px; }
 @media (min-width: 960px) { .footer-inspo { grid-template-columns: 2fr 1.3fr; } }
 .footer-brand { font-weight: 900; font-size: clamp(1.4rem, 1.4vw + 1rem, 2rem); letter-spacing: -0.01em; margin-bottom: 10px; }
 .footer-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
