@@ -148,6 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <a href="<?= h($BASE_PATH) ?>index.php#hero">Home</a>
                 <a href="<?= h(is_logged_in() ? ($BASE_PATH . 'create_campaign.php') : ($BASE_PATH . 'login.php?next=create_campaign.php')) ?>">Create Campaign</a>
                 <a href="<?= h($BASE_PATH) ?>import_users.php"<?= $currentPath === 'import_users.php' ? ' class="active"' : '' ?>>Import Users</a>
+                <a href="<?= h(is_logged_in() ? ($BASE_PATH . 'profile.php') : ($BASE_PATH . 'login.php?next=profile.php')) ?>"<?= $currentPath === 'profile.php' ? ' class="active"' : '' ?>>Profile</a>
                 <?php if (is_logged_in()): ?>
                     <a href="<?= h($BASE_PATH) ?>logout.php">Logout</a>
                 <?php else: ?>

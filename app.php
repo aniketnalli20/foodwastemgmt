@@ -38,7 +38,7 @@ function require_login(): void {
 function current_user(): ?array {
     if (!is_logged_in()) return null;
     global $pdo;
-    $stmt = $pdo->prepare('SELECT id, username, email, created_at FROM users WHERE id = ?');
+    $stmt = $pdo->prepare('SELECT id, username, email, phone, address, created_at FROM users WHERE id = ?');
     $stmt->execute([$_SESSION['user_id']]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
     return $user ?: null;
