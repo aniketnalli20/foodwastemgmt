@@ -71,16 +71,16 @@ try {
     // Silently ignore seeding errors to avoid breaking page loads
 }
 if (($DB_DRIVER ?? 'mysql') === 'pgsql') {
-    $pdo->exec('CREATE TABLE IF NOT EXISTS reports (
+    $pdo->exec("CREATE TABLE IF NOT EXISTS reports (
         id SERIAL PRIMARY KEY,
         reporter_name VARCHAR(255) NOT NULL,
         contact VARCHAR(255),
         item VARCHAR(255) NOT NULL,
         quantity VARCHAR(255) NOT NULL,
         location TEXT,
-        status VARCHAR(50) NOT NULL DEFAULT ''pending'',
+        status VARCHAR(50) NOT NULL DEFAULT 'pending',
         created_at TIMESTAMP NOT NULL
-    )');
+    )");
 } else {
     $pdo->exec('CREATE TABLE IF NOT EXISTS reports (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -96,7 +96,7 @@ if (($DB_DRIVER ?? 'mysql') === 'pgsql') {
 
 // Listings posted by donors for NGOs/recipients to claim
 if (($DB_DRIVER ?? 'mysql') === 'pgsql') {
-    $pdo->exec('CREATE TABLE IF NOT EXISTS listings (
+    $pdo->exec("CREATE TABLE IF NOT EXISTS listings (
         id SERIAL PRIMARY KEY,
         donor_type VARCHAR(50) NOT NULL,
         donor_name VARCHAR(255) NOT NULL,
@@ -108,10 +108,10 @@ if (($DB_DRIVER ?? 'mysql') === 'pgsql') {
         pincode VARCHAR(20),
         expires_at TIMESTAMP,
         image_url TEXT,
-        status VARCHAR(50) NOT NULL DEFAULT ''open'',
+        status VARCHAR(50) NOT NULL DEFAULT 'open',
         created_at TIMESTAMP NOT NULL,
         claimed_at TIMESTAMP NULL
-    )');
+    )");
 } else {
     $pdo->exec('CREATE TABLE IF NOT EXISTS listings (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -158,7 +158,7 @@ if (($DB_DRIVER ?? 'mysql') === 'pgsql') {
 
 // Campaigns to coordinate targeted food distribution efforts
 if (($DB_DRIVER ?? 'mysql') === 'pgsql') {
-    $pdo->exec('CREATE TABLE IF NOT EXISTS campaigns (
+    $pdo->exec("CREATE TABLE IF NOT EXISTS campaigns (
         id SERIAL PRIMARY KEY,
         title VARCHAR(255) NOT NULL,
         summary TEXT NOT NULL,
@@ -166,9 +166,9 @@ if (($DB_DRIVER ?? 'mysql') === 'pgsql') {
         target_meals INT,
         start_date DATE,
         end_date DATE,
-        status VARCHAR(50) NOT NULL DEFAULT ''draft'',
+        status VARCHAR(50) NOT NULL DEFAULT 'draft',
         created_at TIMESTAMP NOT NULL
-    )');
+    )");
 } else {
     $pdo->exec('CREATE TABLE IF NOT EXISTS campaigns (
         id INT AUTO_INCREMENT PRIMARY KEY,
