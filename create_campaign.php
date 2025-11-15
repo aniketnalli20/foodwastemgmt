@@ -342,9 +342,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
                             <ul class="footer-links list-clean">
                                 <li><a href="<?= h($BASE_PATH) ?>profile.php">About</a></li>
                                 <li><a href="<?= h(is_logged_in() ? ($BASE_PATH . 'create_campaign.php') : ($BASE_PATH . 'login.php?next=create_campaign.php')) ?>">Careers</a></li>
-                                <li><a href="<?= h($BASE_PATH) ?>index.php#recent-campaigns">Wall of Love</a></li>
+                                <li><a href="<?= h($BASE_PATH) ?>faqs.php">FAQs</a></li>
                             </ul>
                         </div>
+                    </div>
+                    <div class="faq" style="margin-top:10px;" id="faqs">
+                        <h4>FAQs</h4>
+                        <details>
+                            <summary><strong>What are Karma Coins?</strong></summary>
+                            <div>Karma Coins are rewards earned by contributors for community support on their campaigns.</div>
+                        </details>
+                        <details>
+                            <summary><strong>How do I earn Karma Coins?</strong></summary>
+                            <div>1 Karma Coin is awarded for every 100 endorsements across your campaigns.</div>
+                        </details>
+                        <details>
+                            <summary><strong>Where can I see my coins?</strong></summary>
+                            <div>Open your Profile to see your current Karma Coins and endorsement totals.</div>
+                        </details>
+                        <details>
+                            <summary><strong>Do I need to claim coins?</strong></summary>
+                            <div>No. Coins update automatically when you open your Profile.</div>
+                        </details>
                     </div>
                     <div class="footer-social">
                         <a href="#" aria-label="Twitter">t</a>

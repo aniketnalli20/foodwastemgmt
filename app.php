@@ -192,3 +192,37 @@ function create_campaign(array $data, ?array $imageFile = null): int {
 
     return (int)$pdo->lastInsertId();
 }
+
+function get_karma_balance(int $userId): int {
+    global $pdo;
+    $stmt = $pdo->prepare('SELECT balance FROM karma_wallets WHERE user_id = ?');
+    $stmt->execute([$userId]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $row ? (int)$row['balance'] : 0;
+}
+
+function award_karma_coins(int $userId, int $amount, ?string $reason = null, ?string $refType = null, ?int $refId = null): int {
+    global $pdo, $DB_DRIVER;
+    if ($userId <= 0) throw new InvalidArgumentException('Invalid user');
+    if ($amount <= 0) throw new InvalidArgumentException('Amount must be positive');
+    $pdo->beginTransaction();
+    try {
+        $now = ($DB_DRIVER === 'pgsql') ? gmdate('Y-m-d H:i:s') : gmdate('Y-m-d H:i:s');
+        if ($DB_DRIVER === 'pgsql') {
+            $pdo->prepare('INSERT INTO karma_wallets (user_id, balance, updated_at) VALUES (?, ?, ?)
+                           ON CONFLICT (user_id) DO UPDATE SET balance = karma_wallets.balance + EXCLUDED.balance, updated_at = EXCLUDED.updated_at')
+                ->execute([$userId, $amount, $now]);
+        } else {
+            $pdo->prepare('INSERT INTO karma_wallets (user_id, balance, updated_at) VALUES (?, ?, ?)
+                           ON DUPLICATE KEY UPDATE balance = balance + VALUES(balance), updated_at = VALUES(updated_at)')
+                ->execute([$userId, $amount, $now]);
+        }
+        $pdo->prepare('INSERT INTO karma_events (user_id, amount, reason, ref_type, ref_id, created_at) VALUES (?, ?, ?, ?, ?, ?)')
+            ->execute([$userId, $amount, ($reason !== '' ? $reason : null), ($refType !== '' ? $refType : null), ($refId ?: null), $now]);
+        $pdo->commit();
+    } catch (Throwable $e) {
+        $pdo->rollBack();
+        throw $e;
+    }
+    return get_karma_balance($userId);
+}

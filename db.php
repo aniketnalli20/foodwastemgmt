@@ -248,3 +248,42 @@ if (($DRIVER ?? ($DB_DRIVER ?? 'mysql')) === 'pgsql') {
 try { $pdo->exec('ALTER TABLE endorsements ADD COLUMN user_id INT'); } catch (Throwable $e) {}
 try { $pdo->exec('ALTER TABLE endorsements ADD CONSTRAINT fk_endorsements_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL'); } catch (Throwable $e) {}
 try { $pdo->exec('CREATE UNIQUE INDEX idx_endorsements_unique ON endorsements (campaign_id, kind, user_id)'); } catch (Throwable $e) {}
+
+// Karma coins: wallet and events
+if (($DRIVER ?? ($DB_DRIVER ?? 'mysql')) === 'pgsql') {
+    $pdo->exec('CREATE TABLE IF NOT EXISTS karma_wallets (
+        id SERIAL PRIMARY KEY,
+        user_id INT UNIQUE NOT NULL,
+        balance INT NOT NULL DEFAULT 0,
+        updated_at TIMESTAMP NOT NULL,
+        CONSTRAINT fk_karma_wallets_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )');
+    $pdo->exec('CREATE TABLE IF NOT EXISTS karma_events (
+        id SERIAL PRIMARY KEY,
+        user_id INT NOT NULL,
+        amount INT NOT NULL,
+        reason VARCHAR(255),
+        ref_type VARCHAR(50),
+        ref_id INT,
+        created_at TIMESTAMP NOT NULL,
+        CONSTRAINT fk_karma_events_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )');
+} else {
+    $pdo->exec('CREATE TABLE IF NOT EXISTS karma_wallets (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL UNIQUE,
+        balance INT NOT NULL DEFAULT 0,
+        updated_at DATETIME NOT NULL,
+        CONSTRAINT fk_karma_wallets_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=' . $DB_CHARSET);
+    $pdo->exec('CREATE TABLE IF NOT EXISTS karma_events (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        amount INT NOT NULL,
+        reason VARCHAR(255) NULL,
+        ref_type VARCHAR(50) NULL,
+        ref_id INT NULL,
+        created_at DATETIME NOT NULL,
+        CONSTRAINT fk_karma_events_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=' . $DB_CHARSET);
+}

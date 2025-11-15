@@ -12,6 +12,25 @@ if (!$user) {
 $errors = [];
 $message = '';
 $footer_note = '';
+global $pdo;
+$endorseTotal = 0;
+$karmaBalance = 0;
+$nextIn = 0;
+try {
+    $stmt = $pdo->prepare('SELECT COALESCE(SUM(endorse_campaign),0) AS total FROM campaigns WHERE user_id = ?');
+    $stmt->execute([(int)$user['id']]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $endorseTotal = $row ? (int)$row['total'] : 0;
+    $expected = intdiv($endorseTotal, 100);
+    $karmaBalance = get_karma_balance((int)$user['id']);
+    if ($karmaBalance < $expected) {
+        $diff = $expected - $karmaBalance;
+        $karmaBalance = award_karma_coins((int)$user['id'], $diff, 'endorsements_milestone', 'user', (int)$user['id']);
+    }
+    $nextIn = 100 - ($endorseTotal % 100);
+    if ($nextIn === 100) { $nextIn = 0; }
+} catch (Throwable $e) {
+}
 
 // Handle profile updates (phone, address)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'update_profile') {
@@ -129,6 +148,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
 
                 <div class="label"><strong>Member Since</strong></div>
                 <div><?= h($user['created_at'] ?? '') ?></div>
+            </div>
+            <div class="profile-grid" style="margin-top:12px;">
+                <div class="label"><strong>Karma Coins</strong></div>
+                <div><?= h((string)$karmaBalance) ?></div>
+                <div class="label"><strong>Endorsements Received</strong></div>
+                <div><?= h((string)$endorseTotal) ?></div>
+                <div class="label"><strong>Next Coin In</strong></div>
+                <div><?= h((string)$nextIn) ?></div>
             </div>
             <form method="post" action="<?= h($BASE_PATH) ?>profile.php" class="form" style="margin-top:16px;">
                 <input type="hidden" name="action" value="update_profile">
@@ -266,9 +293,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
                             <ul class="footer-links list-clean">
                                 <li><a href="<?= h($BASE_PATH) ?>profile.php">About</a></li>
                                 <li><a href="<?= h(is_logged_in() ? ($BASE_PATH . 'create_campaign.php') : ($BASE_PATH . 'login.php?next=create_campaign.php')) ?>">Careers</a></li>
-                                <li><a href="<?= h($BASE_PATH) ?>index.php#recent-campaigns">Wall of Love</a></li>
+                                <li><a href="<?= h($BASE_PATH) ?>faqs.php">FAQs</a></li>
                             </ul>
                         </div>
+                    </div>
+                    <div class="faq" style="margin-top:10px;" id="faqs">
+                        <h4>FAQs</h4>
+                        <details>
+                            <summary><strong>What are Karma Coins?</strong></summary>
+                            <div>Karma Coins are rewards earned by contributors for community support on their campaigns.</div>
+                        </details>
+                        <details>
+                            <summary><strong>How do I earn Karma Coins?</strong></summary>
+                            <div>You get 1 Karma Coin for every 100 endorsements across your campaigns.</div>
+                        </details>
+                        <details>
+                            <summary><strong>Where can I see my coins?</strong></summary>
+                            <div>This page shows your Karma Coins and endorsement totals.</div>
+                        </details>
+                        <details>
+                            <summary><strong>When are coins updated?</strong></summary>
+                            <div>They update automatically when you open your Profile.</div>
+                        </details>
                     </div>
                     <div class="footer-social">
                         <a href="#" aria-label="Twitter">t</a>
