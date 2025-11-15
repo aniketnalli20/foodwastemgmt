@@ -277,7 +277,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
                         <a href="#" aria-label="YouTube">yt</a>
                     </div>
                     <div class="footer-desc">No Starve helps people discover available meals nearby and connect safely for convenient access.</div>
-                    <div class="footer-legal"><a href="#">Impressum</a> · <a href="#">Privacy policy</a></div>
+                    <div class="footer-legal">&copy; 2025 No Starve</div>
                 </div>
                 <div>
                     <div class="cta-card" aria-label="Call to action">
@@ -293,7 +293,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
                     </div>
                 </div>
             </div>
-            <small>&copy; 2025 No Starve</small>
         </div>
     </footer>
 </body>
