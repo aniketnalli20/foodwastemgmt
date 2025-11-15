@@ -5,7 +5,14 @@ session_start();
 require_once __DIR__ . '/db.php';
 
 // Compute base path dynamically so links work from a subfolder (e.g., /No%20starve/) or as a vhost root
-$BASE_PATH = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/')), '/') . '/';
+$docRoot = str_replace('\\', '/', rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/'));
+$appDir = str_replace('\\', '/', rtrim(__DIR__, '/'));
+$basePath = '/';
+if ($docRoot !== '' && strncmp($appDir, $docRoot, strlen($docRoot)) === 0) {
+    $rel = substr($appDir, strlen($docRoot));
+    $basePath = $rel !== '' ? $rel : '/';
+}
+$BASE_PATH = rtrim(str_replace('\\', '/', $basePath), '/') . '/';
 
 function h($str) {
     return htmlspecialchars((string)$str, ENT_QUOTES, 'UTF-8');
