@@ -154,7 +154,6 @@ $listings = $listingsStmt->fetchAll();
             <nav id="primary-navigation" class="nav-links" role="navigation" aria-label="Primary">
                 <a href="#hero"<?= $currentPath === 'index.php' ? ' class="active"' : '' ?>>Home</a>
                 <a href="<?= h(is_logged_in() ? ($BASE_PATH . 'create_campaign.php') : ($BASE_PATH . 'login.php?next=create_campaign.php')) ?>"<?= $currentPath === 'create_campaign.php' ? ' class="active"' : '' ?>>Create Campaign</a>
-                <a href="<?= h($BASE_PATH) ?>communityns.php"<?= $currentPath === 'communityns.php' ? ' class="active"' : '' ?>>Community</a>
                 <?php if (is_logged_in()): ?>
                   <a href="<?= h($BASE_PATH) ?>logout.php">Logout</a>
                 <?php else: ?>
@@ -169,7 +168,6 @@ $listings = $listingsStmt->fetchAll();
             <p class="hero-sub break-100">Together Against Food Waste</p>
             <div class="hero-actions">
               <a class="btn accent pill" href="<?= h(is_logged_in() ? ($BASE_PATH . 'create_campaign.php') : ($BASE_PATH . 'login.php?next=create_campaign.php')) ?>">Get Started</a>
-              <a class="btn secondary pill" href="<?= h($BASE_PATH) ?>communityns.php">Explore Community</a>
             </div>
             <form class="search-bar" role="search" method="get" action="<?= h($BASE_PATH) ?>index.php">
               <div class="search-fields">

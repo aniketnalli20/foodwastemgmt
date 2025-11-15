@@ -21,6 +21,13 @@ function gen_email(string $name, int $idx = 0): string {
     return $slug . $suffix . '@nostrv.com';
 }
 
+function gen_phone(int $seed = 0): string {
+    // Deterministic 10-digit number starting with 900
+    $base = 9000000000;
+    $num = $base + ($seed % 999999);
+    return (string)$num;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $sourcePath = '';
@@ -67,13 +74,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $idxFirst = $map['first name'] ?? $map['first'] ?? null;
         $idxLast = $map['last name'] ?? $map['last'] ?? null;
         $idxEmail = $map['email'] ?? null;
+        $idxPhone = $map['phone'] ?? ($map['mobile'] ?? ($map['contact'] ?? null));
+        $idxAddress = $map['address'] ?? ($map['street'] ?? ($map['location'] ?? null));
         $idxUsername = $map['username'] ?? null;
 
         $inserted = 0;
         $skipped = 0;
         $seenEmails = [];
         $now = gmdate('Y-m-d H:i:s');
-        $stmt = $pdo->prepare('INSERT INTO users (username, email, password_hash, created_at) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE email = email');
+        $stmt = $pdo->prepare('INSERT INTO users (username, email, phone, address, password_hash, created_at) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE phone = VALUES(phone), address = VALUES(address)');
 
         $rowNum = 1; // account for header
         while (($row = fgetcsv($fp)) !== false) {
@@ -97,10 +106,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $seenEmails[$email] = true;
+            $phone = ($idxPhone !== null && isset($row[$idxPhone])) ? preg_replace('/\D+/', '', (string)$row[$idxPhone]) : '';
+            if ($phone === '') {
+                $phone = gen_phone($rowNum);
+            }
+            $address = ($idxAddress !== null && isset($row[$idxAddress])) ? trim((string)$row[$idxAddress]) : '';
             $passwordHash = password_hash('demo1234', PASSWORD_DEFAULT);
 
             try {
-                $stmt->execute([$username, $email, $passwordHash, $now]);
+                $stmt->execute([$username, $email, $phone, $address, $passwordHash, $now]);
                 $affected = $stmt->rowCount();
                 // On duplicate key MySQL reports 2; count as skipped when no insert happened
                 if ($affected === 1) { $inserted++; } else { $skipped++; }
@@ -133,7 +147,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <nav id="primary-navigation" class="nav-links" role="navigation" aria-label="Primary">
                 <a href="<?= h($BASE_PATH) ?>index.php#hero">Home</a>
                 <a href="<?= h(is_logged_in() ? ($BASE_PATH . 'create_campaign.php') : ($BASE_PATH . 'login.php?next=create_campaign.php')) ?>">Create Campaign</a>
-                <a href="<?= h($BASE_PATH) ?>communityns.php">Community</a>
                 <a href="<?= h($BASE_PATH) ?>import_users.php"<?= $currentPath === 'import_users.php' ? ' class="active"' : '' ?>>Import Users</a>
                 <?php if (is_logged_in()): ?>
                     <a href="<?= h($BASE_PATH) ?>logout.php">Logout</a>
@@ -146,7 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <main class="container" style="max-width: var(--content-max); padding: var(--content-pad);">
         <h1>Import Users from CSV</h1>
-        <p>Upload your CSV or provide a server path (e.g., <code>uploads/Indian-Name.csv</code>). Each row should include <code>Name</code> or <code>First Name</code>/<code>Last Name</code>, and optionally <code>Email</code>. Missing emails will be generated.</p>
+        <p>Upload your CSV or provide a server path (e.g., <code>uploads/Indian-Name.csv</code>). Each row should include <code>Name</code> or <code>First Name</code>/<code>Last Name</code>, and optionally <code>Email</code>, <code>Phone</code>, and <code>Address</code>. Missing emails and phones will be generated.</p>
 
         <?php if ($message): ?>
             <div class="card-plain" role="alert" style="margin:12px 0; padding:12px; border:1px solid var(--border); border-radius:8px;">

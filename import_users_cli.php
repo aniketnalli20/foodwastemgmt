@@ -20,6 +20,12 @@ function gen_email(string $name, int $idx = 0): string {
     return $slug . $suffix . '@nostrv.com';
 }
 
+function gen_phone(int $seed = 0): string {
+    $base = 9000000000;
+    $num = $base + ($seed % 999999);
+    return (string)$num;
+}
+
 // Parse args
 $path = $argv[1] ?? '';
 if ($path === '') {
@@ -55,6 +61,8 @@ $idxName = $map['name'] ?? ($map['full name'] ?? null);
 $idxFirst = $map['first name'] ?? ($map['first'] ?? null);
 $idxLast = $map['last name'] ?? ($map['last'] ?? null);
 $idxEmail = $map['email'] ?? null;
+$idxPhone = $map['phone'] ?? ($map['mobile'] ?? ($map['contact'] ?? null));
+$idxAddress = $map['address'] ?? ($map['street'] ?? ($map['location'] ?? null));
 $idxUsername = $map['username'] ?? null;
 
 $inserted = 0;
@@ -62,7 +70,7 @@ $skipped = 0;
 $details = [];
 $seenEmails = [];
 $now = gmdate('Y-m-d H:i:s');
-$stmt = $pdo->prepare('INSERT INTO users (username, email, password_hash, created_at) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE email = email');
+$stmt = $pdo->prepare('INSERT INTO users (username, email, phone, address, password_hash, created_at) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE phone = VALUES(phone), address = VALUES(address)');
 
 $rowNum = 1; // header line accounted for
 while (($row = fgetcsv($fp)) !== false) {
@@ -83,10 +91,13 @@ while (($row = fgetcsv($fp)) !== false) {
     }
 
     $seenEmails[$email] = true;
+    $phone = ($idxPhone !== null && isset($row[$idxPhone])) ? preg_replace('/\D+/', '', (string)$row[$idxPhone]) : '';
+    if ($phone === '') $phone = gen_phone($rowNum);
+    $address = ($idxAddress !== null && isset($row[$idxAddress])) ? trim((string)$row[$idxAddress]) : '';
     $passwordHash = password_hash('demo1234', PASSWORD_DEFAULT);
 
     try {
-        $stmt->execute([$username, $email, $passwordHash, $now]);
+        $stmt->execute([$username, $email, $phone, $address, $passwordHash, $now]);
         $affected = $stmt->rowCount();
         if ($affected === 1) { $inserted++; } else { $skipped++; }
     } catch (Throwable $e) {

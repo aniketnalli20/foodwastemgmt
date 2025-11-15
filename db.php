@@ -27,9 +27,14 @@ $pdo->exec('CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
+    phone VARCHAR(30) NULL,
+    address TEXT NULL,
     password_hash VARCHAR(255) NOT NULL,
     created_at DATETIME NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=' . $DB_CHARSET);
+// Backfill new columns for existing installs
+try { $pdo->exec('ALTER TABLE users ADD COLUMN phone VARCHAR(30) NULL'); } catch (Throwable $e) {}
+try { $pdo->exec('ALTER TABLE users ADD COLUMN address TEXT NULL'); } catch (Throwable $e) {}
 // Seed demo users if none exist
 try {
     $userCount = (int)$pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();

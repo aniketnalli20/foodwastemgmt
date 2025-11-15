@@ -10,7 +10,7 @@ $limit = isset($argv[1]) ? (int)$argv[1] : 10;
 if ($limit <= 0) $limit = 10;
 
 try {
-    $stmt = $pdo->prepare('SELECT id, username, email FROM users ORDER BY id ASC LIMIT ?');
+    $stmt = $pdo->prepare('SELECT id, username, email, phone, address FROM users ORDER BY id ASC LIMIT ?');
     $stmt->bindValue(1, $limit, PDO::PARAM_INT);
     $stmt->execute();
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
@@ -20,7 +20,7 @@ try {
     }
     echo "Showing {$limit} users (password: demo1234 unless changed):\n";
     foreach ($rows as $u) {
-        echo 'id=' . (int)$u['id'] . ', username=' . (string)$u['username'] . ', email=' . (string)$u['email'] . "\n";
+        echo 'id=' . (int)$u['id'] . ', username=' . (string)$u['username'] . ', email=' . (string)$u['email'] . ', phone=' . (string)($u['phone'] ?? '') . ', address=' . (string)($u['address'] ?? '') . "\n";
     }
     exit(0);
 } catch (Throwable $e) {
