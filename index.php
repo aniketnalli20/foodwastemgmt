@@ -246,60 +246,6 @@ $campaignsStmt = $pdo->prepare("SELECT id, title, summary, area, target_meals, s
     </section>
 
     <!-- Recent Campaigns section placed directly under hero -->
-    <section id="inspo-links" class="container fullbleed" aria-label="Helpful Links" style="padding: var(--content-pad);">
-      <div class="footer-inspo">
-        <div style="margin:0; text-align:left; width:100%;">
-          <section class="faq card-plain" id="faqs" aria-label="FAQs" style="max-width:none; margin:0 0 12px; text-align:left;">
-            <h4 class="section-title" style="border-bottom:none; margin-bottom:6px;">FAQs</h4>
-            <details open>
-              <summary><strong>What is No Starve?</strong></summary>
-              <div>No Starve helps users discover nearby available meals and connect safely for convenient access, reducing waste.</div>
-            </details>
-            <details>
-              <summary><strong>What are Karma Coins?</strong></summary>
-              <div>Karma Coins are rewards earned by contributors based on community support for their campaigns.</div>
-            </details>
-            <details>
-              <summary><strong>How do I earn Karma Coins?</strong></summary>
-              <div>You receive 1 Karma Coin for every 100 endorsements across your campaigns.</div>
-            </details>
-            <details>
-              <summary><strong>Where can I see my coins?</strong></summary>
-              <div>Open your <a href="<?= h(is_logged_in() ? ($BASE_PATH . 'profile.php') : ($BASE_PATH . 'login.php?next=profile.php')) ?>">Profile</a> to view your current Karma Coins and endorsement totals.</div>
-            </details>
-            <details>
-              <summary><strong>When are coins updated?</strong></summary>
-              <div>Coins update automatically when you open your Profile based on your latest endorsements.</div>
-            </details>
-            <details>
-              <summary><strong>How do I create a campaign?</strong></summary>
-              <div>Go to <a href="<?= h(is_logged_in() ? ($BASE_PATH . 'create_campaign.php') : ($BASE_PATH . 'login.php?next=create_campaign.php')) ?>">Create Campaign</a> and publish details such as location, crowd size, and closing time.</div>
-            </details>
-          </section>
-          <div class="card-plain compact-card">
-            <div class="footer-brand">No Starve</div>
-            <div class="footer-cols" style="display:block; margin:0 auto;">
-              <div class="footer-col">
-                <h4>Resources</h4>
-                <ul class="footer-links list-clean">
-                  <li><a href="<?= h($BASE_PATH) ?>index.php#hero">Blog</a></li>
-                  <li><a href="<?= h($BASE_PATH) ?>index.php#recent-campaigns">Guides</a></li>
-                  <li><a href="<?= h($BASE_PATH) ?>index.php#hero">Help Center</a></li>
-                </ul>
-              </div>
-              <div class="footer-col">
-                <h4>Company</h4>
-                <ul class="footer-links list-clean">
-                  <li><a href="<?= h($BASE_PATH) ?>profile.php">About</a></li>
-                  <li><a href="<?= h(is_logged_in() ? ($BASE_PATH . 'create_campaign.php') : ($BASE_PATH . 'login.php?next=create_campaign.php')) ?>">Careers</a></li>
-                  <li><a href="#faqs">FAQs</a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
     <section id="recent-campaigns" class="container fullbleed" aria-label="Recent Campaigns" style="padding: var(--content-pad);">
         <div class="heading" style="margin-bottom: 12px; display:flex; align-items:center; justify-content:space-between;">
             <span>Recent Campaigns</span>
