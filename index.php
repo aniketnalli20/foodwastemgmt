@@ -12,11 +12,15 @@ if (!is_dir($uploadsDir)) {
 
 // Upload hero option moved to admin in future. Front page does not handle hero uploads.
 
-// Resolve hero background image from uploads (jpg/png/webp)
+// Resolve hero background image: prefer configured path via proxy, fallback to uploads
 $heroUrl = null;
-foreach (['hero.jpg','hero.png','hero.webp'] as $name) {
-    $candidate = $uploadsDir . DIRECTORY_SEPARATOR . $name;
-    if (is_file($candidate)) { $heroUrl = 'uploads/' . $name; break; }
+if (!empty($HERO_IMAGE_PATH) && is_file($HERO_IMAGE_PATH)) {
+    $heroUrl = 'hero_proxy.php';
+} else {
+    foreach (['hero.jpg','hero.png','hero.webp'] as $name) {
+        $candidate = $uploadsDir . DIRECTORY_SEPARATOR . $name;
+        if (is_file($candidate)) { $heroUrl = 'uploads/' . $name; break; }
+    }
 }
 
 // Handle create listing
