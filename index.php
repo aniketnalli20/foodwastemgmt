@@ -365,8 +365,8 @@ $campaignsStmt = $pdo->prepare("SELECT id, title, summary, area, target_meals, s
                             <li>Save time coordinating campaigns</li>
                         </ul>
                         <div class="actions">
-                            <a class="btn dark pill" href="<?= h(is_logged_in() ? ($BASE_PATH . 'create_campaign.php') : ($BASE_PATH . 'login.php?next=create_campaign.php')) ?>">Get access</a>
-                            <a class="btn light pill" href="<?= h(is_logged_in() ? ($BASE_PATH . 'profile.php') : ($BASE_PATH . 'login.php?next=profile.php')) ?>">Book a call</a>
+                            <a class="btn dark pill" href="<?= h($BASE_PATH) ?>login.php">Get access</a>
+                            <a class="btn light pill" href="<?= h($BASE_PATH) ?>register.php">Register</a>
                         </div>
                     </div>
                 </div>
