@@ -138,7 +138,7 @@ try {
       <a class="btn btn-sm pill" href="<?= h($BASE_PATH) ?>admin/index.php#campaigns">Campaigns</a>
       <a class="btn btn-sm pill" href="<?= h($BASE_PATH) ?>admin/index.php#rewards">Rewards</a>
     </div>
-    <div class="admin-grid">
+    <div class="admin-grid stack-container">
     <?php if (!empty($errors)): ?>
       <div class="card-plain is-highlight" role="alert">
         <ul class="list-clean">
@@ -150,7 +150,7 @@ try {
       <div class="card-plain" role="status"><?= h($message) ?></div>
     <?php endif; ?>
     
-    <section id="users" class="card-plain card-horizontal card-fullbleed" aria-label="Users">
+    <section id="users" class="card-plain card-horizontal card-fullbleed stack-card" aria-label="Users">
       <h2 class="section-title">Users</h2>
       <div class="actions">
         <?php if ($usersFull): ?>
@@ -193,9 +193,12 @@ try {
           </tbody>
         </table>
       </div>
+      <div class="actions" style="margin-top:10px;">
+        <a class="btn pill" href="#campaigns">Next</a>
+      </div>
     </section>
     
-    <section id="campaigns" class="card-plain card-horizontal card-fullbleed" aria-label="Campaigns">
+    <section id="campaigns" class="card-plain card-horizontal card-fullbleed stack-card" aria-label="Campaigns">
       <h2 class="section-title">Campaigns</h2>
       <div class="actions">
         <?php if ($campaignsFull): ?>
@@ -259,9 +262,13 @@ try {
           </tbody>
         </table>
       </div>
+      <div class="actions" style="margin-top:10px;">
+        <a class="btn pill" href="#users">Previous</a>
+        <a class="btn pill" href="#rewards">Next</a>
+      </div>
     </section>
     
-    <section id="rewards" class="card-plain card-horizontal card-fullbleed" aria-label="Rewards">
+    <section id="rewards" class="card-plain card-horizontal card-fullbleed stack-card" aria-label="Rewards">
       <h2 class="section-title">Rewards</h2>
       <form method="post" class="form">
         <input type="hidden" name="action" value="search_award">
@@ -327,6 +334,9 @@ try {
             <?php endforeach; ?>
           </tbody>
         </table>
+      </div>
+      <div class="actions" style="margin-top:10px;">
+        <a class="btn pill" href="#campaigns">Previous</a>
       </div>
     </section>
 
