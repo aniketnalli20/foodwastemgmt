@@ -157,16 +157,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <span class="navbar-toggler-icon" aria-hidden="true"></span>
               </button>
               <div class="collapse navbar-collapse" id="primary-navbar">
-                <ul class="navbar-nav mr-auto">
+                <ul class="navbar-nav">
                   <li class="nav-item"><a class="nav-link" href="<?= h($BASE_PATH) ?>index.php#hero">Home</a></li>
                   <li class="nav-item"><a class="nav-link<?= $currentPath === 'profile.php' ? ' active' : '' ?>" href="<?= h($BASE_PATH) ?>profile.php">Profile</a></li>
-                  <?php if (is_logged_in() && is_admin()): ?>
-                    <li class="nav-item"><a class="nav-link" href="<?= h($BASE_PATH) ?>admin/index.php">Admin</a></li>
-                  <?php endif; ?>
-                </ul>
-                <ul class="navbar-nav">
                   <li class="nav-item"><a class="nav-link<?= $currentPath === 'create_campaign.php' ? ' active' : '' ?>" href="<?= h($BASE_PATH) ?>create_campaign.php">Create Campaign</a></li>
-                  <li class="nav-item"><a class="nav-link<?= $currentPath === 'import_users.php' ? ' active' : '' ?>" href="<?= h($BASE_PATH) ?>import_users.php">Import Users</a></li>
                   <?php if (is_logged_in()): ?>
                     <li class="nav-item"><a class="nav-link" href="<?= h($BASE_PATH) ?>logout.php">Logout</a></li>
                   <?php else: ?>
