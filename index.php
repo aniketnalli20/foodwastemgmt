@@ -284,7 +284,6 @@ $campaignsStmt = $pdo->prepare("SELECT id, title, summary, area, target_meals, s
                             </div>
                             <div class="tweet-meta">
                                 <?php if (!empty($c['area'])): ?><span class="chip">Area: <?= h($c['area']) ?></span><?php endif; ?>
-                                <?php if (!empty($c['target_meals'])): ?><span class="chip">Target: <?= h((string)$c['target_meals']) ?></span><?php endif; ?>
                             </div>
                             <div class="tweet-actions">
                                 <button class="tweet-btn endorse-btn" type="button" data-campaign-id="<?= (int)$c['id'] ?>">Endorse <span class="endorse-count" data-campaign-id="<?= (int)$c['id'] ?>"><?= h((string)($c['endorse_campaign'] ?? 0)) ?></span></button>

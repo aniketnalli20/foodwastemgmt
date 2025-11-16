@@ -1116,6 +1116,14 @@ ul { list-style: none; padding-left: 0; }
 .card-plain:hover { border-color: var(--border) !important; box-shadow: none !important; filter: none !important; transform: none !important; }
 #recent-campaigns .card-plain:hover { border-color: var(--border) !important; box-shadow: none !important; filter: none !important; transform: none !important; }
 
+/* Admin single-card view: no page scrollbar, card fits viewport */
+.admin-one { overflow: hidden; }
+.admin-one .card-fullbleed { min-height: calc(100vh - 140px); }
+
+/* Admin scroll-snap: scroll one card at a time */
+.admin-scroll { height: 100vh; overflow-y: auto; scroll-snap-type: y mandatory; }
+.admin-scroll .card-fullbleed { scroll-snap-align: start; min-height: calc(100vh - 140px); }
+
 .admin-grid { display: grid; grid-template-columns: 1fr; gap: 16px; width: 100%; max-width: var(--content-max); margin: 12px auto; padding: 0 var(--content-pad); }
 @media (min-width: 840px) { .admin-grid { grid-template-columns: repeat(2, 1fr); } }
 .btn.dark { background: #1f2937; color: #ffffff; border-color: transparent; }

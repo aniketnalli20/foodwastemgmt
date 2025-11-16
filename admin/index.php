@@ -5,6 +5,8 @@ require_admin();
 // Handle actions
 $message = '';
 $errors = [];
+$section = isset($_GET['section']) ? strtolower(trim((string)$_GET['section'])) : 'users';
+if (!in_array($section, ['users','campaigns','rewards'], true)) { $section = 'users'; }
 $awardUsers = [];
 
 try {
@@ -117,7 +119,7 @@ try {
   <title>Database Tools · No Starve</title>
   <link rel="stylesheet" href="<?= h($BASE_PATH) ?>style.css">
 </head>
-<body>
+<body class="admin-scroll">
   <header class="site-header" role="banner">
     <div class="container header-inner">
       <a href="<?= h($BASE_PATH) ?>index.php#hero" class="brand" aria-label="No Starve home">No Starve</a>
@@ -131,6 +133,11 @@ try {
 
   <main class="container">
     <h1>Database Tools</h1>
+    <div class="actions" style="margin: 8px 0 0;">
+      <a class="btn btn-sm pill" href="<?= h($BASE_PATH) ?>admin/index.php#users">Users</a>
+      <a class="btn btn-sm pill" href="<?= h($BASE_PATH) ?>admin/index.php#campaigns">Campaigns</a>
+      <a class="btn btn-sm pill" href="<?= h($BASE_PATH) ?>admin/index.php#rewards">Rewards</a>
+    </div>
     <div class="admin-grid">
     <?php if (!empty($errors)): ?>
       <div class="card-plain is-highlight" role="alert">
@@ -142,8 +149,8 @@ try {
     <?php if ($message): ?>
       <div class="card-plain" role="status"><?= h($message) ?></div>
     <?php endif; ?>
-
-    <section id="users" class="card-plain card-horizontal" aria-label="Users">
+    
+    <section id="users" class="card-plain card-horizontal card-fullbleed" aria-label="Users">
       <h2 class="section-title">Users</h2>
       <div class="actions">
         <?php if ($usersFull): ?>
@@ -152,19 +159,7 @@ try {
           <a class="btn btn-sm secondary" href="<?= h($BASE_PATH) ?>admin/index.php?users_full=1">View full table</a>
         <?php endif; ?>
       </div>
-      <form method="post" class="form">
-        <input type="hidden" name="action" value="add_user">
-        <input name="username" type="text" class="input" placeholder="Username" required>
-        <input name="email" type="email" class="input" placeholder="Email" required>
-        <input name="password" type="password" class="input" placeholder="Password" required minlength="6">
-        <label style="display:inline-flex; align-items:center; gap:6px; margin-top:6px;"><input type="checkbox" name="is_admin" value="1"> Make Admin</label>
-        <div class="actions"><button type="submit" class="btn pill">Add User</button></div>
-      </form>
-      <form method="post" class="form">
-        <input type="hidden" name="action" value="autogen_users">
-        <input name="count" type="number" class="input" placeholder="Count (max 500)" min="1" max="500" required>
-        <div class="actions"><button type="submit" class="btn pill">Auto-generate</button></div>
-      </form>
+
       <div class="card-plain">
         <strong>Users (latest)</strong>
         <table class="table" aria-label="Users table">
@@ -199,8 +194,8 @@ try {
         </table>
       </div>
     </section>
-
-    <section id="campaigns" class="card-plain card-horizontal" aria-label="Campaigns">
+    
+    <section id="campaigns" class="card-plain card-horizontal card-fullbleed" aria-label="Campaigns">
       <h2 class="section-title">Campaigns</h2>
       <div class="actions">
         <?php if ($campaignsFull): ?>
@@ -265,8 +260,8 @@ try {
         </table>
       </div>
     </section>
-
-    <section class="card-plain card-horizontal" aria-label="Rewards">
+    
+    <section id="rewards" class="card-plain card-horizontal card-fullbleed" aria-label="Rewards">
       <h2 class="section-title">Rewards</h2>
       <form method="post" class="form">
         <input type="hidden" name="action" value="search_award">
