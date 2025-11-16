@@ -162,7 +162,7 @@ $campaigns = [];
 try {
     // Include contributor_name and endorse counts; show only actively open campaigns
     // Community filter removed to allow campaigns without community selection to appear
-$campaignsStmt = $pdo->prepare("SELECT id, title, summary, area, target_meals, status, created_at, contributor_name, endorse_campaign, location, crowd_size, closing_time, latitude, longitude\n  FROM campaigns\n  WHERE status = 'open'\n    AND ((location IS NOT NULL AND location <> '') OR (area IS NOT NULL AND area <> ''))\n    AND crowd_size IS NOT NULL\n    AND closing_time IS NOT NULL AND closing_time <> ''\n  ORDER BY created_at DESC\n  LIMIT 20");
+$campaignsStmt = $pdo->prepare("SELECT id, title, summary, area, target_meals, status, created_at, contributor_name, endorse_campaign, location, crowd_size, closing_time, latitude, longitude,\n  (SELECT COALESCE(SUM(amount), 0) FROM karma_events e WHERE e.ref_type = 'campaign' AND e.ref_id = campaigns.id) AS coins_received\n  FROM campaigns\n  WHERE status = 'open'\n    AND ((location IS NOT NULL AND location <> '') OR (area IS NOT NULL AND area <> ''))\n    AND crowd_size IS NOT NULL\n    AND closing_time IS NOT NULL AND closing_time <> ''\n  ORDER BY created_at DESC\n  LIMIT 20");
     $campaignsStmt->execute();
     $campaigns = $campaignsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 } catch (Throwable $e) {
@@ -194,11 +194,13 @@ $campaignsStmt = $pdo->prepare("SELECT id, title, summary, area, target_meals, s
               <div class="collapse navbar-collapse" id="primary-navbar">
                 <ul class="navbar-nav mr-auto">
                   <li class="nav-item"><a class="nav-link<?= $currentPath === 'index.php' ? ' active' : '' ?>" href="<?= h($BASE_PATH) ?>index.php#hero">Home</a></li>
-                  <li class="nav-item"><a class="nav-link<?= $currentPath === 'create_campaign.php' ? ' active' : '' ?>" href="<?= h(is_logged_in() ? ($BASE_PATH . 'create_campaign.php') : ($BASE_PATH . 'login.php?next=create_campaign.php')) ?>">Create Campaign</a></li>
                   <li class="nav-item"><a class="nav-link<?= $currentPath === 'profile.php' ? ' active' : '' ?>" href="<?= h(is_logged_in() ? ($BASE_PATH . 'profile.php') : ($BASE_PATH . 'login.php?next=profile.php')) ?>">Profile</a></li>
                   <?php if (is_logged_in() && is_admin()): ?>
                     <li class="nav-item"><a class="nav-link" href="<?= h($BASE_PATH) ?>admin/index.php">Admin</a></li>
                   <?php endif; ?>
+                </ul>
+                <ul class="navbar-nav">
+                  <li class="nav-item"><a class="nav-link<?= $currentPath === 'create_campaign.php' ? ' active' : '' ?>" href="<?= h(is_logged_in() ? ($BASE_PATH . 'create_campaign.php') : ($BASE_PATH . 'login.php?next=create_campaign.php')) ?>">Create Campaign</a></li>
                   <?php if (is_logged_in()): ?>
                     <li class="nav-item"><a class="nav-link" href="<?= h($BASE_PATH) ?>logout.php">Logout</a></li>
                   <?php else: ?>
@@ -282,7 +284,7 @@ $campaignsStmt = $pdo->prepare("SELECT id, title, summary, area, target_meals, s
                                   <?php if ($csLabel): ?><span class="chip <?= h($csClass) ?>" style="margin-left:6px;"><?= h($csLabel) ?></span><?php endif; ?>
                                 </span></div>
                                 <div class="detail"><span class="d-label">Closing Time</span><span class="d-value"><?= h($c['closing_time'] ?? '—') ?></span></div>
-                                <div class="detail"><span class="d-label">Target Meals</span><span class="d-value"><?= h(isset($c['target_meals']) && $c['target_meals'] !== '' ? (string)$c['target_meals'] : '—') ?></span></div>
+                                <div class="detail"><span class="d-label">Karma Coins</span><span class="d-value"><?= (int)($c['coins_received'] ?? 0) ?></span></div>
                             </div>
                             <div class="tweet-meta">
                                 <?php if (!empty($c['area'])): ?><span class="chip">Area: <?= h($c['area']) ?></span><?php endif; ?>
