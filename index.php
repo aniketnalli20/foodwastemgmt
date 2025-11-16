@@ -279,7 +279,7 @@ $campaignsStmt = $pdo->prepare("SELECT id, title, summary, area, target_meals, s
                                   <?php if ($csLabel): ?><span class="chip <?= h($csClass) ?>" style="margin-left:6px;"><?= h($csLabel) ?></span><?php endif; ?>
                                 </span></div>
                                 <div class="detail"><span class="d-label">Closing Time</span><span class="d-value"><?= h($c['closing_time'] ?? '—') ?></span></div>
-                                <div class="detail"><span class="d-label">Karma Coins</span><span class="d-value"><?= (int)($c['coins_received'] ?? 0) ?></span></div>
+                                <div class="detail"><span class="d-label"><span class="coin-icon" aria-hidden="true"></span>Karma Coins</span><span class="d-value"><?= (int)($c['coins_received'] ?? 0) ?></span></div>
                             </div>
                             <div class="tweet-meta">
                                 <?php if (!empty($c['area'])): ?><span class="chip">Area: <?= h($c['area']) ?></span><?php endif; ?>
