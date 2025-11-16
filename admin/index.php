@@ -96,6 +96,29 @@ try {
           $errors[] = 'Campaign has no associated user; cannot award bonus.';
         }
       }
+    } else if ($action === 'add_endorsements') {
+      $cid = (int)($_POST['campaign_id'] ?? 0);
+      $kind = strtolower(trim((string)($_POST['kind'] ?? 'campaign')));
+      if ($kind !== 'campaign' && $kind !== 'contributor') { $kind = 'campaign'; }
+      $count = (int)($_POST['count'] ?? 0);
+      if ($cid > 0 && $count > 0) {
+        $st = $pdo->prepare('SELECT contributor_name FROM campaigns WHERE id = ?');
+        $st->execute([$cid]);
+        $row = $st->fetch(PDO::FETCH_ASSOC);
+        $cname = (string)($row['contributor_name'] ?? '');
+        $toInsert = min($count, 200);
+        $now = gmdate('Y-m-d H:i:s');
+        $ins = $pdo->prepare('INSERT INTO endorsements (campaign_id, kind, contributor_name, ip, user_agent, created_at, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)');
+        for ($i = 0; $i < $toInsert; $i++) {
+          $ins->execute([$cid, $kind, $cname, ($_SERVER['REMOTE_ADDR'] ?? null), ($_SERVER['HTTP_USER_AGENT'] ?? null), $now, null]);
+        }
+        $col = ($kind === 'contributor') ? 'endorse_contributor' : 'endorse_campaign';
+        $upd = $pdo->prepare("UPDATE campaigns SET $col = COALESCE($col, 0) + ? WHERE id = ?");
+        $upd->execute([$count, $cid]);
+        $message = 'Added ' . $count . ' endorsement(s) (' . $kind . ') to campaign #' . $cid . '.';
+      } else {
+        $errors[] = 'Provide a valid campaign and positive endorsement count.';
+      }
     } else if ($action === 'autogen_users') {
       $n = (int)($_POST['count'] ?? 0);
       if ($n > 0 && $n <= 500) {
@@ -155,6 +178,8 @@ $tablesFull = isset($_GET['tables_full']);
 try {
   $users = $pdo->query('SELECT id, username, email, created_at, is_admin FROM users ORDER BY id DESC' . ($usersFull ? '' : ' LIMIT ' . (int)$limitRows))->fetchAll(PDO::FETCH_ASSOC) ?: [];
   $campaigns = $pdo->query('SELECT id, title, status, area, created_at, user_id, crowd_size, endorse_campaign, contributor_name, location, latitude, longitude FROM campaigns ORDER BY id DESC' . ($campaignsFull ? '' : ' LIMIT ' . (int)$limitRows))->fetchAll(PDO::FETCH_ASSOC) ?: [];
+  // Endorsements section: show only actual posts (eligible/open campaigns)
+  $endorseableCampaigns = $pdo->query("SELECT id, title, area, endorse_campaign, contributor_name FROM campaigns\n    WHERE status = 'open'\n      AND ((location IS NOT NULL AND location <> '') OR (area IS NOT NULL AND area <> ''))\n    ORDER BY id DESC" . ($campaignsFull ? '' : ' LIMIT ' . (int)$limitRows))->fetchAll(PDO::FETCH_ASSOC) ?: [];
   $wallets = $pdo->query('SELECT w.user_id, u.username, w.balance, w.updated_at FROM karma_wallets w JOIN users u ON u.id = w.user_id ORDER BY w.updated_at DESC' . ($walletsFull ? '' : ' LIMIT ' . (int)$limitRows))->fetchAll(PDO::FETCH_ASSOC) ?: [];
 } catch (Throwable $e) {}
 ?>
@@ -190,11 +215,13 @@ try {
       <span>›</span>
       <a class="users" href="<?= h($BASE_PATH) ?>admin/index.php#users">Users</a>
       <a class="campaigns" href="<?= h($BASE_PATH) ?>admin/index.php#campaigns">Campaigns</a>
+      <a class="endorsements" href="<?= h($BASE_PATH) ?>admin/index.php#endorsements">Endorsements</a>
       <a class="rewards" href="<?= h($BASE_PATH) ?>admin/index.php#rewards">Rewards</a>
     </nav>
     <div class="actions" style="margin: 8px 0 0;">
       <a class="btn btn-sm pill" href="<?= h($BASE_PATH) ?>admin/index.php#users">Users</a>
       <a class="btn btn-sm pill" href="<?= h($BASE_PATH) ?>admin/index.php#campaigns">Campaigns</a>
+      <a class="btn btn-sm pill" href="<?= h($BASE_PATH) ?>admin/index.php#endorsements">Endorsements</a>
       <a class="btn btn-sm pill" href="<?= h($BASE_PATH) ?>admin/index.php#rewards">Rewards</a>
     </div>
     <div class="admin-grid stack-container">
@@ -258,7 +285,53 @@ try {
         </table>
       </div>
     </section>
-    
+
+    <section id="endorsements" class="card-plain card-horizontal card-fullbleed stack-card" aria-label="Endorsements">
+      <h2 class="section-title">Add Endorsements</h2>
+      <form method="post" class="form">
+        <input type="hidden" name="action" value="add_endorsements">
+        <label for="endorse-campaign"><strong>Campaign</strong></label>
+        <select id="endorse-campaign" name="campaign_id" class="input" required style="display:inline-block; max-width: 480px;">
+          <?php foreach ($endorseableCampaigns as $c): ?>
+            <option value="<?= (int)$c['id'] ?>">#<?= (int)$c['id'] ?> · <?= h($c['title']) ?><?= !empty($c['area']) ? (' · ' . h($c['area'])) : '' ?></option>
+          <?php endforeach; ?>
+        </select>
+        <label for="endorse-kind" style="margin-left:8px;"><strong>Type</strong></label>
+        <select id="endorse-kind" name="kind" class="input" style="display:inline-block; width:auto;">
+          <option value="campaign">campaign</option>
+          <option value="contributor">contributor</option>
+        </select>
+        <label for="endorse-count" style="margin-left:8px;"><strong>Count</strong></label>
+        <input id="endorse-count" name="count" type="number" class="input" placeholder="e.g., 10" required min="1" style="display:inline-block; width:120px;">
+        <div class="actions" style="margin-top:8px;"><button type="submit" class="btn pill">Add Endorsements</button></div>
+      </form>
+      <div class="card-plain">
+        <strong>Campaigns (current endorsements)</strong>
+        <table class="table" aria-label="Campaign endorsements table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Area</th>
+              <th>Endorsements</th>
+              <th>Contributor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($endorseableCampaigns as $c): ?>
+            <tr>
+              <td>#<?= (int)$c['id'] ?></td>
+              <td><?= h($c['title']) ?></td>
+              <td><?= h($c['area'] ?? '') ?></td>
+              <td><?= (int)($c['endorse_campaign'] ?? 0) ?></td>
+              <td><?= h(($c["contributor_name"] ?? '') !== '' ? (string)$c["contributor_name"] : '—') ?></td>
+            </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
     <section id="campaigns" class="card-plain card-horizontal card-fullbleed stack-card" aria-label="Campaigns">
       <h2 class="section-title">Campaigns</h2>
       <div class="actions">
@@ -443,6 +516,7 @@ try {
       var hash = (window.location.hash || '#users').toLowerCase();
       var sel = null;
       if (hash.indexOf('#campaigns') === 0) sel = document.querySelector('.breadcrumb .campaigns');
+      else if (hash.indexOf('#endorsements') === 0) sel = document.querySelector('.breadcrumb .endorsements');
       else if (hash.indexOf('#rewards') === 0) sel = document.querySelector('.breadcrumb .rewards');
       else sel = document.querySelector('.breadcrumb .users');
       if (sel) { sel.classList.add('active'); sel.setAttribute('aria-current', 'page'); }
