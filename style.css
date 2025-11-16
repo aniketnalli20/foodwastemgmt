@@ -933,7 +933,7 @@ ul { list-style: none; padding-left: 0; }
 .nav-links a:hover, .nav-links a:focus-visible { background: transparent; border-color: #bfe68c; }
 .nav-links a.active { background: transparent; border-color: #bfe68c; }
 /* Rightmost nav button styled as primary CTA (Book a demo inspo) */
-.nav-links a:last-child { background: var(--accent); color: var(--accentText); border-color: transparent; box-shadow: 0 8px 20px rgba(184,255,53,0.25); }
+.nav-links a.cta { background: var(--accent); color: var(--accentText); border-color: transparent; box-shadow: 0 8px 20px rgba(184,255,53,0.25); }
 .nav-links.open { display: flex; }
 @media (min-width: 768px) {
   .nav-toggle { display: none; }
