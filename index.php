@@ -325,8 +325,8 @@ try {
     </section>
 
     <!-- Informational cards below posts -->
-    <section class="container" aria-label="Karma Coins Info" style="padding: var(--content-pad);">
-      <div class="card-plain card-horizontal stack-card">
+    <section class="container fullbleed" aria-label="Karma Coins Info" style="padding: 0;">
+      <div class="card-plain card-horizontal card-fullbleed stack-card compact info-card">
         <h2 class="section-title"><span class="coin-icon" aria-hidden="true" style="margin-right:8px;"></span>What are Karma Coins?</h2>
         <div>
           <p>Karma Coins are community recognition points that reflect support and impact for a campaign or contributor.</p>
@@ -340,8 +340,8 @@ try {
       </div>
     </section>
 
-    <section class="container" aria-label="About No Starve" style="padding: var(--content-pad);">
-      <div class="card-plain card-horizontal stack-card">
+    <section class="container fullbleed" aria-label="About No Starve" style="padding: 0;">
+      <div class="card-plain card-horizontal card-fullbleed stack-card compact info-card">
         <h2 class="section-title">What is No Starve?</h2>
         <div>
           <p>No Starve helps people quickly find available meals nearby and connect safely to reduce everyday food challenges.</p>

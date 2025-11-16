@@ -1032,6 +1032,22 @@ ul { list-style: none; padding-left: 0; }
   max-width: none;
 }
 
+/* Compact full-bleed variant for info sections */
+.card-plain.card-fullbleed.compact {
+  min-height: auto;
+  padding: calc(var(--content-pad) * 0.6);
+}
+.stack-card.compact { scroll-margin-top: 60px; }
+.card-plain.info-card .section-title { margin-bottom: 6px; padding-bottom: 4px; }
+.card-plain.info-card ul { margin: 8px 0; }
+.card-plain.info-card ul li { margin: 4px 0; line-height: 1.35; }
+
+/* Alignment utilities */
+.justify-center { display: flex; justify-content: center; }
+.align-center { align-items: center; }
+.text-center { text-align: center; }
+.content-center { max-width: 900px; margin-left: auto; margin-right: auto; }
+
 /* Map container inside Create page: no inner padding, tidy borders */
 .create-page #map.card-plain {
   padding: 0;
