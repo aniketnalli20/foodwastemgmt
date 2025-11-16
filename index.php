@@ -475,5 +475,17 @@ $campaignsStmt = $pdo->prepare("SELECT id, title, summary, area, target_meals, s
       });
     })();
     </script>
+    <script>
+    (function(){
+      var header = document.querySelector('.site-header');
+      function onScroll(){
+        if (!header) return;
+        var y = window.scrollY || document.documentElement.scrollTop || 0;
+        if (y > 10) header.classList.add('scrolled'); else header.classList.remove('scrolled');
+      }
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    })();
+    </script>
 </body>
 </html>
