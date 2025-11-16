@@ -13,7 +13,7 @@
   --navy: #0c1a2b;      /* Dark section background */
   --navy-ghost: #0f2238;/* Slightly lighter navy */
   /* Layout containers */
-  --content-max: 1200px;
+  --content-max: 100vw;
   --content-pad: 20px;
 }
 
