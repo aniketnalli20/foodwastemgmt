@@ -30,6 +30,21 @@ body {
 .site-footer { border-top: 1px solid var(--border); border-bottom: none; }
 .site-header .wrap, .site-footer .wrap { width: 100%; max-width: var(--content-max); margin: 0 auto; padding: 12px var(--content-pad); }
 .site-footer .footer-inner { text-align: center; }
+/* Transparent/fading navbar */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: transparent;
+  border-bottom-color: transparent;
+  transition: background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+}
+.site-header.scrolled {
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(8px);
+  border-bottom-color: var(--border);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
 /* Full-bleed footer: stretch content to full screen width */
 .site-footer .footer-inner {
   width: 100vw;
