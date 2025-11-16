@@ -162,7 +162,7 @@ $campaigns = [];
 try {
     // Include contributor_name and endorse counts; show only actively open campaigns
     // Community filter removed to allow campaigns without community selection to appear
-$campaignsStmt = $pdo->prepare("SELECT id, title, summary, area, target_meals, status, created_at, contributor_name, endorse_campaign, location, crowd_size, closing_time\n  FROM campaigns\n  WHERE status = 'open'\n    AND ((location IS NOT NULL AND location <> '') OR (area IS NOT NULL AND area <> ''))\n    AND crowd_size IS NOT NULL\n    AND closing_time IS NOT NULL AND closing_time <> ''\n  ORDER BY created_at DESC\n  LIMIT 20");
+$campaignsStmt = $pdo->prepare("SELECT id, title, summary, area, target_meals, status, created_at, contributor_name, endorse_campaign, location, crowd_size, closing_time, latitude, longitude\n  FROM campaigns\n  WHERE status = 'open'\n    AND ((location IS NOT NULL AND location <> '') OR (area IS NOT NULL AND area <> ''))\n    AND crowd_size IS NOT NULL\n    AND closing_time IS NOT NULL AND closing_time <> ''\n  ORDER BY created_at DESC\n  LIMIT 20");
     $campaignsStmt->execute();
     $campaigns = $campaignsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 } catch (Throwable $e) {
@@ -288,6 +288,18 @@ $campaignsStmt = $pdo->prepare("SELECT id, title, summary, area, target_meals, s
                             <div class="tweet-actions">
                                 <button class="tweet-btn endorse-btn" type="button" data-campaign-id="<?= (int)$c['id'] ?>">Endorse <span class="endorse-count" data-campaign-id="<?= (int)$c['id'] ?>"><?= h((string)($c['endorse_campaign'] ?? 0)) ?></span></button>
                                 <button class="tweet-btn share-btn" type="button" data-campaign-id="<?= (int)$c['id'] ?>">Share</button>
+                                <?php
+                                  $lat = isset($c['latitude']) && $c['latitude'] !== '' ? (float)$c['latitude'] : null;
+                                  $lon = isset($c['longitude']) && $c['longitude'] !== '' ? (float)$c['longitude'] : null;
+                                  $q = trim((string)(($c['location'] ?? '') !== '' ? $c['location'] : ($c['area'] ?? '')));
+                                  $mapUrl = null;
+                                  if ($lat !== null && $lon !== null) {
+                                    $mapUrl = 'https://www.google.com/maps?q=' . rawurlencode($lat . ',' . $lon);
+                                  } else if ($q !== '') {
+                                    $mapUrl = 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode($q);
+                                  }
+                                ?>
+                                <?php if ($mapUrl): ?><a class="tweet-btn" href="<?= h($mapUrl) ?>" target="_blank" rel="noopener">Map</a><?php endif; ?>
                             </div>
                         </div>
                     </article>

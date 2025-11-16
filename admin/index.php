@@ -154,7 +154,7 @@ $walletsFull = isset($_GET['wallets_full']);
 $tablesFull = isset($_GET['tables_full']);
 try {
   $users = $pdo->query('SELECT id, username, email, created_at, is_admin FROM users ORDER BY id DESC' . ($usersFull ? '' : ' LIMIT ' . (int)$limitRows))->fetchAll(PDO::FETCH_ASSOC) ?: [];
-  $campaigns = $pdo->query('SELECT id, title, status, area, created_at, user_id, crowd_size, endorse_campaign, contributor_name FROM campaigns ORDER BY id DESC' . ($campaignsFull ? '' : ' LIMIT ' . (int)$limitRows))->fetchAll(PDO::FETCH_ASSOC) ?: [];
+  $campaigns = $pdo->query('SELECT id, title, status, area, created_at, user_id, crowd_size, endorse_campaign, contributor_name, location, latitude, longitude FROM campaigns ORDER BY id DESC' . ($campaignsFull ? '' : ' LIMIT ' . (int)$limitRows))->fetchAll(PDO::FETCH_ASSOC) ?: [];
   $wallets = $pdo->query('SELECT w.user_id, u.username, w.balance, w.updated_at FROM karma_wallets w JOIN users u ON u.id = w.user_id ORDER BY w.updated_at DESC' . ($walletsFull ? '' : ' LIMIT ' . (int)$limitRows))->fetchAll(PDO::FETCH_ASSOC) ?: [];
 } catch (Throwable $e) {}
 ?>
@@ -232,6 +232,7 @@ try {
               <th>Username</th>
               <th>Email</th>
               <th>Admin</th>
+              <th>Map</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -316,6 +317,20 @@ try {
                   <input name="amount" type="number" class="input" min="1" value="<?= (int)$suggest ?>" style="display:inline-block; width:110px;">
                   <button type="submit" class="btn btn-sm pill" title="Award bonus Karma Coin based on contribution">Award</button>
                 </form>
+              </td>
+              <td>
+                <?php
+                  $lat = isset($c['latitude']) && $c['latitude'] !== '' ? (float)$c['latitude'] : null;
+                  $lon = isset($c['longitude']) && $c['longitude'] !== '' ? (float)$c['longitude'] : null;
+                  $q = trim((string)(($c['location'] ?? '') !== '' ? $c['location'] : ($c['area'] ?? '')));
+                  $mapUrl = null;
+                  if ($lat !== null && $lon !== null) {
+                    $mapUrl = 'https://www.google.com/maps?q=' . rawurlencode($lat . ',' . $lon);
+                  } else if ($q !== '') {
+                    $mapUrl = 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode($q);
+                  }
+                ?>
+                <?php if (!empty($mapUrl)): ?><a class="btn btn-sm pill" href="<?= h($mapUrl) ?>" target="_blank" rel="noopener">View Map</a><?php else: ?>—<?php endif; ?>
               </td>
               <td>
                 <div class="actions">
