@@ -328,7 +328,7 @@ try {
     <section class="container fullbleed" aria-label="Karma Coins Info" style="padding: 0;">
       <div class="card-plain card-horizontal card-fullbleed stack-card compact info-card">
         <h2 class="section-title"><span class="coin-icon" aria-hidden="true" style="margin-right:8px;"></span>What are Karma Coins?</h2>
-        <div>
+        <div class="content-center">
           <p>Karma Coins are community recognition points that reflect support and impact for a campaign or contributor.</p>
           <ul>
             <li>Earned through <strong>endorsements</strong> and verified meal deliveries; awarding is <strong>automated</strong> (not admin‑based).</li>
@@ -343,7 +343,7 @@ try {
     <section class="container fullbleed" aria-label="About No Starve" style="padding: 0;">
       <div class="card-plain card-horizontal card-fullbleed stack-card compact info-card">
         <h2 class="section-title">What is No Starve?</h2>
-        <div>
+        <div class="content-center">
           <p>No Starve helps people quickly find available meals nearby and connect safely to reduce everyday food challenges.</p>
           <ul>
             <li>Discover <strong>affordable or free food options</strong> around you.</li>
