@@ -281,20 +281,9 @@ try {
                                 else if ($csVal >= 50) { $csLabel = 'Medium'; $csClass = 'medium'; }
                                 else { $csLabel = 'Low'; $csClass = 'low'; }
                               }
+                              $locRaw = (($c['location'] ?? '') !== '' ? (string)$c['location'] : (string)($c['area'] ?? '—'));
+                              $locText = $locRaw;
                             ?>
-                                <?php
-                                  $terms = [];
-                                  if ($cityFilter !== '') $terms[] = $cityFilter;
-                                  if ($pincodeFilter !== '') $terms[] = $pincodeFilter;
-                                  $locRaw = (($c['location'] ?? '') !== '' ? (string)$c['location'] : (string)($c['area'] ?? '—'));
-                                  $locText = $locRaw;
-                                  if (!empty($terms) && $locText !== '—') {
-                                    foreach ($terms as $t) {
-                                      $t = preg_quote($t, '/');
-                                      $locText = preg_replace('/(' . $t . ')/i', '<mark>$1</mark>', $locText);
-                                    }
-                                  }
-                                ?>
                                 <div class="tweet-details">
                                 <div class="detail"><span class="d-label">Location</span><span class="d-value"><?= $locText ?></span></div>
                                 <div class="detail"><span class="d-label">Crowd Size</span><span class="d-value">
@@ -306,15 +295,7 @@ try {
                             </div>
                             <div class="tweet-meta">
                                 <?php if (!empty($c['area'])): ?>
-                                  <?php
-                                    $areaText = (string)$c['area'];
-                                    if (!empty($terms)) {
-                                      foreach ($terms as $t) {
-                                        $t = preg_quote($t, '/');
-                                        $areaText = preg_replace('/(' . $t . ')/i', '<mark>$1</mark>', $areaText);
-                                      }
-                                    }
-                                  ?>
+                                  <?php $areaText = (string)$c['area']; ?>
                                   <span class="chip">Area: <?= $areaText ?></span>
                                 <?php endif; ?>
                             </div>
@@ -341,6 +322,37 @@ try {
         <?php else: ?>
             <div class="card-plain" role="note" style="padding:12px; border:1px solid var(--border); border-radius:8px;">No campaigns yet. Be the first to <a href="<?= h(is_logged_in() ? ($BASE_PATH . 'create_campaign.php') : ($BASE_PATH . 'login.php?next=create_campaign.php')) ?>">create one</a>.</div>
         <?php endif; ?>
+    </section>
+
+    <!-- Informational cards below posts -->
+    <section class="container" aria-label="Karma Coins Info" style="padding: var(--content-pad);">
+      <div class="card-plain card-horizontal stack-card">
+        <h2 class="section-title"><span class="coin-icon" aria-hidden="true" style="margin-right:8px;"></span>What are Karma Coins?</h2>
+        <div>
+          <p>Karma Coins are community recognition points that reflect support and impact for a campaign or contributor.</p>
+          <ul>
+            <li>Earned through <strong>endorsements</strong> and verified meal deliveries; awarding is <strong>automated</strong> (not admin‑based).</li>
+            <li>Help surface <strong>high‑impact campaigns</strong> to the top so people can find and support them faster.</li>
+            <li><strong>Not a currency</strong> and have no cash value; used for badges, milestones, and visibility.</li>
+            <li>Visible on each campaign as a simple way to gauge <strong>community trust</strong> and activity.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="container" aria-label="About No Starve" style="padding: var(--content-pad);">
+      <div class="card-plain card-horizontal stack-card">
+        <h2 class="section-title">What is No Starve?</h2>
+        <div>
+          <p>No Starve helps people quickly find available meals nearby and connect safely to reduce everyday food challenges.</p>
+          <ul>
+            <li>Discover <strong>affordable or free food options</strong> around you.</li>
+            <li>See real‑time availability from campaigns and listings in your area.</li>
+            <li>Designed for <strong>working professionals</strong>, <strong>bachelors</strong>, and <strong>students</strong>.</li>
+            <li>Built to <strong>reduce food waste</strong>—one meal, one user at a time.</li>
+          </ul>
+        </div>
+      </div>
     </section>
 
     <main>

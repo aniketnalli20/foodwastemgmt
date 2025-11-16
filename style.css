@@ -467,9 +467,6 @@ ul { list-style: none; padding-left: 0; }
 /* Highlight chip used for search terms */
 .chip.highlight { background: #eef5ff; border-color: #1a7aff; color: #0a3a7a; }
 
-/* Search term highlight */
-mark { background: #fff3b0; color: inherit; padding: 0 2px; border-radius: 2px; }
-
 /* Hero stats */
 .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; width: 100%; max-width: 820px; margin: 14px auto 0; }
 .stat {
