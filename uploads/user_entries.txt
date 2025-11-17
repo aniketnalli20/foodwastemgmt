@@ -1,2 +1,3 @@
 2025-11-17T12:13:08+00:00 | register | username=karen.gonzalez723@company.com | email=karen.gonzalez723@company.com | phone= | address=
 2025-11-17T14:59:35+00:00 | register | username=jessica | email=jessica.lopez726@company.com | phone= | address=
+2025-11-17T15:19:35+00:00 | register | username=patrica | email=patricia.williams101@company.com | phone= | address=

@@ -385,7 +385,7 @@ try {
         </div>
       </div>
     </section>
-    <h2 class="section-title" id="dbtools" style="margin-left: var(--content-pad);">Database Tools</h2>
+    <h2 class="section-title" id="dbtools">Database Tools</h2>
     <div class="admin-grid stack-container">
     <?php if (!empty($errors)): ?>
       <div class="card-plain is-highlight" role="alert">
@@ -1034,6 +1034,21 @@ try {
           coll.classList.toggle('show');
         });
       }
+    })();
+  </script>
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true" style="display:none;"></div>
+  <script>
+    (function(){
+      function showToast(msg, type){
+        var el = document.getElementById('toast');
+        if (!el) return;
+        el.textContent = msg;
+        el.className = 'toast ' + (type || '');
+        el.style.display = 'block';
+        el.classList.add('show');
+        setTimeout(function(){ el.classList.remove('show'); el.style.display = 'none'; }, 2400);
+      }
+      window.showToast = showToast;
     })();
   </script>
 </body>

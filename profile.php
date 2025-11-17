@@ -273,42 +273,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
                   <?php endif; ?>
                 </div>
             </div>
-            <form method="post" action="<?= h($BASE_PATH) ?>profile.php" class="form form-card" style="margin-top:16px;">
-                <input type="hidden" name="action" value="update_profile">
-                <label for="phone"><strong>Phone</strong></label>
-                <input id="phone" name="phone" type="text" class="input" placeholder="e.g., +91 98765 43210" value="<?= h($user['phone'] ?? '') ?>" pattern="[0-9+\-\s]{7,30}" autocomplete="tel" aria-describedby="phone-hint" list="phone-presets" />
-                <small id="phone-hint" class="input-hint">Use digits, +, -, spaces; 7–30 characters.</small>
-                <datalist id="phone-presets">
-                  <option value="+91 98765 43210"></option>
-                  <option value="+91 91234 56789"></option>
-                  <option value="+1 555-123-4567"></option>
-                </datalist>
-                <div class="preset-group" aria-label="Phone presets">
-                  <button type="button" class="chip" data-fill-phone="+91 98765 43210">Use sample</button>
-                  <button type="button" class="chip" data-clear="phone">Clear</button>
-                </div>
-
-                <label for="address" style="margin-top:10px;"><strong>Address</strong></label>
-                <textarea id="address" name="address" class="input" placeholder="Street, City, State, PIN" rows="3" style="resize: vertical;" autocomplete="street-address"><?= h($user['address'] ?? '') ?></textarea>
-                <div class="preset-group" aria-label="Address presets" style="margin-top:6px;">
-                  <button type="button" class="chip" id="open-map">Pick on Map</button>
-                  <button type="button" class="chip" data-clear="address">Clear</button>
-                </div>
-
-                <div id="map-container" class="card-plain" style="display:none; margin-top:8px;">
-                  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
-                    <strong>Select location on map</strong>
-                    <button type="button" class="chip" id="close-map">Done</button>
+            <div class="form-frame">
+              <div class="form-panel">
+                <div class="panel-title">Enter your details</div>
+                <form id="profileForm" method="post" action="<?= h($BASE_PATH) ?>profile.php" class="form" style="margin-top:8px;">
+                  <input type="hidden" name="action" value="update_profile">
+                  <label for="phone"><strong>Phone</strong></label>
+                  <input id="phone" name="phone" type="text" class="input" placeholder="e.g., +91 98765 43210" value="<?= h($user['phone'] ?? '') ?>" pattern="[0-9+\-\s]{7,30}" autocomplete="tel" aria-describedby="phone-hint" list="phone-presets" />
+                  <small id="phone-hint" class="input-hint">Use digits, +, -, spaces; 7–30 characters.</small>
+                  <datalist id="phone-presets">
+                    <option value="+91 98765 43210"></option>
+                    <option value="+91 91234 56789"></option>
+                    <option value="+1 555-123-4567"></option>
+                  </datalist>
+                  <div class="preset-group" aria-label="Phone presets">
+                    <button type="button" class="chip" data-fill-phone="+91 98765 43210">Use sample</button>
+                    <button type="button" class="chip" data-clear="phone">Clear</button>
                   </div>
-                  <div id="profile-map" style="height:300px; border-radius:8px; overflow:hidden;"></div>
-                  <small class="input-hint" id="map-hint">Click the map to auto-fill address.</small>
-                </div>
 
-                <div class="profile-actions">
-                    <button type="submit" class="btn btn-bhargav"><span>Save Changes</span></button>
-                    <a class="btn pill" href="<?= h($BASE_PATH) ?>index.php#hero">Cancel</a>
+                  <label for="address" style="margin-top:10px;"><strong>Address</strong></label>
+                  <textarea id="address" name="address" class="input" placeholder="Street, City, State, PIN" rows="3" style="resize: vertical;" autocomplete="street-address"><?= h($user['address'] ?? '') ?></textarea>
+                  <div class="preset-group" aria-label="Address presets" style="margin-top:6px;">
+                    <button type="button" class="chip" id="open-map">Pick on Map</button>
+                    <button type="button" class="chip" data-clear="address">Clear</button>
+                  </div>
+
+                  <div id="map-container" class="card-plain" style="display:none; margin-top:8px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                      <strong>Select location on map</strong>
+                      <button type="button" class="chip" id="close-map">Done</button>
+                    </div>
+                    <div id="profile-map" style="height:300px; border-radius:8px; overflow:hidden;"></div>
+                    <small class="input-hint" id="map-hint">Click the map to auto-fill address.</small>
+                  </div>
+                </form>
+              </div>
+              <aside class="summary-card">
+                <div class="summary-title">Profile Summary</div>
+                <ul class="summary-list">
+                  <li><span>Username</span><span><?= h((string)($user['username'] ?? '—')) ?></span></li>
+                  <li><span>Email</span><span><?= h((string)($user['email'] ?? '—')) ?></span></li>
+                  <?php $balance = 0; try { $stB = $pdo->prepare('SELECT COALESCE(balance,0) FROM karma_wallets WHERE user_id = ?'); $stB->execute([(int)$user['id']]); $balance = (int)($stB->fetchColumn() ?: 0); } catch (Throwable $e) {} ?>
+                  <li><span>Wallet</span><span><?= h(format_compact_number((int)$balance)) ?></span></li>
+                </ul>
+                <div class="summary-cta" style="margin-top:8px;">
+                  <button type="submit" class="btn success pill" form="profileForm">Save Changes</button>
                 </div>
-            </form>
+              </aside>
+            </div>
             <div class="profile-actions">
                 <a class="btn pill" href="<?= h($BASE_PATH) ?>index.php#hero">Back to Home</a>
                 <a class="btn btn-bhargav" href="<?= h(is_logged_in() ? ($BASE_PATH . 'create_campaign.php') : ($BASE_PATH . 'login.php?next=create_campaign.php')) ?>"><span>Create Campaign</span></a>
