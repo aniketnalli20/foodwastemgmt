@@ -923,7 +923,17 @@ try {
       var add = document.getElementById('btn-add-chart');
       if (!add) return;
       add.addEventListener('click', function(){
-        if (window.showToast) window.showToast('Chart added','success');
+        if (window.showToast) {
+          window.showToast('Chart added','success');
+        } else {
+          try {
+            var t = document.createElement('div');
+            t.className = 'toast show';
+            t.textContent = 'Chart added';
+            document.body.appendChild(t);
+            setTimeout(function(){ t.classList.remove('show'); t.remove(); }, 1600);
+          } catch(e) {}
+        }
       });
     })();
   </script>
