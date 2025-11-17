@@ -622,12 +622,14 @@ try {
 </html>
     <section id="contributors" class="card-plain card-horizontal card-fullbleed stack-card" aria-label="Contributors">
       <h2 class="section-title">Contributors</h2>
-      <form method="post" class="form" style="margin-bottom:10px;">
-        <input type="hidden" name="action" value="set_contributor_verified">
-        <input name="name" type="text" class="input" placeholder="Contributor name" required style="max-width:320px;">
-        <label style="margin-left:8px; display:inline-flex; align-items:center; gap:6px;"><input type="checkbox" name="verified" value="1"> Verified</label>
-        <div class="actions" style="margin-top:8px;"><button type="submit" class="btn pill">Save</button></div>
-      </form>
+      <div class="card-plain">
+        <form method="post" class="form" style="margin-bottom:10px;">
+          <input type="hidden" name="action" value="set_contributor_verified">
+          <input name="name" type="text" class="input" placeholder="Contributor name" required style="max-width:320px;">
+          <label style="margin-left:8px; display:inline-flex; align-items:center; gap:6px;"><input type="checkbox" name="verified" value="1"> Verified</label>
+          <div class="actions" style="margin-top:8px;"><button type="submit" class="btn pill">Save</button></div>
+        </form>
+      </div>
       <div class="card-plain">
         <strong>Known Contributors</strong>
         <table class="table" aria-label="Contributors table">

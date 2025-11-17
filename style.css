@@ -1210,9 +1210,11 @@ ul { list-style: none; padding-left: 0; }
 
 .award-row td { background: #f7f7f7; }
 
-/* Remove hover animations on cards */
-.card-plain:hover { border-color: var(--border) !important; box-shadow: none !important; filter: none !important; transform: none !important; }
-#recent-campaigns .card-plain:hover { border-color: var(--border) !important; box-shadow: none !important; filter: none !important; transform: none !important; }
+/* Admin panel: remove hover animations */
+.admin-scroll .card-plain:hover { border-color: var(--border) !important; box-shadow: none !important; filter: none !important; transform: none !important; }
+.admin-scroll .cta-card:hover { border-color: var(--border) !important; box-shadow: none !important; filter: none !important; transform: none !important; }
+.admin-scroll .table tbody tr:hover { background: transparent !important; }
+.admin-scroll .btn:hover, .admin-scroll .actions button:hover, .admin-scroll .navbar-nav .nav-link:hover { background: inherit !important; box-shadow: none !important; filter: none !important; }
 
 /* Admin single-card view: no page scrollbar, card fits viewport */
 .admin-one { overflow: hidden; }
