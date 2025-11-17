@@ -1287,7 +1287,7 @@ ul { list-style: none; padding-left: 0; }
 .admin-sidebar { border: 1px solid var(--border); border-radius: 12px; background: var(--panel); padding: 12px; }
 .admin-sidebar { position: sticky; top: 82px; }
 .sidebar-title { font-weight: 800; margin: 0 0 8px; }
-.side-link { display: block; padding: 8px 10px; border-radius: 8px; color: var(--text); text-decoration: none; border: 1px solid transparent; }
+.side-link { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; color: var(--text); text-decoration: none; border: 1px solid transparent; }
 .side-link:hover, .side-link:focus-visible { border-color: var(--border); background: #fafafa; }
 .admin-main { padding-right: var(--content-pad); }
 /* Ensure anchor scroll brings sections below header */
@@ -1296,6 +1296,19 @@ ul { list-style: none; padding-left: 0; }
 /* Sidebar active and badges */
 .side-link.active { border-color: var(--border); background: #eef4ff; }
 .side-link .side-count { margin-left: auto; display: inline-block; padding: 0 8px; border-radius: 999px; background: #f3f4f6; color: #111; font-weight: 700; font-size: 0.82rem; }
+.side-ico { display: inline-block; width: 14px; height: 14px; border-radius: 3px; background: #e5e7eb; }
+.ico-dashboard { background: #dbeafe; }
+.ico-users { background: #fde68a; }
+.ico-campaigns { background: #bbf7d0; }
+.ico-endorsements { background: #bfdbfe; }
+.ico-rewards { background: #fee2e2; }
+.ico-contributors { background: #ddd6fe; }
+.ico-kyc { background: #dcfce7; }
+.ico-tools { background: #f5f5f5; }
+.page-admin .container { padding-top: 8px; }
+.metric-card { position: relative; }
+.metric-card:first-child::before { content: none; }
+.metric-card::before { content: ''; position: absolute; left: -4px; top: 8px; bottom: 8px; width: 1px; background: #e5e7eb; }
 
 /* Admin dashboard layout */
 .dash-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 6px 0 10px; }
