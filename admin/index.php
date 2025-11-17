@@ -263,6 +263,11 @@ try {
 
   <main class="container">
     <h1>Admin Dashboard</h1>
+    <div class="admin-tabs" role="tablist" aria-label="Admin views" style="padding: 0 var(--content-pad);">
+      <a class="tab-btn<?= (isset($_GET['view']) && $_GET['view'] === 'overview' ? ' active' : '') ?>" href="<?= h($BASE_PATH) ?>admin/index.php?view=overview#dashboard">Overview</a>
+      <a class="tab-btn<?= (!isset($_GET['view']) || $_GET['view'] === 'dashboard' ? ' active' : '') ?>" href="<?= h($BASE_PATH) ?>admin/index.php?view=dashboard#dashboard">Dashboard</a>
+      <a class="tab-btn<?= (isset($_GET['view']) && $_GET['view'] === 'tools' ? ' active' : '') ?>" href="<?= h($BASE_PATH) ?>admin/index.php?view=tools#dbtools">Tools</a>
+    </div>
     <nav class="breadcrumb" aria-label="Breadcrumb">
       <a class="home" href="<?= h($BASE_PATH) ?>index.php#hero">Home</a>
       <span>›</span>
@@ -299,6 +304,12 @@ try {
       </aside>
       <section class="admin-main">
     <?php
+      // Chart filters via query params
+      $start = isset($_GET['start']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', (string)$_GET['start']) ? (string)$_GET['start'] : '';
+      $end = isset($_GET['end']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', (string)$_GET['end']) ? (string)$_GET['end'] : '';
+      $areaFilter = trim((string)($_GET['area'] ?? ''));
+      $startDT = $start !== '' ? ($start . ' 00:00:00') : null;
+      $endDT = $end !== '' ? ($end . ' 23:59:59') : null;
       // Dashboard aggregates
       $totalUsers = 0; $totalCampaigns = 0; $openCampaigns = 0; $closedCampaigns = 0; $endorseTotal = 0; $kycApproved = 0; $kycPending = 0; $walletsTotal = 0;
       try {
@@ -317,15 +328,34 @@ try {
       try {
         $walletsTotal = (int)$pdo->query('SELECT COUNT(*) FROM karma_wallets')->fetchColumn();
       } catch (Throwable $e) {}
-      // Bar: endorsements by area (top 5)
+      // Bar: endorsements by area (top 5) with optional filters
       $endorseByArea = [];
       try {
-        $sqlArea = "SELECT area, SUM(COALESCE(endorse_campaign,0)) AS total FROM campaigns WHERE area IS NOT NULL AND area <> '' GROUP BY area ORDER BY total DESC LIMIT 5";
-        $endorseByArea = $pdo->query($sqlArea)->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        $where = ['area IS NOT NULL AND area <> '''];
+        $binds = [];
+        if ($areaFilter !== '') { $where[] = 'area LIKE ?'; $binds[] = '%' . $areaFilter . '%'; }
+        if ($startDT !== null) { $where[] = 'created_at >= ?'; $binds[] = $startDT; }
+        if ($endDT !== null) { $where[] = 'created_at <= ?'; $binds[] = $endDT; }
+        $sqlArea = 'SELECT area, SUM(COALESCE(endorse_campaign,0)) AS total FROM campaigns WHERE ' . implode(' AND ', $where) . ' GROUP BY area ORDER BY total DESC LIMIT 5';
+        $stArea = $pdo->prepare($sqlArea);
+        $stArea->execute($binds);
+        $endorseByArea = $stArea->fetchAll(PDO::FETCH_ASSOC) ?: [];
       } catch (Throwable $e) {}
       // Donut: KYC completion distribution
       $kycRejected = 0;
-      try { $kycRejected = (int)$pdo->query("SELECT COUNT(*) FROM kyc_requests WHERE status = 'rejected'")->fetchColumn(); } catch (Throwable $e) {}
+      try {
+        $whereK = [];
+        $bindK = [];
+        if ($startDT !== null) { $whereK[] = 'created_at >= ?'; $bindK[] = $startDT; }
+        if ($endDT !== null) { $whereK[] = 'created_at <= ?'; $bindK[] = $endDT; }
+        $cond = empty($whereK) ? '' : (' WHERE ' . implode(' AND ', $whereK));
+        $stA = $pdo->prepare("SELECT COUNT(*) FROM kyc_requests" . $cond . " AND status = 'approved'");
+        $stP = $pdo->prepare("SELECT COUNT(*) FROM kyc_requests" . $cond . " AND status = 'pending'");
+        $stR = $pdo->prepare("SELECT COUNT(*) FROM kyc_requests" . $cond . " AND status = 'rejected'");
+        $stA->execute($bindK); $kycApproved = (int)$stA->fetchColumn();
+        $stP->execute($bindK); $kycPending = (int)$stP->fetchColumn();
+        $stR->execute($bindK); $kycRejected = (int)$stR->fetchColumn();
+      } catch (Throwable $e) { try { $kycRejected = (int)$pdo->query("SELECT COUNT(*) FROM kyc_requests WHERE status = 'rejected'")->fetchColumn(); } catch (Throwable $e2) {} }
       $kycTotal = max(1, $kycApproved + $kycPending + $kycRejected);
       $pApproved = ($kycApproved / $kycTotal);
       $pPending = ($kycPending / $kycTotal);
@@ -338,7 +368,20 @@ try {
       $lenRejected = arcLen($pRejected);
     ?>
     <section id="dashboard" class="card-plain card-horizontal card-fullbleed" aria-label="Dashboard">
-      <h2 class="section-title">Dashboard</h2>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <h2 class="section-title" style="margin:0;">Dashboard</h2>
+        <div class="actions" style="display:flex; gap:8px;">
+          <form method="get" action="<?= h($BASE_PATH) ?>admin/index.php#dashboard" style="display:flex; gap:6px; align-items:center;">
+            <input type="hidden" name="view" value="dashboard">
+            <input name="start" type="date" class="input" value="<?= h($start) ?>" style="width:140px;">
+            <input name="end" type="date" class="input" value="<?= h($end) ?>" style="width:140px;">
+            <input name="area" type="text" class="input" placeholder="Area" value="<?= h($areaFilter) ?>" style="width:160px;">
+            <button type="submit" class="btn btn-sm pill">Apply</button>
+            <a class="btn btn-sm pill" href="<?= h($BASE_PATH) ?>admin/index.php?view=dashboard#dashboard">Reset</a>
+          </form>
+          <button type="button" id="btn-add-chart" class="btn btn-sm pill">Add Chart</button>
+        </div>
+      </div>
       <div class="dash-cards">
         <div class="metric-card">
           <div class="metric-label">Users</div>
@@ -381,15 +424,16 @@ try {
         <div class="chart-card">
           <div class="chart-title">Endorsements by area</div>
           <?php $maxArea = 0; foreach ($endorseByArea as $ea) { $maxArea = max($maxArea, (int)($ea['total'] ?? 0)); } $maxArea = max($maxArea, 1); ?>
-          <svg viewBox="0 0 300 140" class="bar-chart" role="img" aria-label="Endorsements by area">
+          <svg viewBox="0 0 300 120" class="bar-chart" role="img" aria-label="Endorsements by area">
             <?php $i = 0; foreach ($endorseByArea as $ea): $val = (int)($ea['total'] ?? 0); $h = (int)round(($val / $maxArea) * 100); $x = 20 + $i * 55; ?>
               <rect x="<?= $x ?>" y="<?= 120 - $h ?>" width="36" height="<?= $h ?>" class="bar"></rect>
-              <text x="<?= $x + 18 ?>" y="130" text-anchor="middle" class="bar-label"><?= h(substr((string)$ea['area'],0,8)) ?></text>
+              <text x="<?= $x + 18 ?>" y="115" text-anchor="middle" class="bar-label"><?= h(substr((string)$ea['area'],0,8)) ?></text>
             <?php $i++; endforeach; ?>
           </svg>
         </div>
       </div>
     </section>
+    <h2 class="section-title" id="dbtools" style="margin-left: var(--content-pad);">Database Tools</h2>
     <div class="admin-grid">
     <?php if (!empty($errors)): ?>
       <div class="card-plain is-highlight" role="alert">
@@ -771,6 +815,20 @@ try {
       <small>&copy; 2025 No Starve</small>
     </div>
   </footer>
+  <script>
+    (function(){
+      var add = document.getElementById('btn-add-chart');
+      if (!add) return;
+      var toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = 'Chart added (sample)';
+      document.body.appendChild(toast);
+      add.addEventListener('click', function(){
+        toast.classList.add('show');
+        setTimeout(function(){ toast.classList.remove('show'); }, 1600);
+      });
+    })();
+  </script>
   <script>
     (function() {
       if (!window.location.hash) {
