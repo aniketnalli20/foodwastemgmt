@@ -297,20 +297,15 @@ try {
       // Dashboard aggregates
       $totalUsers = 0; $totalCampaigns = 0; $openCampaigns = 0; $closedCampaigns = 0; $endorseTotal = 0; $kycApproved = 0; $kycPending = 0; $walletsTotal = 0;
       try {
-        $totalUsers = (int)$pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
-      } catch (Throwable $e) {}
-      try {
-        $totalCampaigns = (int)$pdo->query('SELECT COUNT(*) FROM campaigns')->fetchColumn();
-        $openCampaigns = (int)$pdo->query("SELECT COUNT(*) FROM campaigns WHERE status = 'open'")->fetchColumn();
-        $closedCampaigns = (int)$pdo->query("SELECT COUNT(*) FROM campaigns WHERE status = 'closed'")->fetchColumn();
-        $endorseTotal = (int)($pdo->query('SELECT SUM(COALESCE(endorse_campaign,0)) FROM campaigns')->fetchColumn() ?: 0);
-      } catch (Throwable $e) {}
-      try {
-        $kycApproved = (int)$pdo->query("SELECT COUNT(*) FROM kyc_requests WHERE status = 'approved'")->fetchColumn();
-        $kycPending = (int)$pdo->query("SELECT COUNT(*) FROM kyc_requests WHERE status = 'pending'")->fetchColumn();
-      } catch (Throwable $e) {}
-      try {
-        $walletsTotal = (int)$pdo->query('SELECT COUNT(*) FROM karma_wallets')->fetchColumn();
+        $stats = get_site_stats();
+        $totalUsers = (int)($stats['users'] ?? 0);
+        $totalCampaigns = (int)($stats['campaigns'] ?? 0);
+        $openCampaigns = (int)($stats['campaigns_open'] ?? 0);
+        $closedCampaigns = (int)($stats['campaigns_closed'] ?? 0);
+        $endorseTotal = (int)($stats['endorsements'] ?? 0);
+        $kycApproved = (int)($stats['kyc_approved'] ?? 0);
+        $kycPending = (int)($stats['kyc_pending'] ?? 0);
+        $walletsTotal = (int)($stats['wallets'] ?? 0);
       } catch (Throwable $e) {}
       // Bar: endorsements by area (top 5) with optional filters
       $endorseByArea = [];
@@ -736,12 +731,22 @@ try {
         if (!in_array($kycSort, ['id','status','created_at'], true)) { $kycSort = 'created_at'; }
         $kycDir = strtolower(trim((string)($_GET['kyc_dir'] ?? 'desc')));
         $kycDir = ($kycDir === 'asc') ? 'asc' : 'desc';
+        $kycQ = trim((string)($_GET['kyc_q'] ?? ''));
         try {
           $where = [];
           $binds = [];
           if ($kycStatus !== '') { $where[] = 'k.status = ?'; $binds[] = $kycStatus; }
           if ($kycStart !== '') { $where[] = 'k.created_at >= ?'; $binds[] = $kycStart . ' 00:00:00'; }
           if ($kycEnd !== '') { $where[] = 'k.created_at <= ?'; $binds[] = $kycEnd . ' 23:59:59'; }
+          if ($kycQ !== '') {
+            $where[] = '(u.username LIKE ? OR u.email LIKE ? OR k.phone LIKE ? OR k.id_number LIKE ? OR k.ifsc LIKE ? OR k.bank_account_number LIKE ?)';
+            $binds[] = '%' . $kycQ . '%';
+            $binds[] = '%' . $kycQ . '%';
+            $binds[] = '%' . $kycQ . '%';
+            $binds[] = '%' . $kycQ . '%';
+            $binds[] = '%' . $kycQ . '%';
+            $binds[] = '%' . $kycQ . '%';
+          }
           $cond = empty($where) ? '' : (' WHERE ' . implode(' AND ', $where));
           $stCount = $pdo->prepare('SELECT COUNT(*) FROM kyc_requests k' . $cond);
           $stCount->execute($binds);
@@ -749,7 +754,7 @@ try {
           $kycPages = max(1, (int)ceil($kycTotalRows / $kycPerPage));
           $kycPage = min(max(1, $kycPage), $kycPages);
           $offset = ($kycPage - 1) * $kycPerPage;
-          $sql = 'SELECT k.id, k.user_id, u.username, u.email, k.full_name, k.phone, k.bank_name, k.bank_account_number, k.ifsc, k.id_number, k.status, k.created_at
+          $sql = 'SELECT k.id, k.user_id, u.username, u.email, k.full_name, k.phone, k.bank_name, k.bank_account_number, k.ifsc, k.id_number, k.status, k.created_at, k.notes
                   FROM kyc_requests k LEFT JOIN users u ON u.id = k.user_id' . $cond . ' ORDER BY k.' . $kycSort . ' ' . strtoupper($kycDir) . ' LIMIT ' . (int)$kycPerPage . ' OFFSET ' . (int)$offset;
           $st = $pdo->prepare($sql);
           $st->execute($binds);
@@ -775,6 +780,7 @@ try {
         if ($kycEnd !== '') $qs['kyc_end'] = $kycEnd;
         if ($kycSort !== '') $qs['kyc_sort'] = $kycSort;
         if ($kycDir !== '') $qs['kyc_dir'] = $kycDir;
+        if ($kycQ !== '') $qs['kyc_q'] = $kycQ;
         $baseQS = http_build_query($qs);
         $prevQS = $baseQS . '&kyc_page=' . max(1, $kycPage - 1);
         $nextQS = $baseQS . '&kyc_page=' . min($kycPages, $kycPage + 1);
@@ -790,6 +796,7 @@ try {
           </select>
           <input name="kyc_start" type="date" class="input" value="<?= h($kycStart) ?>" style="width:140px;">
           <input name="kyc_end" type="date" class="input" value="<?= h($kycEnd) ?>" style="width:140px;">
+          <input name="kyc_q" type="text" class="input" value="<?= h($kycQ) ?>" placeholder="Search..." style="width:200px;">
           <button type="submit" class="btn btn-sm pill">Apply</button>
           <a class="btn btn-sm pill" href="<?= h($BASE_PATH) ?>admin/index.php?view=tools#kyc">Reset</a>
         </form>
@@ -809,6 +816,8 @@ try {
                 $qsId = $baseQS . '&kyc_sort=id&kyc_dir=' . $dirToggleId . '&kyc_page=1';
                 $dirToggleSt = ($kycSort === 'status' && $kycDir === 'asc') ? 'desc' : 'asc';
                 $qsSt = $baseQS . '&kyc_sort=status&kyc_dir=' . $dirToggleSt . '&kyc_page=1';
+                $dirToggleCr = ($kycSort === 'created_at' && $kycDir === 'asc') ? 'desc' : 'asc';
+                $qsCr = $baseQS . '&kyc_sort=created_at&kyc_dir=' . $dirToggleCr . '&kyc_page=1';
               ?>
               <th><a href="<?= h($BASE_PATH) ?>admin/index.php?<?= h($qsId) ?>#kyc">ID</a></th>
               <th>User</th>
@@ -818,6 +827,8 @@ try {
               <th>IFSC</th>
               <th>ID Number</th>
               <th><a href="<?= h($BASE_PATH) ?>admin/index.php?<?= h($qsSt) ?>#kyc">Status</a></th>
+              <th><a href="<?= h($BASE_PATH) ?>admin/index.php?<?= h($qsCr) ?>#kyc">Created</a></th>
+              <th>Notes</th>
               <th>Actions</th>
             </tr>
           </thead>

@@ -345,7 +345,7 @@ function has_wallet_access(int $userId): bool {
 function require_wallet_access_or_redirect(): void {
     if (!is_logged_in()) require_login();
     $uid = (int)($_SESSION['user_id'] ?? 0);
-    if (!has_wallet_access($uid)) {
+    if (!has_approved_kyc($uid)) {
         global $BASE_PATH;
         header('Location: ' . $BASE_PATH . 'kyc.php');
         exit;
@@ -371,17 +371,35 @@ function proceed_wallet_after_kyc(): void {
     $uid = (int)($_SESSION['user_id'] ?? 0);
     global $BASE_PATH;
     if (has_approved_kyc($uid)) {
-        if (has_wallet_access($uid)) {
-            header('Location: ' . $BASE_PATH . 'wallet.php');
-            exit;
-        }
-        // KYC approved but other thresholds not met; keep on KYC page with note
-        header('Location: ' . $BASE_PATH . 'kyc.php?approved=1');
+        header('Location: ' . $BASE_PATH . 'wallet.php');
         exit;
     } else {
         header('Location: ' . $BASE_PATH . 'kyc.php');
         exit;
     }
+}
+
+function get_site_stats(): array {
+    global $pdo;
+    $stats = [
+        'users' => 0,
+        'campaigns' => 0,
+        'campaigns_open' => 0,
+        'campaigns_closed' => 0,
+        'endorsements' => 0,
+        'kyc_approved' => 0,
+        'kyc_pending' => 0,
+        'wallets' => 0,
+    ];
+    try { $stats['users'] = (int)$pdo->query('SELECT COUNT(*) FROM users')->fetchColumn(); } catch (Throwable $e) {}
+    try { $stats['campaigns'] = (int)$pdo->query('SELECT COUNT(*) FROM campaigns')->fetchColumn(); } catch (Throwable $e) {}
+    try { $stats['campaigns_open'] = (int)$pdo->query("SELECT COUNT(*) FROM campaigns WHERE status = 'open'")->fetchColumn(); } catch (Throwable $e) {}
+    try { $stats['campaigns_closed'] = (int)$pdo->query("SELECT COUNT(*) FROM campaigns WHERE status = 'closed'")->fetchColumn(); } catch (Throwable $e) {}
+    try { $stats['endorsements'] = (int)($pdo->query('SELECT SUM(COALESCE(endorse_campaign,0)) FROM campaigns')->fetchColumn() ?: 0); } catch (Throwable $e) {}
+    try { $stats['kyc_approved'] = (int)$pdo->query("SELECT COUNT(*) FROM kyc_requests WHERE status = 'approved'")->fetchColumn(); } catch (Throwable $e) {}
+    try { $stats['kyc_pending'] = (int)$pdo->query("SELECT COUNT(*) FROM kyc_requests WHERE status = 'pending'")->fetchColumn(); } catch (Throwable $e) {}
+    try { $stats['wallets'] = (int)$pdo->query('SELECT COUNT(*) FROM karma_wallets')->fetchColumn(); } catch (Throwable $e) {}
+    return $stats;
 }
 
 function set_contributor_verified(string $name, int $verified): void {
