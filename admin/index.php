@@ -204,6 +204,35 @@ try {
           $message = 'Contributor ' . htmlspecialchars($name) . ' set to ' . ($verified ? 'verified' : 'unverified');
         } catch (Throwable $e) { $errors[] = 'Failed to set contributor: ' . $e->getMessage(); }
       }
+    } else if ($action === 'update_counters') {
+      try {
+        $meals = (int)($_POST['mealsSaved'] ?? 0);
+        $donors = (int)($_POST['donorsCount'] ?? 0);
+        $partners = (int)($_POST['partnersCount'] ?? 0);
+        $active = (int)($_POST['activeUsersCount'] ?? 0);
+        $enabled = isset($_POST['enabled']) ? 1 : 0;
+        $payload = json_encode([
+          'enabled' => $enabled,
+          'mealsSaved' => $meals,
+          'donorsCount' => $donors,
+          'partnersCount' => $partners,
+          'activeUsersCount' => $active,
+          'updated_at' => gmdate('c'),
+        ], JSON_UNESCAPED_SLASHES);
+        $path = __DIR__ . '/../uploads/counters_override.json';
+        if (!is_dir(dirname($path))) { @mkdir(dirname($path), 0777, true); }
+        file_put_contents($path, $payload, LOCK_EX);
+        $message = 'Counters updated';
+      } catch (Throwable $e) { $errors[] = 'Failed to update counters'; }
+    } else if ($action === 'reset_counters') {
+      try {
+        $path = __DIR__ . '/../uploads/counters_override.json';
+        if (is_file($path)) {
+          $data = @json_decode((string)file_get_contents($path), true);
+          if (is_array($data)) { $data['enabled'] = 0; @file_put_contents($path, json_encode($data)); }
+        }
+        $message = 'Counters reset to live';
+      } catch (Throwable $e) { $errors[] = 'Failed to reset counters'; }
     }
   }
 } catch (Throwable $e) {
@@ -279,6 +308,7 @@ try {
           <a href="#campaigns" class="side-link">Campaigns <span class="side-count"><?= h(format_compact_number((int)$campaignsCountSidebar)) ?></span></a>
           <a href="#endorsements" class="side-link">Endorsements</a>
           <a href="#rewards" class="side-link">Rewards</a>
+          <a href="#counters" class="side-link">Counters</a>
           <a href="#contributors" class="side-link">Contributors</a>
           <a href="#kyc" class="side-link">KYC <span class="side-count"><?= h(format_compact_number((int)$kycCountSidebar)) ?></span></a>
         </div>
@@ -383,6 +413,35 @@ try {
         <div class="card-plain" style="margin-top:6px;">
           <div class="muted">Activity view coming soon</div>
         </div>
+      </div>
+    </section>
+    <section id="counters" class="card-plain card-horizontal card-fullbleed stack-card" aria-label="Counters">
+      <h2 class="section-title">Control Counters</h2>
+      <div class="card-plain">
+        <form method="post" class="form" style="display:grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap:12px;">
+          <input type="hidden" name="action" value="update_counters">
+          <div>
+            <label>Meals Made</label>
+            <input name="mealsSaved" type="number" class="input" min="0" placeholder="e.g., 1200">
+          </div>
+          <div>
+            <label>Contributors</label>
+            <input name="donorsCount" type="number" class="input" min="0" placeholder="e.g., 320">
+          </div>
+          <div>
+            <label>Partners</label>
+            <input name="partnersCount" type="number" class="input" min="0" placeholder="e.g., 42">
+          </div>
+          <div>
+            <label>Active Users</label>
+            <input name="activeUsersCount" type="number" class="input" min="0" placeholder="e.g., 18">
+          </div>
+          <label style="grid-column: 1 / -1; display:inline-flex; align-items:center; gap:6px; margin-top:6px;"><input type="checkbox" name="enabled" value="1"> Enable manual override</label>
+          <div class="actions" style="grid-column: 1 / -1; margin-top:8px;">
+            <button type="submit" class="btn pill">Save Counters</button>
+            <button type="submit" name="action" value="reset_counters" class="btn pill" style="margin-left:6px;">Reset to Live</button>
+          </div>
+        </form>
       </div>
     </section>
     <h2 class="section-title" id="dbtools">Database Tools</h2>
