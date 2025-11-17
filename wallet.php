@@ -6,7 +6,9 @@ $user = current_user();
 if (!$user) { header('Location: ' . $BASE_PATH . 'login.php'); exit; }
 
 $msg = '';
+$convFailed = false;
 $redeemMsg = '';
+$redeemFailed = false;
 // Conversion: align wallet with endorsements-based expected earnings
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && isset($_POST['action']) && $_POST['action'] === 'convert') {
     try {
@@ -25,6 +27,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && isset($_POST['action']) 
         }
     } catch (Throwable $e) {
         $msg = 'Conversion failed';
+        $convFailed = true;
     }
 }
 
@@ -34,13 +37,17 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && isset($_POST['action']) 
         $res = redeem_karma_to_cash((int)$user['id']);
         if ($res['ok']) {
             $redeemMsg = 'Redeemed ' . (int)$res['coins'] . ' coins → ₹' . number_format(((int)$res['paisa']) / 100, 2);
+            $redeemFailed = false;
         } else if ($res['error'] === 'threshold') {
             $redeemMsg = 'Redemption allowed only at 10,00,000 Karma Coins';
+            $redeemFailed = true;
         } else {
             $redeemMsg = 'Redemption failed';
+            $redeemFailed = true;
         }
     } catch (Throwable $e) {
         $redeemMsg = 'Redemption failed';
+        $redeemFailed = true;
     }
 }
 
@@ -83,7 +90,10 @@ try {
         <input type="hidden" name="action" value="convert">
         <button type="submit" class="btn pill">Convert endorsements → coins</button>
       </form>
-      <?php if ($msg !== ''): ?><div class="muted" style="margin-top:6px;"><?= h($msg) ?></div><?php endif; ?>
+      <?php if ($msg !== ''): ?>
+        <?php if ($convFailed): ?><div class="alert error error-wobble" role="alert" style="margin-top:6px;"><?= h($msg) ?></div>
+        <?php else: ?><div class="alert success" role="status" style="margin-top:6px;"><?= h($msg) ?></div><?php endif; ?>
+      <?php endif; ?>
       <div class="card-plain" style="margin-top:10px;">
         <strong><span class="material-symbols-outlined" aria-hidden="true" style="vertical-align:-4px;">currency_rupee</span> Currency Conversion</strong>
         <div class="muted" style="margin-top:6px;">Conversion: 100 Karma Coins = ₹0.01. Redemption is allowed only at 1,000,000 Karma Coins.</div>
@@ -91,7 +101,10 @@ try {
           <input type="hidden" name="action" value="redeem">
           <button type="submit" class="btn pill">Redeem</button>
         </form>
-        <?php if ($redeemMsg !== ''): ?><div class="muted" style="margin-top:6px;"><?= h($redeemMsg) ?></div><?php endif; ?>
+        <?php if ($redeemMsg !== ''): ?>
+          <?php if ($redeemFailed): ?><div class="alert error error-wobble" role="alert" style="margin-top:6px;"><?= h($redeemMsg) ?></div>
+          <?php else: ?><div class="alert success" role="status" style="margin-top:6px;"><?= h($redeemMsg) ?></div><?php endif; ?>
+        <?php endif; ?>
       </div>
     </section>
 

@@ -683,6 +683,17 @@ ul { list-style: none; padding-left: 0; }
 /* Color-coded alerts */
 .alert.success { background: #e8f8ec; border-color: #b7e6c2; color: #0f6b36; }
 .alert.error { background: #fdeaea; border-color: #f5c2c2; color: #7a1f1f; }
+.error-wobble { animation: wobble 420ms ease; box-shadow: 0 0 0 3px rgba(220,38,38,0.25), 0 6px 18px rgba(220,38,38,0.18); }
+@keyframes wobble {
+  0% { transform: translateX(0); }
+  15% { transform: translateX(-5px); }
+  30% { transform: translateX(5px); }
+  45% { transform: translateX(-4px); }
+  60% { transform: translateX(4px); }
+  75% { transform: translateX(-3px); }
+  90% { transform: translateX(3px); }
+  100% { transform: translateX(0); }
+}
 
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 @media (max-width: 840px) {
