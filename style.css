@@ -1418,18 +1418,20 @@ ul { list-style: none; padding-left: 0; }
 .feature-card .subchips { display:flex; flex-wrap:wrap; gap:6px; margin: 6px 0 8px; }
 .feature-card .subchips .chip { background:#fafafa; color:#333; border-color:#e5e5e5; }
 .page-faqs main.container { max-width: none; margin-left: 0; margin-right: 0; padding-left: var(--content-pad); padding-right: var(--content-pad); }
+.page-profile .section-title { margin-bottom: 14px; }
 .profile-header { margin: 0 auto; padding: var(--content-pad); }
 .profile-cover { height: 220px; border-radius: 16px; background: linear-gradient(135deg,#e2e8f0,#f1f5f9); background-size: cover; background-position: center; position: relative; }
-.profile-meta { display: flex; align-items: flex-end; justify-content: space-between; margin-top: -40px; }
+.profile-meta { display: flex; align-items: flex-end; justify-content: space-between; margin-top: 0; }
 .profile-ident { display: flex; align-items: center; gap: 12px; }
+.profile-ident > div { min-width: 0; }
 .profile-avatar { width: 80px; height: 80px; border-radius: 50%; border: 4px solid #fff; box-shadow: 0 6px 18px rgba(0,0,0,0.12); background: #fff; object-fit: cover; }
-.profile-name { font-size: 1.25rem; font-weight: 700; }
-.profile-stats { display:flex; align-items:center; gap: 10px; color: var(--muted); }
-.profile-stats .stat { display:flex; align-items:center; gap:6px; background:#fff; border:1px solid var(--border); border-radius: 999px; padding: 6px 10px; }
+.profile-name { font-size: 1.25rem; font-weight: 700; overflow-wrap: anywhere; }
+.profile-stats { display:flex; align-items:center; gap: 10px; color: var(--muted); flex-wrap: wrap; margin-top: 6px; }
+.profile-stats .stat { display:flex; align-items:center; gap:6px; background:#fff; border:1px solid var(--border); border-radius: 12px; padding: 6px 10px; }
 .profile-actions { display:flex; align-items:center; gap:8px; }
 .btn.icon { display:inline-flex; align-items:center; gap:6px; }
-.profile-tabs { display:flex; align-items:center; gap:8px; margin-top: 12px; }
-.profile-tabs .tab { border:1px solid var(--border); background:#fff; color:#111; border-radius:999px; padding:6px 12px; }
+.profile-tabs { display:flex; align-items:center; gap:8px; margin-top: 12px; flex-wrap: wrap; }
+.profile-tabs .tab { border:1px solid var(--border); background:#fff; color:#111; border-radius:12px; padding:6px 12px; }
 .profile-tabs .tab.active { background:#eef2ff; border-color:#c7d2fe; color:#1a7aff; }
 .tab-panel { display: none; margin-top: 12px; }
 .tab-panel.active { display: block; }
