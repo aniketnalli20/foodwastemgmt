@@ -49,6 +49,12 @@ try {
   $isFollowing = ((int)($st3->fetchColumn() ?: 0)) > 0;
 } catch (Throwable $e) {}
 
+// Followers/Following lists for this user
+$followersFull = isset($_GET['followers_full']);
+$followingFull = isset($_GET['following_full']);
+$followersList = get_user_followers($id, $followersFull ? 100 : 15, 0);
+$followingList = get_user_following($id, $followingFull ? 100 : 15, 0);
+
 // Admin profile preview controls
 if (is_admin() && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['action'] ?? '') === 'admin_profile_preview') {
   $followersNew = isset($_POST['followers']) ? (int)$_POST['followers'] : 0;
@@ -128,6 +134,50 @@ if (is_admin() && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['a
       </div>
       <?php $followersEff = (int)($followersOverride !== null ? $followersOverride : $followers); ?>
       <div class="muted">Joined <?= h(date('Y-m-d', strtotime($user['created_at']))) ?> · Followers: <?= h(format_compact_number($followersEff)) ?></div>
+    </section>
+
+    <section class="card-plain" aria-label="Connections" id="connections">
+      <h2 class="section-title">Connections</h2>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+        <strong>Followers</strong>
+        <?php if (!$followersFull): ?>
+          <a class="btn btn-sm secondary" href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$id ?>&followers_full=1#followers">View More</a>
+        <?php endif; ?>
+      </div>
+      <div id="followers" class="table-wrap" style="margin-top:6px;">
+        <table class="table" aria-label="Followers list">
+          <thead><tr><th>User</th><th>Since</th><th>Action</th></tr></thead>
+          <tbody>
+            <?php foreach ($followersList as $fu): ?>
+              <tr>
+                <td><a href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$fu['id'] ?>" class="nav-link">@<?= h($fu['username']) ?></a></td>
+                <td><?= h(date('Y-m-d', strtotime((string)($fu['followed_at'] ?? gmdate('c'))))) ?></td>
+                <td><a class="chip" href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$fu['id'] ?>">View Profile</a></td>
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:10px;">
+        <strong>Following</strong>
+        <?php if (!$followingFull): ?>
+          <a class="btn btn-sm secondary" href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$id ?>&following_full=1#following">View More</a>
+        <?php endif; ?>
+      </div>
+      <div id="following" class="table-wrap" style="margin-top:6px;">
+        <table class="table" aria-label="Following list">
+        <thead><tr><th>User</th><th>Since</th><th>Action</th></tr></thead>
+        <tbody>
+          <?php foreach ($followingList as $fo): ?>
+            <tr>
+              <td><a href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$fo['id'] ?>" class="nav-link">@<?= h($fo['username']) ?></a></td>
+              <td><?= h(date('Y-m-d', strtotime((string)($fo['followed_at'] ?? gmdate('c'))))) ?></td>
+              <td><a class="chip" href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$fo['id'] ?>">View Profile</a></td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+        </table>
+      </div>
     </section>
 
     <?php if (is_admin()): ?>

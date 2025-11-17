@@ -1179,21 +1179,57 @@ try {
         var ctx = canvas.getContext('2d');
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.clearRect(0,0,w,h);
-        var pad = 24;
-        var max = 0; for (var i=0;i<series.length;i++){ var v = Number(series[i].meals||0); if (v>max) max=v; }
-        max = Math.max(max, 1);
+        // paddings for axes + labels
+        var padT = 10, padR = 10, padB = 26, padL = 46;
+        // compute nice scale for Y
+        var rawMax = 0; for (var i=0;i<series.length;i++){ var v = Number(series[i].meals||0); if (v>rawMax) rawMax=v; }
+        function niceNum(x, round){
+          var exp = Math.floor(Math.log10(x || 1));
+          var f = (x || 1)/Math.pow(10, exp);
+          var nf;
+          if (round){
+            if (f < 1.5) nf = 1; else if (f < 3) nf = 2; else if (f < 7) nf = 5; else nf = 10;
+          } else {
+            if (f <= 1) nf = 1; else if (f <= 2) nf = 2; else if (f <= 5) nf = 5; else nf = 10;
+          }
+          return nf * Math.pow(10, exp);
+        }
+        var desiredTicks = 4;
+        var yRange = niceNum(Math.max(rawMax, 1), false);
+        var yStep = niceNum(yRange/desiredTicks, true);
+        var yMax = Math.ceil(yRange / yStep) * yStep;
+        // axes
         ctx.strokeStyle = '#e5e7eb'; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(pad, h-pad); ctx.lineTo(w-pad, h-pad); ctx.lineTo(w-pad, pad); ctx.stroke();
-        var n = series.length; var step = (w - pad*2) / Math.max(n-1, 1);
+        ctx.beginPath(); ctx.moveTo(padL, h-padB); ctx.lineTo(w-padR, h-padB); ctx.lineTo(w-padR, padT); ctx.stroke();
+        // y ticks + grid
+        ctx.fillStyle = '#6b7280'; ctx.font = '12px system-ui'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+        for (var t = 0; t <= yMax; t += yStep){
+          var yy = h - padB - (t / yMax) * (h - padT - padB);
+          ctx.strokeStyle = '#eef2f7'; ctx.beginPath(); ctx.moveTo(padL, yy); ctx.lineTo(w-padR, yy); ctx.stroke();
+          ctx.fillText(String(t), padL - 6, yy);
+        }
+        // x steps
+        var n = series.length; var xStep = (w - padL - padR) / Math.max(n-1, 1);
+        // x labels every ~3 points
+        ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.fillStyle = '#6b7280';
+        for (var i=0;i<n;i++){
+          if (i % 3 === 0){
+            var xlab = padL + i * xStep;
+            var d = (series[i].date||'').slice(5); // show MM-DD
+            ctx.fillText(d, xlab, h - padB + 6);
+          }
+        }
+        // line
         ctx.strokeStyle = '#1a7aff'; ctx.lineWidth = 2; ctx.beginPath();
         for (var i=0;i<n;i++){
-          var x = pad + i*step; var y = h - pad - (Number(series[i].meals||0)/max) * (h - pad*2);
+          var x = padL + i * xStep; var y = h - padB - (Number(series[i].meals||0)/yMax) * (h - padT - padB);
           if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
         }
         ctx.stroke();
+        // points
         ctx.fillStyle = '#1a7aff';
         for (var i=0;i<n;i++){
-          var x = pad + i*step; var y = h - pad - (Number(series[i].meals||0)/max) * (h - pad*2);
+          var x = padL + i * xStep; var y = h - padB - (Number(series[i].meals||0)/yMax) * (h - padT - padB);
           ctx.beginPath(); ctx.arc(x,y,2.5,0,Math.PI*2); ctx.fill();
         }
       }

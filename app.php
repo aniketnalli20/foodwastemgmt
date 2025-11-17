@@ -588,3 +588,31 @@ function classify_user_roles(int $userId): array {
         'contributor_types' => array_keys($contribKinds),
     ];
 }
+
+function get_user_followers(int $userId, int $limit = 15, int $offset = 0): array {
+    global $pdo;
+    try {
+        $st = $pdo->prepare('SELECT u.id, u.username, u.email, f.created_at AS followed_at
+            FROM follows f
+            JOIN users u ON u.id = f.follower_user_id
+            WHERE f.target_user_id = ?
+            ORDER BY f.created_at DESC
+            LIMIT ? OFFSET ?');
+        $st->execute([$userId, $limit, $offset]);
+        return $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    } catch (Throwable $e) { return []; }
+}
+
+function get_user_following(int $userId, int $limit = 15, int $offset = 0): array {
+    global $pdo;
+    try {
+        $st = $pdo->prepare('SELECT u.id, u.username, u.email, f.created_at AS followed_at
+            FROM follows f
+            JOIN users u ON u.id = f.target_user_id
+            WHERE f.follower_user_id = ? AND f.target_user_id IS NOT NULL
+            ORDER BY f.created_at DESC
+            LIMIT ? OFFSET ?');
+        $st->execute([$userId, $limit, $offset]);
+        return $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    } catch (Throwable $e) { return []; }
+}

@@ -1236,7 +1236,7 @@ ul { list-style: none; padding-left: 0; }
 /* Readable cells: allow wrapping to avoid horizontal scroll */
 .table th, .table td { white-space: normal; overflow-wrap: anywhere; word-break: break-word; text-overflow: clip; }
 
-.admin-grid .card-plain { max-width: none; margin-left: 0; margin-right: 0; padding: 20px 22px; }
+.admin-grid .card-plain { max-width: none; margin-left: 0; margin-right: 0; padding: 20px 22px; border-radius: 12px; box-shadow: none; }
 .admin-grid .card-horizontal { gap: 12px; }
 .admin-grid .card-horizontal .section-title { display: block; margin: 0 0 10px; }
 @media (min-width: 720px) { .admin-grid .card-horizontal .section-title { display: block; margin: 0 0 10px; } }
@@ -1287,7 +1287,7 @@ ul { list-style: none; padding-left: 0; }
 .admin-scroll .admin-grid { max-width: none; margin-left: 0; margin-right: 0; padding: 0; }
 /* Ensure admin cards use full available width inside grid/containers */
 .page-admin .card-plain { max-width: none; margin-left: 0; margin-right: 0; width: 100%; }
-.page-admin .card-plain.card-fullbleed { width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); }
+.page-admin .card-plain.card-fullbleed { width: 100%; margin-left: 0; margin-right: 0; }
 .admin-scroll .breadcrumb { display: none; }
 .star-admin { color: #f5b301; margin-left: 6px; font-size: 0.95em; }
 .admin-scroll h1 { margin-left: 0; padding-left: var(--content-pad); }
@@ -1326,7 +1326,7 @@ ul { list-style: none; padding-left: 0; }
 .navbar .nav-link { font-size: 0.95rem; display: inline-flex; align-items: center; gap: 6px; }
 .navbar .nav-link .material-symbols-outlined { font-size: 18px; line-height: 1; vertical-align: middle; }
 /* Admin two-column layout */
-.admin-layout { display: grid; grid-template-columns: 260px 1fr; gap: 6px; padding: 0; align-items: start; }
+.admin-layout { display: grid; grid-template-columns: 260px 1fr; gap: 0; padding: 0; align-items: start; }
 @media (max-width: 920px) { .admin-layout { grid-template-columns: 1fr; } }
 .admin-sidebar { border: 1px solid var(--border); border-radius: 12px; background: var(--panel); padding: 12px; }
 .admin-sidebar { position: sticky; top: 82px; align-self: start; }
@@ -1495,3 +1495,4 @@ ul { list-style: none; padding-left: 0; }
 /* Overlay darkening layer for header area */
 .overlay { position: relative; }
 .overlay::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; top: 0; background-color: rgba(0, 0, 0, 0.3); pointer-events: none; }
+.page-admin .section-title { border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 10px; }
