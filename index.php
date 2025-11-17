@@ -277,14 +277,14 @@ try {
       <div class="feature-card">
         <div class="head">
           <span class="icon"><span class="material-symbols-outlined" aria-hidden="true">workspace_premium</span></span>
-          <div class="title">What are Karma Coins?</div>
+          <div class="title">Karma Coins: Your Community Reputation</div>
         </div>
         <ul class="list">
-          <li><span class="material-symbols-outlined check" aria-hidden="true">check_circle</span><span>Karma Coins are community recognition points that reflect support and impact for a campaign or contributor.</span></li>
-          <li><span class="material-symbols-outlined check" aria-hidden="true">check_circle</span><span>Earned through endorsements and verified meal deliveries; awarding is automated (not admin-based).</span></li>
-          <li><span class="material-symbols-outlined check" aria-hidden="true">check_circle</span><span>Help surface high‑impact campaigns to the top so people can find and support them faster.</span></li>
-          <li><span class="material-symbols-outlined check" aria-hidden="true">check_circle</span><span>Not a currency and have no cash value; used for badges, milestones, and visibility.</span></li>
-          <li><span class="material-symbols-outlined check" aria-hidden="true">check_circle</span><span>Visible on each campaign as a simple way to gauge community trust and activity.</span></li>
+          <li><span class="material-symbols-outlined check" aria-hidden="true">check_circle</span><span>Earn coins when people endorse your campaigns and when meal deliveries are verified.</span></li>
+          <li><span class="material-symbols-outlined check" aria-hidden="true">check_circle</span><span>Coins lift trusted, high‑impact campaigns so more people can find and support them.</span></li>
+          <li><span class="material-symbols-outlined check" aria-hidden="true">check_circle</span><span>Not a currency; they power badges, milestones, and profile visibility.</span></li>
+          <li><span class="material-symbols-outlined check" aria-hidden="true">check_circle</span><span>Clear trust signal shown on profiles and campaigns.</span></li>
+          <li><span class="material-symbols-outlined check" aria-hidden="true">check_circle</span><span>Fully automated recognition—no manual approvals.</span></li>
         </ul>
         <div class="actions" style="margin-top:10px;">
           <a class="btn pill" href="<?= h($BASE_PATH) ?>faqs.php">Learn More</a>
@@ -293,14 +293,13 @@ try {
       <div class="feature-card">
         <div class="head">
           <span class="icon"><span class="material-symbols-outlined" aria-hidden="true">restaurant</span></span>
-          <div class="title">What is No Starve?</div>
+          <div class="title">How No Starve Helps</div>
         </div>
         <ul class="list">
-          <li><span class="material-symbols-outlined check" aria-hidden="true">check_circle</span><span>No Starve helps people quickly find available meals nearby and connect safely to reduce everyday food challenges.</span></li>
-          <li><span class="material-symbols-outlined check" aria-hidden="true">check_circle</span><span>Discover affordable or free food options around you.</span></li>
-          <li><span class="material-symbols-outlined check" aria-hidden="true">check_circle</span><span>See real‑time availability from campaigns and listings in your area.</span></li>
+          <li><span class="material-symbols-outlined check" aria-hidden="true">check_circle</span><span>Instantly discover nearby meals and safe pickup details.</span></li>
+          <li><span class="material-symbols-outlined check" aria-hidden="true">check_circle</span><span>See real‑time availability and closing times from campaigns around you.</span></li>
           <li><span class="material-symbols-outlined check" aria-hidden="true">check_circle</span><span>Designed for working professionals, bachelors, and students.</span></li>
-          <li><span class="material-symbols-outlined check" aria-hidden="true">check_circle</span><span>Built to reduce food waste—one meal, one user at a time.</span></li>
+          <li><span class="material-symbols-outlined check" aria-hidden="true">check_circle</span><span>Reduce food waste and daily meal challenges—one meal at a time.</span></li>
         </ul>
         <div class="actions" style="margin-top:10px;">
           <a class="btn pill" href="<?= h($BASE_PATH) ?>faqs.php">Learn More</a>
@@ -394,14 +393,13 @@ try {
     <!-- Informational cards below posts -->
     <section class="container fullbleed" aria-label="Karma Coins Info" style="padding: 0;">
       <div class="card-plain card-horizontal card-fullbleed stack-card compact info-card">
-        <h2 class="section-title"><span class="coin-icon" aria-hidden="true" style="margin-right:8px;"></span>What are Karma Coins?</h2>
+        <h2 class="section-title"><span class="coin-icon" aria-hidden="true" style="margin-right:8px;"></span>Karma Coins: Your Community Reputation</h2>
         <div class="content-center">
-          <p>Karma Coins are community recognition points that reflect support and impact for a campaign or contributor.</p>
+          <p>Karma Coins are earned through endorsements and verified deliveries. They highlight trusted contributors and amplify high‑impact campaigns.</p>
           <ul>
-            <li>Earned through <strong>endorsements</strong> and verified meal deliveries; awarding is <strong>automated</strong> (not admin‑based).</li>
-            <li>Help surface <strong>high‑impact campaigns</strong> to the top so people can find and support them faster.</li>
-            <li><strong>Not a currency</strong> and have no cash value; used for badges, milestones, and visibility.</li>
-            <li>Visible on each campaign as a simple way to gauge <strong>community trust</strong> and activity.</li>
+            <li>Automated recognition—no admin approvals.</li>
+            <li>Power badges, milestones, and visibility; not a currency.</li>
+            <li>Shown on campaigns and profiles as a clear trust signal.</li>
           </ul>
         </div>
       </div>
@@ -409,14 +407,14 @@ try {
 
     <section class="container fullbleed" aria-label="About No Starve" style="padding: 0;">
       <div class="card-plain card-horizontal card-fullbleed stack-card compact info-card">
-        <h2 class="section-title">What is No Starve?</h2>
+        <h2 class="section-title">How No Starve Helps</h2>
         <div class="content-center">
-          <p>No Starve helps people quickly find available meals nearby and connect safely to reduce everyday food challenges.</p>
+          <p>No Starve makes it simple to find available meals nearby and connect safely.</p>
           <ul>
-            <li>Discover <strong>affordable or free food options</strong> around you.</li>
-            <li>See real‑time availability from campaigns and listings in your area.</li>
-            <li>Designed for <strong>working professionals</strong>, <strong>bachelors</strong>, and <strong>students</strong>.</li>
-            <li>Built to <strong>reduce food waste</strong>—one meal, one user at a time.</li>
+            <li>Discover <strong>affordable or free food options</strong> instantly.</li>
+            <li>Real‑time listings with area and closing time.</li>
+            <li>Built for <strong>working professionals</strong>, <strong>bachelors</strong>, and <strong>students</strong>.</li>
+            <li>Reduce <strong>food waste</strong>—one meal, one user at a time.</li>
           </ul>
         </div>
       </div>
