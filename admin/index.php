@@ -331,7 +331,7 @@ try {
       // Bar: endorsements by area (top 5) with optional filters
       $endorseByArea = [];
       try {
-        $where = ['area IS NOT NULL AND area <> '''];
+        $where = ["area IS NOT NULL AND area <> ''"];
         $binds = [];
         if ($areaFilter !== '') { $where[] = 'area LIKE ?'; $binds[] = '%' . $areaFilter . '%'; }
         if ($startDT !== null) { $where[] = 'created_at >= ?'; $binds[] = $startDT; }
@@ -349,9 +349,10 @@ try {
         if ($startDT !== null) { $whereK[] = 'created_at >= ?'; $bindK[] = $startDT; }
         if ($endDT !== null) { $whereK[] = 'created_at <= ?'; $bindK[] = $endDT; }
         $cond = empty($whereK) ? '' : (' WHERE ' . implode(' AND ', $whereK));
-        $stA = $pdo->prepare("SELECT COUNT(*) FROM kyc_requests" . $cond . " AND status = 'approved'");
-        $stP = $pdo->prepare("SELECT COUNT(*) FROM kyc_requests" . $cond . " AND status = 'pending'");
-        $stR = $pdo->prepare("SELECT COUNT(*) FROM kyc_requests" . $cond . " AND status = 'rejected'");
+        $whereStatus = empty($cond) ? ' WHERE ' : ' AND ';
+        $stA = $pdo->prepare("SELECT COUNT(*) FROM kyc_requests" . $cond . $whereStatus . "status = 'approved'");
+        $stP = $pdo->prepare("SELECT COUNT(*) FROM kyc_requests" . $cond . $whereStatus . "status = 'pending'");
+        $stR = $pdo->prepare("SELECT COUNT(*) FROM kyc_requests" . $cond . $whereStatus . "status = 'rejected'");
         $stA->execute($bindK); $kycApproved = (int)$stA->fetchColumn();
         $stP->execute($bindK); $kycPending = (int)$stP->fetchColumn();
         $stR->execute($bindK); $kycRejected = (int)$stR->fetchColumn();
@@ -771,8 +772,20 @@ try {
           }
         }
       ?>
-      <div class="card-plain">
-        <table class="table" aria-label="KYC table">
+      <div class="card-plain card-compact kyc-card">
+        <div class="table-wrap">
+        <table class="table table-compact" aria-label="KYC table">
+          <colgroup>
+            <col style="width:8%">
+            <col style="width:16%">
+            <col style="width:20%">
+            <col style="width:14%">
+            <col style="width:20%">
+            <col style="width:10%">
+            <col style="width:16%">
+            <col style="width:12%">
+            <col style="width:14%">
+          </colgroup>
           <thead><tr><th>ID</th><th>User</th><th>Email</th><th>Phone</th><th>Bank</th><th>IFSC</th><th>ID Number</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody>
             <?php foreach ($kycList as $k): ?>
@@ -789,12 +802,12 @@ try {
                   <form method="post" style="display:inline-flex; gap:6px; align-items:center;">
                     <input type="hidden" name="action" value="set_kyc_status">
                     <input type="hidden" name="kyc_id" value="<?= (int)$k['id'] ?>">
-                    <select name="status" class="input" style="width:140px;">
+                    <select name="status" class="input" style="width:120px;">
                       <option value="pending" <?= ((string)$k['status'] === 'pending' ? 'selected' : '') ?>>pending</option>
                       <option value="approved" <?= ((string)$k['status'] === 'approved' ? 'selected' : '') ?>>approved</option>
                       <option value="rejected" <?= ((string)$k['status'] === 'rejected' ? 'selected' : '') ?>>rejected</option>
                     </select>
-                    <input name="note" type="text" class="input" placeholder="Note" style="width:180px;">
+                    <input name="note" type="text" class="input" placeholder="Note" style="width:160px;">
                     <button type="submit" class="btn btn-sm pill">Save</button>
                   </form>
                 </td>
@@ -802,6 +815,7 @@ try {
             <?php endforeach; ?>
           </tbody>
         </table>
+        </div>
       </div>
     </section>
 
