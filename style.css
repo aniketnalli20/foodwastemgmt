@@ -1385,3 +1385,4 @@ ul { list-style: none; padding-left: 0; }
 .feature-card .list li { display:flex; align-items:flex-start; gap:8px; }
 .feature-card .list li .check { color:#16a34a; }
 .feature-card .actions { margin-top: auto; }
+.page-faqs main.container { max-width: none; margin-left: 0; margin-right: 0; padding-left: var(--content-pad); padding-right: var(--content-pad); }

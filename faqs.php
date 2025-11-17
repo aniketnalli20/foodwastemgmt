@@ -12,7 +12,7 @@ require_once __DIR__ . '/app.php';
     <link rel="icon" type="image/png" href="<?= h($BASE_PATH) ?>uploads/favicon.png" sizes="32x32">
     <link rel="apple-touch-icon" href="<?= h($BASE_PATH) ?>uploads/favicon.png">
 </head>
-<body>
+<body class="page-faqs">
     <header class="site-header" role="banner">
         <div class="container header-inner">
             <?php $currentPath = basename($_SERVER['SCRIPT_NAME'] ?? ''); ?>
@@ -73,7 +73,7 @@ require_once __DIR__ . '/app.php';
     })();
     </script>
 
-    <main class="container" style="max-width: var(--content-max); padding: var(--content-pad);" aria-label="FAQs">
+    <main class="container" aria-label="FAQs">
         <section class="card-plain">
             <h2 class="section-title">FAQs</h2>
             <div class="faq" id="faqs">
