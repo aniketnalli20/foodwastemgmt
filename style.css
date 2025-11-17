@@ -1273,18 +1273,21 @@ ul { list-style: none; padding-left: 0; }
 .admin-scroll .card-fullbleed { min-height: auto; }
 .stack-card { scroll-snap-align: none; scroll-margin-top: 80px; }
 
-.admin-grid { display: grid; grid-template-columns: 1fr; gap: 16px; width: 100%; max-width: var(--content-max); margin: 12px auto; padding: 0 var(--content-pad); }
-@media (min-width: 840px) { .admin-grid { grid-template-columns: repeat(2, 1fr); } }
+.admin-grid { display: grid; grid-template-columns: 1fr; gap: 16px; width: 100%; max-width: none; margin: 12px 0; padding: 0; }
+@media (min-width: 840px) { .admin-grid { grid-template-columns: 1fr; } }
 
 /* Force stacked layout in DB Tools: Campaigns below Users */
-.admin-grid.stack-container { grid-template-columns: 1fr !important; }
-@media (min-width: 840px) { .admin-grid.stack-container { grid-template-columns: 1fr !important; } }
+.admin-grid.stack-container { grid-template-columns: 1fr; }
+@media (min-width: 840px) { .admin-grid.stack-container { grid-template-columns: 1fr; } }
 .btn.dark { background: #1f2937; color: #ffffff; border-color: transparent; }
 .btn.light { background: #ffffff; color: #000000; border-color: transparent; }
 
 /* Admin page: align content flush to left edge */
 .admin-scroll main.container { max-width: none; margin-left: 0; margin-right: 0; padding-left: 0; padding-right: 0; }
 .admin-scroll .admin-grid { max-width: none; margin-left: 0; margin-right: 0; padding: 0; }
+/* Ensure admin cards use full available width inside grid/containers */
+.page-admin .card-plain { max-width: none; margin-left: 0; margin-right: 0; width: 100%; }
+.page-admin .card-plain.card-fullbleed { width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); }
 .admin-scroll .breadcrumb { display: none; }
 .star-admin { color: #f5b301; margin-left: 6px; font-size: 0.95em; }
 .admin-scroll h1 { margin-left: 0; padding-left: var(--content-pad); }
@@ -1323,14 +1326,14 @@ ul { list-style: none; padding-left: 0; }
 .navbar .nav-link { font-size: 0.95rem; display: inline-flex; align-items: center; gap: 6px; }
 .navbar .nav-link .material-symbols-outlined { font-size: 18px; line-height: 1; vertical-align: middle; }
 /* Admin two-column layout */
-.admin-layout { display: grid; grid-template-columns: 260px 1fr; gap: 12px; padding: 0 var(--content-pad); align-items: start; }
+.admin-layout { display: grid; grid-template-columns: 260px 1fr; gap: 6px; padding: 0; align-items: start; }
 @media (max-width: 920px) { .admin-layout { grid-template-columns: 1fr; } }
 .admin-sidebar { border: 1px solid var(--border); border-radius: 12px; background: var(--panel); padding: 12px; }
 .admin-sidebar { position: sticky; top: 82px; align-self: start; }
 .sidebar-title { font-weight: 800; margin: 0 0 8px; }
 .side-link { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; color: var(--text); text-decoration: none; border: 1px solid transparent; }
 .side-link:hover, .side-link:focus-visible { border-color: var(--border); background: #fafafa; }
-.admin-main { padding-right: var(--content-pad); }
+.admin-main { padding-left: 0; padding-right: 0; }
 /* Ensure anchor scroll brings sections below header */
 .admin-main section { scroll-margin-top: 82px; }
 
