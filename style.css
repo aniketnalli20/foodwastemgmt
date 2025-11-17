@@ -1295,7 +1295,7 @@ ul { list-style: none; padding-left: 0; }
 
 /* Sidebar active and badges */
 .side-link.active { border-color: var(--border); background: #eef4ff; }
-.side-link .side-count { margin-left: auto; display: inline-block; padding: 0 8px; border-radius: 999px; background: #f3f4f6; color: #111; font-weight: 700; font-size: 0.82rem; }
+.side-link .side-count { margin-left: 6px; display: inline-block; padding: 0 6px; border-radius: 999px; background: #f3f4f6; color: #111; font-weight: 700; font-size: 0.82rem; }
 .side-ico, .ico-dashboard, .ico-users, .ico-campaigns, .ico-endorsements, .ico-rewards, .ico-contributors, .ico-kyc, .ico-tools { display: none !important; }
 .page-admin .container { padding-top: 0; }
 .metric-card { position: relative; }
