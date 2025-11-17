@@ -270,16 +270,23 @@ try {
     </div>
     
     <div class="admin-layout">
+      <?php
+        // Sidebar counts (lightweight queries for quick badges)
+        $usersCountSidebar = 0; $campaignsCountSidebar = 0; $kycCountSidebar = 0;
+        try { $usersCountSidebar = (int)$pdo->query('SELECT COUNT(*) FROM users')->fetchColumn(); } catch (Throwable $e) {}
+        try { $campaignsCountSidebar = (int)$pdo->query('SELECT COUNT(*) FROM campaigns')->fetchColumn(); } catch (Throwable $e) {}
+        try { $kycCountSidebar = (int)$pdo->query('SELECT COUNT(*) FROM kyc_requests')->fetchColumn(); } catch (Throwable $e) {}
+      ?>
       <aside class="admin-sidebar" aria-label="Admin Navigation">
         <div class="sidebar-group">
           <div class="sidebar-title">Sections</div>
           <a href="#dashboard" class="side-link">Dashboard</a>
-          <a href="#users" class="side-link">Users</a>
-          <a href="#campaigns" class="side-link">Campaigns</a>
+          <a href="#users" class="side-link">Users <span class="side-count"><?= (int)$usersCountSidebar ?></span></a>
+          <a href="#campaigns" class="side-link">Campaigns <span class="side-count"><?= (int)$campaignsCountSidebar ?></span></a>
           <a href="#endorsements" class="side-link">Endorsements</a>
           <a href="#rewards" class="side-link">Rewards</a>
           <a href="#contributors" class="side-link">Contributors</a>
-          <a href="#kyc" class="side-link">KYC</a>
+          <a href="#kyc" class="side-link">KYC <span class="side-count"><?= (int)$kycCountSidebar ?></span></a>
         </div>
         <div class="sidebar-group" style="margin-top:10px;">
           <div class="sidebar-title">Tools</div>
@@ -935,6 +942,91 @@ try {
           } catch(e) {}
         }
       });
+    })();
+  </script>
+  <script>
+    (function(){
+      // Highlight active sidebar link based on hash and visible section
+      function setActiveByHash(){
+        try {
+          var hash = (window.location.hash || '#dashboard').toLowerCase();
+          document.querySelectorAll('.admin-sidebar .side-link').forEach(function(a){ a.classList.remove('active'); });
+          var link = document.querySelector('.admin-sidebar .side-link[href="' + hash + '"]');
+          if (link) link.classList.add('active');
+        } catch(e) {}
+      }
+      setActiveByHash();
+      window.addEventListener('hashchange', setActiveByHash);
+      // IntersectionObserver to update active section on scroll
+      try {
+        var obs = new IntersectionObserver(function(entries){
+          entries.forEach(function(en){
+            if (en.isIntersecting) {
+              var id = '#' + en.target.id;
+              var link = document.querySelector('.admin-sidebar .side-link[href="' + id + '"]');
+              if (link) {
+                document.querySelectorAll('.admin-sidebar .side-link').forEach(function(a){ a.classList.remove('active'); });
+                link.classList.add('active');
+              }
+            }
+          });
+        }, { rootMargin: '-30% 0px -60% 0px', threshold: 0.1 });
+        ['dashboard','users','campaigns','endorsements','rewards','contributors','kyc','dbtools'].forEach(function(id){
+          var el = document.getElementById(id); if (el) obs.observe(el);
+        });
+      } catch(e) {}
+    })();
+  </script>
+  <script>
+    (function(){
+      try {
+        var params = new URLSearchParams(window.location.search || '');
+        if (params.get('test') !== '1') return;
+        var checks = [];
+        var tabs = document.querySelectorAll('.admin-tabs .tab-btn');
+        checks.push({ name: 'Tabs present (>=3)', ok: (tabs && tabs.length >= 3) });
+        checks.push({ name: 'Active tab set', ok: !!document.querySelector('.admin-tabs .tab-btn.active') });
+        var sidebar = document.querySelector('.admin-sidebar');
+        var sideLinks = document.querySelectorAll('.admin-sidebar .side-link');
+        checks.push({ name: 'Sidebar exists', ok: !!sidebar });
+        checks.push({ name: 'Sidebar links (>=7)', ok: (sideLinks && sideLinks.length >= 7) });
+        var metrics = document.querySelectorAll('.dash-cards .metric-card');
+        checks.push({ name: 'Metric cards (>=5)', ok: (metrics && metrics.length >= 5) });
+        var kycForm = document.querySelector('form[action*="#kyc"]');
+        var kycStatusSel = document.querySelector('select[name="kyc_status"]');
+        var kycStart = document.querySelector('input[name="kyc_start"]');
+        var kycEnd = document.querySelector('input[name="kyc_end"]');
+        checks.push({ name: 'KYC filter form', ok: !!kycForm });
+        checks.push({ name: 'KYC status filter', ok: !!kycStatusSel });
+        checks.push({ name: 'KYC date filters', ok: (!!kycStart && !!kycEnd) });
+        var kycTable = document.querySelector('.kyc-card .table');
+        checks.push({ name: 'KYC table', ok: !!kycTable });
+        var sections = ['users','campaigns','endorsements','rewards','contributors','kyc'];
+        sections.forEach(function(id){
+          var el = document.getElementById(id);
+          checks.push({ name: 'Section #' + id + ' visible', ok: !!el && el.offsetHeight > 0 });
+        });
+        checks.push({ name: 'Toast helper', ok: !!window.showToast });
+        var panel = document.createElement('div');
+        panel.className = 'test-panel';
+        var title = document.createElement('div');
+        title.className = 'test-title';
+        title.textContent = 'Admin Self-Test';
+        panel.appendChild(title);
+        checks.forEach(function(c){
+          var row = document.createElement('div');
+          row.className = 'test-item';
+          var chip = document.createElement('span');
+          chip.className = c.ok ? 'chip chip-pass' : 'chip chip-fail';
+          chip.textContent = c.ok ? 'pass' : 'fail';
+          var txt = document.createElement('span');
+          txt.textContent = ' ' + c.name;
+          row.appendChild(chip);
+          row.appendChild(txt);
+          panel.appendChild(row);
+        });
+        document.body.appendChild(panel);
+      } catch (e) {}
     })();
   </script>
   <script>
