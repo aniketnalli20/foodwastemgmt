@@ -25,6 +25,7 @@ $followers = 0;
 $isFollowing = false;
 $isVerified = false;
 $followersOverride = null;
+$adminMsg = '';
 try {
   $stc = $pdo->prepare('SELECT COUNT(*) FROM follows WHERE target_user_id = ?');
   $stc->execute([$id]);
@@ -47,6 +48,24 @@ try {
   $st3->execute([$_SESSION['user_id'] ?? 0, $id]);
   $isFollowing = ((int)($st3->fetchColumn() ?: 0)) > 0;
 } catch (Throwable $e) {}
+
+// Admin profile preview controls
+if (is_admin() && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['action'] ?? '') === 'admin_profile_preview') {
+  $followersNew = isset($_POST['followers']) ? (int)$_POST['followers'] : 0;
+  $verifiedNew = isset($_POST['verified']) ? 1 : 0;
+  $joinedNew = trim((string)($_POST['joined'] ?? ''));
+  try {
+    if ($joinedNew !== '') {
+      $pdo->prepare('UPDATE users SET created_at = ? WHERE id = ?')->execute([$joinedNew . ' 00:00:00', $id]);
+      $user['created_at'] = $joinedNew . ' 00:00:00';
+    }
+    $pdo->prepare('UPDATE users SET followers_override = ? WHERE id = ?')->execute([$followersNew, $id]);
+    $followersOverride = $followersNew;
+    set_contributor_verified((string)$user['username'], (int)$verifiedNew);
+    $isVerified = ($verifiedNew === 1);
+    $adminMsg = 'Profile preview updated';
+  } catch (Throwable $e) {}
+}
 
 ?><!doctype html>
 <html lang="en">
@@ -79,10 +98,15 @@ try {
         <?php endif; ?>
         <?php if (is_logged_in() && (int)$_SESSION['user_id'] === $id): ?>
           <a class="btn pill" href="<?= h($BASE_PATH) ?>profile.php">Settings</a>
-          <a class="btn pill" href="<?= h($BASE_PATH) ?>wallet.php">Wallet</a>
+          <?php if (has_wallet_access((int)$id)): ?>
+            <a class="btn pill" href="<?= h($BASE_PATH) ?>wallet.php">Wallet</a>
+          <?php else: ?>
+            <a class="btn pill" href="<?= h($BASE_PATH) ?>kyc.php">KYC</a>
+          <?php endif; ?>
         <?php endif; ?>
       </div>
-      <div class="muted">Joined <?= h(date('Y-m-d', strtotime($user['created_at']))) ?> · Followers: <?= (int)($followersOverride !== null ? $followersOverride : $followers) ?></div>
+      <?php $followersEff = (int)($followersOverride !== null ? $followersOverride : $followers); ?>
+      <div class="muted">Joined <?= h(date('Y-m-d', strtotime($user['created_at']))) ?> · Followers: <?= h(format_compact_number($followersEff)) ?></div>
     </section>
 
     <?php if (is_admin()): ?>
@@ -107,6 +131,7 @@ try {
         <input name="joined" type="text" class="input" value="<?= h(date('Y-m-d', strtotime($user['created_at']))) ?>" style="width:160px; display:inline-block;">
         <div class="actions" style="margin-top:8px;"><button type="submit" class="btn pill">Save</button></div>
       </form>
+      <?php if ($adminMsg !== ''): ?><div class="muted" style="margin-top:6px;"><?= h($adminMsg) ?></div><?php endif; ?>
     </section>
     <?php endif; ?>
 
@@ -150,28 +175,3 @@ try {
   </script>
 </body>
 </html>
-// Admin profile preview controls
-if (is_admin() && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['action'] ?? '') === 'admin_profile_preview') {
-  $followersNew = isset($_POST['followers']) ? (int)$_POST['followers'] : 0;
-  $verifiedNew = isset($_POST['verified']) ? 1 : 0;
-  $joinedNew = trim((string)($_POST['joined'] ?? ''));
-  try {
-    if ($joinedNew !== '') {
-      $pdo->prepare('UPDATE users SET created_at = ? WHERE id = ?')->execute([$joinedNew . ' 00:00:00', $id]);
-      $user['created_at'] = $joinedNew . ' 00:00:00';
-    }
-    $pdo->prepare('UPDATE users SET followers_override = ? WHERE id = ?')->execute([$followersNew, $id]);
-    $followersOverride = $followersNew;
-    $now = gmdate('Y-m-d H:i:s');
-    if ($DB_DRIVER === 'pgsql') {
-      $pdo->prepare('INSERT INTO contributors (name, verified, created_at, updated_at) VALUES (?, ?, ?, ?)
-                     ON CONFLICT (name) DO UPDATE SET verified = EXCLUDED.verified, updated_at = EXCLUDED.updated_at')
-          ->execute([$user['username'], $verifiedNew, $now, $now]);
-    } else {
-      $pdo->prepare('INSERT INTO contributors (name, verified, created_at, updated_at) VALUES (?, ?, ?, ?)
-                     ON DUPLICATE KEY UPDATE verified = VALUES(verified), updated_at = VALUES(updated_at)')
-          ->execute([$user['username'], $verifiedNew, $now, $now]);
-    }
-    $isVerified = ($verifiedNew === 1);
-  } catch (Throwable $e) {}
-}

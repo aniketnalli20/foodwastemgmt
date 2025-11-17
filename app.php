@@ -351,3 +351,33 @@ function require_wallet_access_or_redirect(): void {
         exit;
     }
 }
+
+function set_contributor_verified(string $name, int $verified): void {
+    global $pdo, $DB_DRIVER;
+    $now = gmdate('Y-m-d H:i:s');
+    if (($DB_DRIVER ?? 'mysql') === 'pgsql') {
+        $pdo->prepare('INSERT INTO contributors (name, verified, created_at, updated_at) VALUES (?, ?, ?, ?)
+                       ON CONFLICT (name) DO UPDATE SET verified = EXCLUDED.verified, updated_at = EXCLUDED.updated_at')
+            ->execute([$name, $verified, $now, $now]);
+    } else {
+        $pdo->prepare('INSERT INTO contributors (name, verified, created_at, updated_at) VALUES (?, ?, ?, ?)
+                       ON DUPLICATE KEY UPDATE verified = VALUES(verified), updated_at = VALUES(updated_at)')
+            ->execute([$name, $verified, $now, $now]);
+    }
+}
+
+function format_compact_number(int $n): string {
+    if ($n >= 1000000000) {
+        $v = round($n / 1000000000, 1);
+        return rtrim(rtrim(sprintf('%.1f', $v), '0'), '.') . ' billion';
+    }
+    if ($n >= 1000000) {
+        $v = round($n / 1000000, 1);
+        return rtrim(rtrim(sprintf('%.1f', $v), '0'), '.') . ' million';
+    }
+    if ($n >= 1000) {
+        $v = round($n / 1000, 1);
+        return rtrim(rtrim(sprintf('%.1f', $v), '0'), '.') . 'k';
+    }
+    return (string)$n;
+}

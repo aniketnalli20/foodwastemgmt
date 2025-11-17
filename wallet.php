@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/app.php';
-require_login();
+require_wallet_access_or_redirect();
 
 $user = current_user();
 if (!$user) { header('Location: ' . $BASE_PATH . 'login.php'); exit; }
@@ -86,7 +86,7 @@ try {
       <?php if ($msg !== ''): ?><div class="muted" style="margin-top:6px;"><?= h($msg) ?></div><?php endif; ?>
       <div class="card-plain" style="margin-top:10px;">
         <strong><span class="material-symbols-outlined" aria-hidden="true" style="vertical-align:-4px;">currency_rupee</span> Currency Conversion</strong>
-        <div class="muted" style="margin-top:6px;">Rate: 1000 Karma Coins = 10 paisa. Redemption is allowed only at 10,00,000 Karma Coins.</div>
+        <div class="muted" style="margin-top:6px;">Rate: 1000 Karma Coins = 10 paisa. Redemption is allowed only at 1 million Karma Coins.</div>
         <form method="post" action="<?= h($BASE_PATH) ?>wallet.php" style="margin-top:10px;">
           <input type="hidden" name="action" value="redeem">
           <button type="submit" class="btn pill">Redeem to Paisa</button>
