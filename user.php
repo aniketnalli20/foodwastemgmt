@@ -98,7 +98,8 @@ if (is_admin() && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['a
         <?php endif; ?>
         <?php if (is_logged_in() && (int)$_SESSION['user_id'] === $id): ?>
           <a class="btn pill" href="<?= h($BASE_PATH) ?>profile.php">Settings</a>
-          <?php if (has_wallet_access((int)$id)): ?>
+          <?php $hasApproved = has_approved_kyc((int)$id); ?>
+          <?php if ($hasApproved): ?>
             <a class="btn pill" href="<?= h($BASE_PATH) ?>wallet.php">Wallet</a>
           <?php else: ?>
             <a class="btn pill" href="<?= h($BASE_PATH) ?>kyc.php">KYC</a>

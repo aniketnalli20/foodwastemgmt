@@ -283,7 +283,6 @@ try {
           <a href="#kyc" class="side-link">KYC <span class="side-count"><?= (int)$kycCountSidebar ?></span></a>
         </div>
         <div class="sidebar-group" style="margin-top:10px;">
-          <div class="sidebar-title">Tools</div>
           <a href="#dbtools" class="side-link">Database Tools</a>
         </div>
       </aside>
