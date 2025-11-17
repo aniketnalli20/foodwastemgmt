@@ -339,7 +339,7 @@ function has_wallet_access(int $userId): bool {
     $verified = is_user_verified_by_username($username);
     $followers = get_effective_followers($userId);
     $coins = get_karma_balance($userId);
-    return $verified && $followers >= 10000 && $coins >= 100000;
+    return $verified && $followers >= 10000 && $coins >= 100000 && has_approved_kyc($userId);
 }
 
 function require_wallet_access_or_redirect(): void {
@@ -347,6 +347,38 @@ function require_wallet_access_or_redirect(): void {
     $uid = (int)($_SESSION['user_id'] ?? 0);
     if (!has_wallet_access($uid)) {
         global $BASE_PATH;
+        header('Location: ' . $BASE_PATH . 'kyc.php');
+        exit;
+    }
+}
+
+// Check if the user has an approved KYC request
+function has_approved_kyc(int $userId): bool {
+    global $pdo;
+    try {
+        $st = $pdo->prepare('SELECT status FROM kyc_requests WHERE user_id = ? ORDER BY updated_at DESC, created_at DESC LIMIT 1');
+        $st->execute([$userId]);
+        $status = (string)($st->fetchColumn() ?: '');
+        return $status === 'approved';
+    } catch (Throwable $e) {
+        return false;
+    }
+}
+
+// Proceed to wallet after KYC approval; otherwise send to KYC page
+function proceed_wallet_after_kyc(): void {
+    if (!is_logged_in()) require_login();
+    $uid = (int)($_SESSION['user_id'] ?? 0);
+    global $BASE_PATH;
+    if (has_approved_kyc($uid)) {
+        if (has_wallet_access($uid)) {
+            header('Location: ' . $BASE_PATH . 'wallet.php');
+            exit;
+        }
+        // KYC approved but other thresholds not met; keep on KYC page with note
+        header('Location: ' . $BASE_PATH . 'kyc.php?approved=1');
+        exit;
+    } else {
         header('Location: ' . $BASE_PATH . 'kyc.php');
         exit;
     }

@@ -66,6 +66,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['action'] ?? '')
           <li>100k+ Karma Coins</li>
         </ul>
       </div>
+      <?php if (isset($_GET['approved'])): ?>
+        <div class="alert success" role="status">KYC approved. Complete remaining thresholds to enable wallet.</div>
+      <?php endif; ?>
       <?php if (!empty($errors)): ?>
         <div class="alert error" role="alert">
           <ul class="list-clean">
