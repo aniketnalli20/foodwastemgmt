@@ -312,6 +312,45 @@ if (($DRIVER ?? ($DB_DRIVER ?? 'mysql')) === 'pgsql') {
 
 // Optional followers override on users for admin preview/tools
 try { $pdo->exec('ALTER TABLE users ADD COLUMN followers_override INT'); } catch (Throwable $e) {}
+
+// KYC requests: collect wallet and user details for manual verification
+if (($DRIVER ?? ($DB_DRIVER ?? 'mysql')) === 'pgsql') {
+    $pdo->exec('CREATE TABLE IF NOT EXISTS kyc_requests (
+        id SERIAL PRIMARY KEY,
+        user_id INT NOT NULL,
+        full_name VARCHAR(255),
+        phone VARCHAR(50),
+        address TEXT,
+        bank_account_name VARCHAR(255),
+        bank_account_number VARCHAR(100),
+        ifsc VARCHAR(20),
+        bank_name VARCHAR(255),
+        id_number VARCHAR(100),
+        status VARCHAR(20) NOT NULL DEFAULT \'pending\',
+        notes TEXT,
+        created_at TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP NOT NULL,
+        CONSTRAINT fk_kyc_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )');
+} else {
+    $pdo->exec('CREATE TABLE IF NOT EXISTS kyc_requests (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        full_name VARCHAR(255) NULL,
+        phone VARCHAR(50) NULL,
+        address TEXT NULL,
+        bank_account_name VARCHAR(255) NULL,
+        bank_account_number VARCHAR(100) NULL,
+        ifsc VARCHAR(20) NULL,
+        bank_name VARCHAR(255) NULL,
+        id_number VARCHAR(100) NULL,
+        status VARCHAR(20) NOT NULL DEFAULT \'pending\',
+        notes TEXT NULL,
+        created_at DATETIME NOT NULL,
+        updated_at DATETIME NOT NULL,
+        CONSTRAINT fk_kyc_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=' . $DB_CHARSET);
+}
 // Follows: users can follow creators (users) or named contributors (string)
 if (($DRIVER ?? ($DB_DRIVER ?? 'mysql')) === 'pgsql') {
     $pdo->exec('CREATE TABLE IF NOT EXISTS follows (

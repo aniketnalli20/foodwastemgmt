@@ -300,3 +300,54 @@ function redeem_karma_to_cash(int $userId): array {
     debit_karma_coins($userId, $redeemCoins, 'redeem');
     return ['ok' => true, 'coins' => $redeemCoins, 'paisa' => $paisa, 'balance' => get_karma_balance($userId)];
 }
+
+function get_followers_override(int $userId): ?int {
+    global $pdo;
+    $st = $pdo->prepare('SELECT followers_override FROM users WHERE id = ?');
+    $st->execute([$userId]);
+    $v = $st->fetchColumn();
+    if ($v === false || $v === null) return null;
+    return (int)$v;
+}
+
+function get_followers_count(int $userId): int {
+    global $pdo;
+    $st = $pdo->prepare('SELECT COUNT(*) FROM follows WHERE target_user_id = ?');
+    $st->execute([$userId]);
+    return (int)($st->fetchColumn() ?: 0);
+}
+
+function get_effective_followers(int $userId): int {
+    $ov = get_followers_override($userId);
+    if ($ov !== null) return (int)$ov;
+    return get_followers_count($userId);
+}
+
+function is_user_verified_by_username(string $username): bool {
+    global $pdo;
+    $st = $pdo->prepare('SELECT verified FROM contributors WHERE name = ?');
+    $st->execute([trim($username)]);
+    return ((int)($st->fetchColumn() ?: 0)) === 1;
+}
+
+function has_wallet_access(int $userId): bool {
+    global $pdo;
+    $st = $pdo->prepare('SELECT username FROM users WHERE id = ?');
+    $st->execute([$userId]);
+    $username = (string)($st->fetchColumn() ?: '');
+    if ($username === '') return false;
+    $verified = is_user_verified_by_username($username);
+    $followers = get_effective_followers($userId);
+    $coins = get_karma_balance($userId);
+    return $verified && $followers >= 10000 && $coins >= 100000;
+}
+
+function require_wallet_access_or_redirect(): void {
+    if (!is_logged_in()) require_login();
+    $uid = (int)($_SESSION['user_id'] ?? 0);
+    if (!has_wallet_access($uid)) {
+        global $BASE_PATH;
+        header('Location: ' . $BASE_PATH . 'kyc.php');
+        exit;
+    }
+}
