@@ -616,3 +616,12 @@ function get_user_following(int $userId, int $limit = 15, int $offset = 0): arra
         return $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
     } catch (Throwable $e) { return []; }
 }
+
+function get_following_count(int $userId): int {
+    global $pdo;
+    try {
+        $st = $pdo->prepare('SELECT COUNT(*) FROM follows WHERE follower_user_id = ? AND target_user_id IS NOT NULL');
+        $st->execute([$userId]);
+        return (int)($st->fetchColumn() ?: 0);
+    } catch (Throwable $e) { return 0; }
+}
