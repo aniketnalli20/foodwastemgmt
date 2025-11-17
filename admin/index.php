@@ -426,32 +426,47 @@ try {
     </section>
     <section id="counters" class="card-plain card-horizontal card-fullbleed stack-card" aria-label="Counters">
       <h2 class="section-title">Control Counters</h2>
-      <div class="form-panel">
-        <div class="panel-title">Manual override</div>
-        <form method="post" class="form" style="display:grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap:12px;">
+      <div class="form-frame">
+        <div class="form-panel">
+          <div class="panel-title">Manual override</div>
+          <form method="post" class="form" style="display:grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap:12px;">
           <input type="hidden" name="action" value="update_counters">
           <div>
             <label>Meals Made</label>
-            <input name="mealsSaved" type="number" class="input" min="0" placeholder="e.g., 1200" value="<?= h((string)($countersOverride['mealsSaved'] ?? '')) ?>">
+            <input id="c_meals" name="mealsSaved" type="number" class="input" min="0" placeholder="e.g., 1200" value="<?= h((string)($countersOverride['mealsSaved'] ?? '')) ?>">
+            <small class="input-hint">e.g., 1200</small>
           </div>
           <div>
             <label>Contributors</label>
-            <input name="donorsCount" type="number" class="input" min="0" placeholder="e.g., 320" value="<?= h((string)($countersOverride['donorsCount'] ?? '')) ?>">
+            <input id="c_donors" name="donorsCount" type="number" class="input" min="0" placeholder="e.g., 320" value="<?= h((string)($countersOverride['donorsCount'] ?? '')) ?>">
+            <small class="input-hint">e.g., 320</small>
           </div>
           <div>
             <label>Partners</label>
-            <input name="partnersCount" type="number" class="input" min="0" placeholder="e.g., 42" value="<?= h((string)($countersOverride['partnersCount'] ?? '')) ?>">
+            <input id="c_partners" name="partnersCount" type="number" class="input" min="0" placeholder="e.g., 42" value="<?= h((string)($countersOverride['partnersCount'] ?? '')) ?>">
+            <small class="input-hint">e.g., 42</small>
           </div>
           <div>
             <label>Active Users</label>
-            <input name="activeUsersCount" type="number" class="input" min="0" placeholder="e.g., 18" value="<?= h((string)($countersOverride['activeUsersCount'] ?? '')) ?>">
+            <input id="c_active" name="activeUsersCount" type="number" class="input" min="0" placeholder="e.g., 18" value="<?= h((string)($countersOverride['activeUsersCount'] ?? '')) ?>">
+            <small class="input-hint">e.g., 18</small>
           </div>
           <label style="grid-column: 1 / -1; display:inline-flex; align-items:center; gap:6px; margin-top:6px;"><input type="checkbox" name="enabled" value="1"<?= !empty($countersOverride['enabled']) ? ' checked' : '' ?>> Enable manual override</label>
           <div class="actions" style="grid-column: 1 / -1; margin-top:8px;">
             <button type="submit" class="btn pill">Save Counters</button>
             <button type="submit" name="action" value="reset_counters" class="btn pill" style="margin-left:6px;">Reset to Live</button>
           </div>
-        </form>
+          </form>
+        </div>
+        <aside class="summary-card">
+          <div class="summary-title">Live Summary</div>
+          <ul class="summary-list">
+            <li><span>Meals Made</span><span id="live_meals">—</span></li>
+            <li><span>Contributors</span><span id="live_donors">—</span></li>
+            <li><span>Partners</span><span id="live_partners">—</span></li>
+            <li><span>Active Users</span><span id="live_active">—</span></li>
+          </ul>
+        </aside>
       </div>
     </section>
     <h2 class="section-title" id="dbtools">Database Tools</h2>
@@ -956,6 +971,19 @@ try {
           } catch(e) {}
         }
       });
+    })();
+  </script>
+  <script>
+    (function(){
+      // Populate live summary in Counters panel
+      var lm = document.getElementById('live_meals');
+      var ld = document.getElementById('live_donors');
+      var lp = document.getElementById('live_partners');
+      var la = document.getElementById('live_active');
+      function fmt(n){ return (typeof n==='number') ? '<?= h('') ?>'+n.toString() : '—'; }
+      fetch('<?= h($BASE_PATH) ?>stats.php?mode=summary&status=all').then(function(r){return r.json();}).then(function(j){
+        if (!j) return; if (lm) lm.textContent = j.mealsSaved.toString(); if (ld) ld.textContent = j.donorsCount.toString(); if (lp) lp.textContent = j.partnersCount.toString(); if (la) la.textContent = j.activeUsersCount.toString();
+      }).catch(function(){});
     })();
   </script>
   <script>

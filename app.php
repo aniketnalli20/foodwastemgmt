@@ -453,3 +453,48 @@ function auto_close_expired_campaigns(): void {
 
 // Invoke auto-close on every request to keep status fresh without manual admin action
 try { auto_close_expired_campaigns(); } catch (Throwable $e) {}
+// Password reset helpers using filesystem tokens (expires in 1 hour)
+function create_password_reset_token(int $userId, string $email): string {
+    $token = bin2hex(random_bytes(16));
+    $payload = [
+        'user_id' => $userId,
+        'email' => $email,
+        'expires_at' => gmdate('Y-m-d H:i:s', time() + 3600),
+        'created_at' => gmdate('Y-m-d H:i:s'),
+    ];
+    try {
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'password_resets';
+        if (!is_dir($dir)) { mkdir($dir, 0777, true); }
+        file_put_contents($dir . DIRECTORY_SEPARATOR . $token . '.json', json_encode($payload), LOCK_EX);
+    } catch (Throwable $e) {}
+    return $token;
+}
+
+function read_password_reset_token(string $token): ?array {
+    $path = __DIR__ . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'password_resets' . DIRECTORY_SEPARATOR . $token . '.json';
+    if (!is_file($path)) return null;
+    try {
+        $data = json_decode((string)file_get_contents($path), true);
+        if (!is_array($data)) return null;
+        $exp = strtotime((string)($data['expires_at'] ?? ''));
+        if ($exp !== false && time() > $exp) { @unlink($path); return null; }
+        return $data;
+    } catch (Throwable $e) { return null; }
+}
+
+function complete_password_reset(string $token, string $newPassword): bool {
+    global $pdo;
+    $rec = read_password_reset_token($token);
+    if (!$rec) return false;
+    $userId = (int)($rec['user_id'] ?? 0);
+    if ($userId <= 0) return false;
+    if (strlen($newPassword) < 6) return false;
+    $hash = password_hash($newPassword, PASSWORD_DEFAULT);
+    try {
+        $st = $pdo->prepare('UPDATE users SET password_hash = ? WHERE id = ?');
+        $st->execute([$hash, $userId]);
+        $path = __DIR__ . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'password_resets' . DIRECTORY_SEPARATOR . $token . '.json';
+        @unlink($path);
+        return true;
+    } catch (Throwable $e) { return false; }
+}
