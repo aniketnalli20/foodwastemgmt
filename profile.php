@@ -134,6 +134,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
                 <ul class="navbar-nav">
                   <li class="nav-item"><a class="nav-link<?= $currentPath === 'index.php' ? ' active' : '' ?>" href="<?= h($BASE_PATH) ?>index.php#hero">Home</a></li>
                   <li class="nav-item"><a class="nav-link<?= $currentPath === 'profile.php' ? ' active' : '' ?>" href="<?= h(is_logged_in() ? ($BASE_PATH . 'profile.php') : ($BASE_PATH . 'login.php?next=profile.php')) ?>">Profile</a></li>
+                  <li class="nav-item"><a class="nav-link<?= $currentPath === 'wallet.php' ? ' active' : '' ?>" href="<?= h(is_logged_in() ? ($BASE_PATH . 'wallet.php') : ($BASE_PATH . 'login.php?next=wallet.php')) ?>">Wallet</a></li>
+                  <li class="nav-item"><a class="nav-link<?= $currentPath === 'kyc.php' ? ' active' : '' ?>" href="<?= h(is_logged_in() ? ($BASE_PATH . 'kyc.php') : ($BASE_PATH . 'login.php?next=kyc.php')) ?>">KYC</a></li>
                   <li class="nav-item"><a class="nav-link<?= $currentPath === 'create_campaign.php' ? ' active' : '' ?>" href="<?= h(is_logged_in() ? ($BASE_PATH . 'create_campaign.php') : ($BASE_PATH . 'login.php?next=create_campaign.php')) ?>">Create Campaign</a></li>
                   <?php if (is_logged_in()): ?>
                     <li class="nav-item"><a class="nav-link" href="<?= h($BASE_PATH) ?>logout.php">Logout</a></li>
@@ -226,8 +228,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
         ?>
         <div id="tab-overview" class="tab-panel active">
         <div class="info-grid">
-          <div class="info-card" aria-label="Basic info">
-            <div class="item"><div class="left"><span class="material-symbols-outlined" aria-hidden="true">badge</span><span><?= h($user['username'] ?? '') ?></span></div><span class="material-symbols-outlined" aria-hidden="true">person</span></div>
+        <div class="info-card" aria-label="Basic info">
+            <div class="item"><div class="left"><span class="material-symbols-outlined" aria-hidden="true">badge</span><span><?= h($user['username'] ?? '') ?></span></div></div>
             <div class="item"><div class="left"><span class="material-symbols-outlined" aria-hidden="true">mail</span><span><?= h($user['email'] ?? '') ?></span></div><span class="material-symbols-outlined" aria-hidden="true">chevron_right</span></div>
             <div class="item"><div class="left"><span class="material-symbols-outlined" aria-hidden="true">call</span><span><?= h(($user['phone'] ?? '') !== '' ? $user['phone'] : 'Not provided') ?></span></div><span class="material-symbols-outlined" aria-hidden="true">chevron_right</span></div>
             <div class="item"><div class="left"><span class="material-symbols-outlined" aria-hidden="true">location_on</span><span><?= h(($user['address'] ?? '') !== '' ? $user['address'] : 'Not provided') ?></span></div><span class="material-symbols-outlined" aria-hidden="true">chevron_right</span></div>

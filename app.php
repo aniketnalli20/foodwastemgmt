@@ -546,3 +546,45 @@ function send_password_reset_email(string $to, string $link): bool {
           . '</div>';
     return send_mail($to, $subject, $html);
 }
+
+function classify_contributor_kind(string $name): string {
+    $n = strtolower(trim($name));
+    if ($n === '') return 'other';
+    $r = ['restaurant','hotel','cafe','eatery','food court','bakery'];
+    foreach ($r as $k) { if (strpos($n, $k) !== false) return 'restaurant_firm'; }
+    $m = ['mess','canteen','tiffin','dabbawala','hostel mess'];
+    foreach ($m as $k) { if (strpos($n, $k) !== false) return 'mess_firm'; }
+    $h = ['home','homemade','home cooked','free food','community kitchen','langar','prasad'];
+    foreach ($h as $k) { if (strpos($n, $k) !== false) return 'home_cooked_free_foods'; }
+    return 'other';
+}
+
+function classify_user_roles(int $userId): array {
+    global $pdo;
+    $user = null;
+    try { $st = $pdo->prepare('SELECT username, email, address FROM users WHERE id = ?'); $st->execute([$userId]); $user = $st->fetch(PDO::FETCH_ASSOC) ?: null; } catch (Throwable $e) {}
+    $email = strtolower((string)($user['email'] ?? ''));
+    $addr = strtolower((string)($user['address'] ?? ''));
+    $userType = 'general';
+    $campaignsCount = 0;
+    $endorseCount = 0;
+    try { $st = $pdo->prepare('SELECT COUNT(*) FROM campaigns WHERE user_id = ?'); $st->execute([$userId]); $campaignsCount = (int)($st->fetchColumn() ?: 0); } catch (Throwable $e) {}
+    try { $st = $pdo->prepare('SELECT COUNT(*) FROM endorsements WHERE user_id = ?'); $st->execute([$userId]); $endorseCount = (int)($st->fetchColumn() ?: 0); } catch (Throwable $e) {}
+    $studentKeys = ['college','university','student','campus','hostel'];
+    $bachelorKeys = ['pg','paying guest','hostel','co-living','coliving','flat','bachelor'];
+    foreach ($studentKeys as $k) { if ($addr && strpos($addr, $k) !== false) { $userType = 'student'; break; } }
+    if ($userType === 'general' && (strpos($email, '.edu') !== false)) $userType = 'student';
+    if ($userType === 'general') { foreach ($bachelorKeys as $k) { if ($addr && strpos($addr, $k) !== false) { $userType = 'bachelor'; break; } } }
+    if ($campaignsCount >= 3 || $endorseCount >= 10) $userType = 'social_activist';
+    $contribKinds = [];
+    try {
+        $st = $pdo->prepare('SELECT DISTINCT contributor_name FROM campaigns WHERE user_id = ? AND contributor_name IS NOT NULL AND contributor_name <> \'\'');
+        $st->execute([$userId]);
+        $rows = $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        foreach ($rows as $r) { $kind = classify_contributor_kind((string)($r['contributor_name'] ?? '')); if ($kind) $contribKinds[$kind] = true; }
+    } catch (Throwable $e) {}
+    return [
+        'user_type' => $userType,
+        'contributor_types' => array_keys($contribKinds),
+    ];
+}

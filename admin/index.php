@@ -282,9 +282,11 @@ try {
   $endorseableCampaigns = $pdo->query("SELECT id, title, area, endorse_campaign, contributor_name FROM campaigns\n    WHERE status = 'open'\n      AND ((location IS NOT NULL AND location <> '') OR (area IS NOT NULL AND area <> ''))\n    ORDER BY id DESC" . ($campaignsFull ? '' : ' LIMIT ' . (int)$limitRows))->fetchAll(PDO::FETCH_ASSOC) ?: [];
   $wallets = $pdo->query('SELECT w.user_id, u.username, w.balance, w.updated_at FROM karma_wallets w JOIN users u ON u.id = w.user_id ORDER BY w.updated_at DESC' . ($walletsFull ? '' : ' LIMIT ' . (int)$limitRows))->fetchAll(PDO::FETCH_ASSOC) ?: [];
   $contributorsList = [];
+  $contributorsFull = isset($_GET['contributors_full']);
   try {
     $sql = "SELECT c.name AS name, COALESCE(cc.verified, 0) AS verified\n            FROM (\n              SELECT DISTINCT contributor_name AS name FROM campaigns WHERE contributor_name IS NOT NULL AND contributor_name <> ''\n              UNION\n              SELECT DISTINCT username AS name FROM users WHERE username IS NOT NULL AND username <> ''\n            ) c\n            LEFT JOIN contributors cc ON cc.name = c.name\n            ORDER BY c.name ASC";
     $contributorsList = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    if (!$contributorsFull) { $contributorsList = array_slice($contributorsList, 0, 15); }
   } catch (Throwable $e) {}
 } catch (Throwable $e) {}
 ?>
@@ -309,6 +311,8 @@ try {
           <ul class="navbar-nav">
             <li class="nav-item"><a class="nav-link" href="<?= h($BASE_PATH) ?>index.php#hero">Home</a></li>
             <li class="nav-item"><a class="nav-link<?= $currentPath === 'profile.php' ? ' active' : '' ?>" href="<?= h($BASE_PATH) ?>profile.php">Profile</a></li>
+            <li class="nav-item"><a class="nav-link<?= $currentPath === 'wallet.php' ? ' active' : '' ?>" href="<?= h($BASE_PATH) ?>wallet.php">Wallet</a></li>
+            <li class="nav-item"><a class="nav-link<?= $currentPath === 'kyc.php' ? ' active' : '' ?>" href="<?= h($BASE_PATH) ?>kyc.php">KYC</a></li>
             <li class="nav-item"><a class="nav-link<?= $currentPath === 'create_campaign.php' ? ' active' : '' ?>" href="<?= h($BASE_PATH) ?>create_campaign.php">Create Campaign</a></li>
             <li class="nav-item"><a class="nav-link" href="<?= h($BASE_PATH) ?>logout.php">Logout</a></li>
           </ul>
@@ -810,7 +814,12 @@ try {
         </form>
       </div>
       <div class="card-plain">
-        <strong>Known Contributors</strong>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+          <strong>Known Contributors</strong>
+          <?php if (!$contributorsFull): ?>
+            <a class="btn pill" style="margin-left:auto;" href="<?= h($BASE_PATH) ?>admin/index.php?contributors_full=1#contributors">View More</a>
+          <?php endif; ?>
+        </div>
         <div class="table-wrap">
         <table class="table" aria-label="Contributors table">
           <thead>
