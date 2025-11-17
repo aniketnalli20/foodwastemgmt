@@ -98,7 +98,7 @@ if (is_admin() && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['a
           <div class="navbar-right">
             <ul class="navbar-nav">
               <li class="nav-item"><a class="nav-link" href="<?= h($BASE_PATH) ?>index.php#about">About</a></li>
-              <li class="nav-item"><a class="nav-link" href="<?= h($BASE_PATH) ?>faqs.php">Help</a></li>
+              
             </ul>
             <?php if (!is_logged_in()): ?>
               <a class="btn pill" href="<?= h($BASE_PATH) ?>login.php">Get started</a>

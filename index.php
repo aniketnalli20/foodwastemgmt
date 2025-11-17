@@ -194,44 +194,7 @@ try {
     <link rel="apple-touch-icon" href="<?= h($BASE_PATH) ?>uploads/favicon.png">
 </head>
 <body>
-    <header class="site-header header-area overlay" role="banner">
-        <div class="container header-inner">
-          <?php $currentPath = basename($_SERVER['SCRIPT_NAME'] ?? ''); ?>
-            <nav class="navbar navbar-expand-md navbar-dark" role="navigation" aria-label="Primary">
-              <button class="navbar-toggler collapsed" type="button" aria-controls="primary-navbar" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="menu-icon-bar" aria-hidden="true"></span>
-                <span class="menu-icon-bar" aria-hidden="true"></span>
-                <span class="menu-icon-bar" aria-hidden="true"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="primary-navbar">
-                <div class="navbar-left">
-                  <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link<?= $currentPath === 'index.php' ? ' active' : '' ?>" href="<?= h($BASE_PATH) ?>index.php#hero">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= h($BASE_PATH) ?>index.php#recent-campaigns">Campaigns</a></li>
-                    <li class="nav-item"><a class="nav-link<?= $currentPath === 'create_campaign.php' ? ' active' : '' ?>" href="<?= h(is_logged_in() ? ($BASE_PATH . 'create_campaign.php') : ($BASE_PATH . 'login.php?next=create_campaign.php')) ?>">Create</a></li>
-                  </ul>
-                </div>
-                <div class="navbar-center">
-                  <a class="navbar-brand" href="<?= h($BASE_PATH) ?>index.php#hero">No Starve</a>
-                </div>
-                <div class="navbar-right">
-                  <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" href="<?= h($BASE_PATH) ?>index.php#about">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= h($BASE_PATH) ?>faqs.php">Help</a></li>
-                    <?php if (is_admin()): ?>
-                      <li class="nav-item"><a class="nav-link" href="<?= h($BASE_PATH) ?>admin/index.php">Admin</a></li>
-                    <?php endif; ?>
-                  </ul>
-                  <?php if (!is_logged_in()): ?>
-                    <a class="btn pill" href="<?= h($BASE_PATH) ?>login.php">Get started</a>
-                  <?php else: ?>
-                    <a class="btn pill" href="<?= h($BASE_PATH) ?>profile.php">Profile</a>
-                  <?php endif; ?>
-                </div>
-              </div>
-            </nav>
-        </div>
-    </header>
+    
     <section id="hero" class="hero"<?= $heroUrl ? ' style="--hero-img: url(' . h($heroUrl) . ');"' : '' ?> >
         <div class="wrap">
             <h1 class="hero-title break-100">We strive to make a real difference by helping people find available meals nearby</h1>
@@ -268,7 +231,7 @@ try {
     <div class="card-plain" style="text-align:center;">
       <div class="section-title" style="border-bottom:none;">Questions? See FAQs</div>
       <p style="margin:6px 0 10px;">Learn about Karma Coins and how No Starve helps in one place.</p>
-      <a class="btn pill" href="<?= h($BASE_PATH) ?>faqs.php">Open FAQs</a>
+      
     </div>
   </section>
 
@@ -399,17 +362,7 @@ try {
                     <div class="footer-legal" style="text-align:center;">&copy; 2025 No Starve</div>
                 </div>
                 <div>
-                    <div class="cta-card" aria-label="Call to action">
-                        <h3>Make Access To Meals Easy</h3>
-                        <ul class="list-bullets checklist">
-                            <li>Discover nearby meal availability</li>
-                            <li>Save time coordinating campaigns</li>
-                        </ul>
-                        <div class="actions">
-                            <a class="btn dark pill" href="<?= h($BASE_PATH) ?>login.php">Get access</a>
-                            <a class="btn light pill" href="<?= h($BASE_PATH) ?>login.php?tab=register">Register</a>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -589,47 +542,6 @@ try {
       });
     })();
     </script>
-    <script>
-    (function(){
-      var header = document.querySelector('.site-header');
-      var lastY = window.scrollY || document.documentElement.scrollTop || 0;
-      function onScroll(){
-        if (!header) return;
-        var y = window.scrollY || document.documentElement.scrollTop || 0;
-        if (y > 10) header.classList.add('scrolled'); else header.classList.remove('scrolled');
-        if (y < lastY) {
-          header.classList.add('slim');
-          var coll = document.getElementById('primary-navbar');
-          if (coll) coll.classList.remove('show');
-          var btn = document.querySelector('.navbar-toggler');
-          if (btn) { btn.setAttribute('aria-expanded','false'); btn.classList.add('collapsed'); }
-        } else {
-          header.classList.remove('slim');
-        }
-        lastY = y;
-      }
-      onScroll();
-      window.addEventListener('scroll', onScroll, { passive: true });
-    })();
-    </script>
-    <script>
-    (function(){
-      var btn = document.querySelector('.navbar-toggler');
-      var coll = document.getElementById('primary-navbar');
-      if (btn && coll) {
-        btn.addEventListener('click', function(){
-          var wasExpanded = btn.getAttribute('aria-expanded') === 'true';
-          var nowExpanded = !wasExpanded;
-          btn.setAttribute('aria-expanded', nowExpanded.toString());
-          coll.classList.toggle('show');
-          if (nowExpanded) {
-            btn.classList.remove('collapsed');
-          } else {
-            btn.classList.add('collapsed');
-          }
-        });
-      }
-    })();
-    </script>
+    <!-- Navbar scripts removed -->
 </body>
 </html>
