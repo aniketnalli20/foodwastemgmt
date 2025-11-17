@@ -1196,19 +1196,19 @@ ul { list-style: none; padding-left: 0; }
 /* Readable cells: allow wrapping to avoid horizontal scroll */
 .table th, .table td { white-space: normal; overflow-wrap: anywhere; word-break: break-word; text-overflow: clip; }
 
-.admin-grid .card-plain { max-width: none; margin-left: 0; margin-right: 0; padding: 12px 14px; }
+.admin-grid .card-plain { max-width: none; margin-left: 0; margin-right: 0; padding: 20px 22px; }
 .admin-grid .card-horizontal { gap: 12px; }
 .admin-grid .card-horizontal .section-title { display: block; margin: 0 0 10px; }
 @media (min-width: 720px) { .admin-grid .card-horizontal .section-title { display: block; margin: 0 0 10px; } }
 .admin-grid .form .input { width: 100%; background: white; border: 1px solid var(--border); padding: 8px 10px; border-radius: 10px; margin-top: 8px; }
 .admin-grid .form .actions { margin-top: 8px; }
 
-.admin-grid .table { font-size: 0.85rem; }
-.admin-grid .table thead th { padding: 4px 6px; }
-.admin-grid .table tbody td { padding: 4px 6px; }
-.admin-grid .table td, .admin-grid .table th { line-height: 1.15; }
-.admin-grid .table .actions { gap: 4px; }
-.admin-grid .table .btn.btn-sm { padding: 4px 6px; font-size: 0.82rem; border-radius: 8px; }
+.admin-grid .table { font-size: 0.95rem; }
+.admin-grid .table thead th { padding: 6px 8px; }
+.admin-grid .table tbody td { padding: 6px 8px; }
+.admin-grid .table td, .admin-grid .table th { line-height: 1.25; }
+.admin-grid .table .actions { gap: 6px; }
+.admin-grid .table .btn.btn-sm { padding: 6px 10px; font-size: 0.95rem; border-radius: 10px; }
 
 .award-row td { background: #f7f7f7; }
 

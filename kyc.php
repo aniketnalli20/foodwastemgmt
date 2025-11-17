@@ -125,9 +125,60 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['action'] ?? '')
             <textarea name="notes" class="input" rows="2" placeholder="Any remarks"></textarea>
           </div>
         </div>
-        <div class="actions"><button type="submit" class="btn pill"><span class="material-symbols-outlined" aria-hidden="true">badge</span> Submit KYC</button></div>
+        <div class="actions" style="display:flex; gap:8px; align-items:center;">
+          <button type="button" class="btn pill" id="btn-autofill"><span class="material-symbols-outlined" aria-hidden="true">auto_awesome</span> Autofill</button>
+          <button type="submit" class="btn pill"><span class="material-symbols-outlined" aria-hidden="true">badge</span> Submit KYC</button>
+        </div>
       </form>
     </section>
   </main>
+  <script>
+  (function(){
+    var btn = document.getElementById('btn-autofill');
+    if (!btn) return;
+    function pick(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+    function randDigits(n){ var s=''; for(var i=0;i<n;i++){ s += String(Math.floor(Math.random()*10)); } return s; }
+    function genPAN(){
+      var letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      function randL(k){ var r=''; for(var i=0;i<k;i++){ r += letters[Math.floor(Math.random()*letters.length)]; } return r; }
+      return randL(5) + randDigits(4) + randL(1);
+    }
+    var banks = [
+      { name: 'State Bank of India', code: 'SBIN' },
+      { name: 'HDFC Bank', code: 'HDFC' },
+      { name: 'ICICI Bank', code: 'ICIC' },
+      { name: 'Axis Bank', code: 'UTIB' },
+      { name: 'Kotak Mahindra Bank', code: 'KKBK' },
+      { name: 'Punjab National Bank', code: 'PUNB' },
+      { name: 'Bank of Baroda', code: 'BARB' },
+      { name: 'Canara Bank', code: 'CNRB' }
+    ];
+    btn.addEventListener('click', function(){
+      try {
+        var bank = pick(banks);
+        var ifsc = bank.code + '0' + randDigits(6);
+        var accLen = 12 + Math.floor(Math.random()*5); // 12-16
+        var acc = randDigits(accLen);
+        var phoneEl = document.querySelector('input[name="phone"]');
+        var addrEl = document.querySelector('textarea[name="address"]');
+        var nameEl = document.querySelector('input[name="bank_account_name"]');
+        var accEl = document.querySelector('input[name="bank_account_number"]');
+        var ifscEl = document.querySelector('input[name="ifsc"]');
+        var bankEl = document.querySelector('input[name="bank_name"]');
+        var idEl = document.querySelector('input[name="id_number"]');
+        var notesEl = document.querySelector('textarea[name="notes"]');
+        var fullNameEl = document.querySelector('input[name="full_name"]');
+        if (nameEl && fullNameEl && (!nameEl.value || nameEl.value.trim() === '')) nameEl.value = fullNameEl.value || 'Account Holder';
+        if (accEl) accEl.value = acc;
+        if (ifscEl) ifscEl.value = ifsc;
+        if (bankEl) bankEl.value = bank.name;
+        if (idEl) idEl.value = genPAN();
+        if (notesEl && (!notesEl.value || notesEl.value.trim() === '')) notesEl.value = 'Autofilled for review';
+        if (phoneEl && (!phoneEl.value || phoneEl.value.trim() === '')) phoneEl.value = '+91 ' + randDigits(5) + ' ' + randDigits(5);
+        if (addrEl && (!addrEl.value || addrEl.value.trim() === '')) addrEl.value = 'Malpur Taluka, Aravalli, Gujarat, 383345, India';
+      } catch (e) {}
+    });
+  })();
+  </script>
 </body>
 </html>
