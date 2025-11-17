@@ -185,6 +185,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
     <main class="container" style="max-width: var(--content-max); padding: var(--content-pad);" aria-label="My Profile">
       <section class="card-plain card-fullbleed page-profile" aria-label="Profile">
         <h2 class="section-title">My Profile</h2>
+        <?php $avatarUrl = $BASE_PATH . 'uploads/avatar.png'; if (is_file(__DIR__ . '/uploads/avatars/' . (int)$user['id'] . '.png')) { $avatarUrl = $BASE_PATH . 'uploads/avatars/' . (int)$user['id'] . '.png'; } $coverUrl = is_file(__DIR__ . '/uploads/cover.jpg') ? ($BASE_PATH . 'uploads/cover.jpg') : ''; ?>
+        <section class="profile-header" aria-label="Profile Header">
+          <div class="profile-cover"<?= $coverUrl !== '' ? ' style="background-image:url(' . h($coverUrl) . ')"' : '' ?>></div>
+          <div class="profile-meta">
+            <div class="profile-ident">
+              <img src="<?= h($avatarUrl) ?>" alt="Avatar" class="profile-avatar">
+              <div>
+                <div class="profile-name"><?= h((string)($user['username'] ?? 'User')) ?></div>
+                <div class="profile-stats">
+                  <div class="stat"><span class="material-symbols-outlined" aria-hidden="true">workspace_premium</span><span><?= h(format_compact_number((int)$karmaBalance)) ?> coins</span></div>
+                  <div class="stat"><span class="material-symbols-outlined" aria-hidden="true">favorite</span><span><?= h(format_compact_number((int)$endorseTotal)) ?> endorsements</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="profile-actions">
+              <button class="btn icon pill"><span class="material-symbols-outlined" aria-hidden="true">person_add</span><span>Follow</span></button>
+              <button class="btn icon pill"><span class="material-symbols-outlined" aria-hidden="true">chat</span><span>Message</span></button>
+            </div>
+          </div>
+          <div class="profile-tabs">
+            <button class="tab active">Overview</button>
+            <button class="tab">About</button>
+            <button class="tab">Campaigns</button>
+            <button class="tab">Badges</button>
+          </div>
+        </section>
         <?php if (!empty($errors)): ?>
             <div class="alert error" role="alert">
                 <strong>Error:</strong>
