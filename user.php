@@ -78,37 +78,7 @@ if (is_admin() && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['a
 </head>
 <body class="page-profile">
   <header class="site-header" role="banner">
-    <div class="container header-inner">
-      <?php $currentPath = basename($_SERVER['SCRIPT_NAME'] ?? ''); ?>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light" role="navigation" aria-label="Primary">
-        <button class="navbar-toggler" type="button" aria-controls="primary-navbar" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon" aria-hidden="true"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="primary-navbar">
-          <div class="navbar-left">
-            <ul class="navbar-nav">
-              <li class="nav-item"><a class="nav-link" href="<?= h($BASE_PATH) ?>index.php#hero">Home</a></li>
-              <li class="nav-item"><a class="nav-link" href="<?= h($BASE_PATH) ?>index.php#recent-campaigns">Campaigns</a></li>
-              <li class="nav-item"><a class="nav-link<?= $currentPath === 'create_campaign.php' ? ' active' : '' ?>" href="<?= h(is_logged_in() ? ($BASE_PATH . 'create_campaign.php') : ($BASE_PATH . 'login.php?next=create_campaign.php')) ?>">Create</a></li>
-            </ul>
-          </div>
-          <div class="navbar-center">
-            <a class="navbar-brand" href="<?= h($BASE_PATH) ?>index.php#hero">No Starve</a>
-          </div>
-          <div class="navbar-right">
-            <ul class="navbar-nav">
-              <li class="nav-item"><a class="nav-link" href="<?= h($BASE_PATH) ?>index.php#about">About</a></li>
-              
-            </ul>
-            <?php if (!is_logged_in()): ?>
-              <a class="btn pill" href="<?= h($BASE_PATH) ?>login.php">Get started</a>
-            <?php else: ?>
-              <a class="btn pill" href="<?= h($BASE_PATH) ?>profile.php">Profile</a>
-            <?php endif; ?>
-          </div>
-        </div>
-      </nav>
-    </div>
+    <div class="container header-inner"></div>
   </header>
 
   <main class="container" style="max-width: var(--content-max); padding: var(--content-pad);">
