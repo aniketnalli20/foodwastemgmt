@@ -224,6 +224,13 @@ try {
                     <li class="nav-item"><a class="nav-link<?= $currentPath === 'login.php' ? ' active' : '' ?>" href="<?= h($BASE_PATH) ?>login.php">Login</a></li>
                   <?php endif; ?>
                 </ul>
+                <form class="search-bar nav-search" role="search" method="get" action="<?= h($BASE_PATH) ?>index.php">
+                  <div class="search-fields">
+                    <input type="text" name="city" placeholder="Search by city" value="<?= h($cityFilter) ?>" aria-label="City" />
+                    <input type="text" name="pincode" placeholder="Pincode" value="<?= h($pincodeFilter) ?>" aria-label="Pincode" />
+                    <button class="btn accent pill" type="submit">Search</button>
+                  </div>
+                </form>
               </div>
             </nav>
         </div>
@@ -240,20 +247,12 @@ try {
                 <a class="btn pill" href="<?= h($BASE_PATH) ?>login.php?next=profile.php">View Profile</a>
               <?php endif; ?>
             </div>
-            <form class="search-bar" role="search" method="get" action="<?= h($BASE_PATH) ?>index.php">
-              <div class="search-fields">
-                <input type="text" name="city" placeholder="Search by city" value="<?= h($cityFilter) ?>" aria-label="City" />
-                <input type="text" name="pincode" placeholder="Pincode" value="<?= h($pincodeFilter) ?>" aria-label="Pincode" />
-                <!-- Category filter removed -->
-                <button class="btn accent pill" type="submit">Search</button>
+            <?php if ($cityFilter !== '' || $pincodeFilter !== ''): ?>
+              <div class="search-meta" aria-live="polite">Showing <?= (int)count($campaigns) ?> result<?= count($campaigns) === 1 ? '' : 's' ?> for 
+                <?= $cityFilter !== '' ? '<span class="chip highlight">' . h($cityFilter) . '</span>' : '' ?>
+                <?= $pincodeFilter !== '' ? '<span class="chip highlight">' . h($pincodeFilter) . '</span>' : '' ?>
               </div>
-              <?php if ($cityFilter !== '' || $pincodeFilter !== ''): ?>
-                <div class="search-meta" aria-live="polite">Showing <?= (int)count($campaigns) ?> result<?= count($campaigns) === 1 ? '' : 's' ?> for 
-                  <?= $cityFilter !== '' ? '<span class="chip highlight">' . h($cityFilter) . '</span>' : '' ?>
-                  <?= $pincodeFilter !== '' ? '<span class="chip highlight">' . h($pincodeFilter) . '</span>' : '' ?>
-                </div>
-              <?php endif; ?>
-            </form>
+            <?php endif; ?>
             <div class="stats">
               <div class="stat"><span id="meals-count" class="stat-num">0</span><span class="stat-label">Meals Made</span></div>
               <div class="stat"><span id="donors-count" class="stat-num">0</span><span class="stat-label">Contributors</span></div>
