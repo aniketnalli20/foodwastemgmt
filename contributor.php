@@ -15,10 +15,16 @@ try {
 // Follower count for contributor_name
 $followers = 0;
 $isFollowing = false;
+$isVerified = false;
 try {
   $st2 = $pdo->prepare('SELECT COUNT(*) FROM follows WHERE contributor_name = ?');
   $st2->execute([$name]);
   $followers = (int)($st2->fetchColumn() ?: 0);
+} catch (Throwable $e) {}
+try {
+  $stV = $pdo->prepare('SELECT verified FROM contributors WHERE name = ?');
+  $stV->execute([$name]);
+  $isVerified = ((int)($stV->fetchColumn() ?: 0)) === 1;
 } catch (Throwable $e) {}
 try {
   $st3 = $pdo->prepare('SELECT COUNT(*) FROM follows WHERE follower_user_id = ? AND contributor_name = ?');
@@ -47,8 +53,9 @@ try {
   <main class="container" style="max-width: var(--content-max); padding: var(--content-pad);">
     <section class="card-plain" aria-label="Contributor Profile">
       <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-        <h2 class="section-title" style="margin:0;">
-          <?= h($name) ?>
+        <h2 class="section-title" style="margin:0; display:inline-flex; align-items:center; gap:6px;">
+          <span><?= h($name) ?></span>
+          <?php if ($isVerified): ?><span class="material-symbols-outlined verified-badge" title="Verified" aria-label="Verified">verified</span><?php endif; ?>
         </h2>
         <?php if (is_logged_in()): ?>
           <button type="button" class="btn pill follow-toggle" data-contributor-name="<?= h($name) ?>"><?= $isFollowing ? 'Following' : 'Follow' ?></button>

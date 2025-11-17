@@ -160,7 +160,7 @@ $listings = $listingsStmt->fetchAll();
 // Fetch recent campaigns
 $campaigns = [];
 try {
-    $campSql = "SELECT id, user_id, title, summary, area, target_meals, status, created_at, contributor_name, endorse_campaign, location, crowd_size, closing_time, latitude, longitude,\n  (SELECT COALESCE(SUM(amount), 0) FROM karma_events e WHERE e.ref_type = 'campaign' AND e.ref_id = campaigns.id) AS coins_received\n  FROM campaigns\n  WHERE status = 'open'\n    AND ((location IS NOT NULL AND location <> '') OR (area IS NOT NULL AND area <> ''))\n    AND crowd_size IS NOT NULL\n    AND closing_time IS NOT NULL AND closing_time <> ''";
+    $campSql = "SELECT id, user_id, title, summary, area, target_meals, status, created_at, contributor_name, endorse_campaign, location, crowd_size, closing_time, latitude, longitude,\n  (SELECT COALESCE(SUM(amount), 0) FROM karma_events e WHERE e.ref_type = 'campaign' AND e.ref_id = campaigns.id) AS coins_received,\n  (SELECT COALESCE(verified, 0) FROM contributors cc WHERE cc.name = campaigns.contributor_name LIMIT 1) AS contributor_verified\n  FROM campaigns\n  WHERE status = 'open'\n    AND ((location IS NOT NULL AND location <> '') OR (area IS NOT NULL AND area <> ''))\n    AND crowd_size IS NOT NULL\n    AND closing_time IS NOT NULL AND closing_time <> ''";
     $campParams = [];
     if ($cityFilter !== '') {
         $campSql .= " AND ((area LIKE ?) OR (location LIKE ?))";
@@ -273,6 +273,9 @@ try {
                         <div class="tweet-content">
                             <div class="tweet-header">
                                 <span class="tweet-name"><?= h($name) ?></span>
+                                <?php if (((int)($c['contributor_verified'] ?? 0)) === 1): ?>
+                                  <span class="material-symbols-outlined verified-badge" title="Verified" aria-label="Verified">verified</span>
+                                <?php endif; ?>
                             </div>
                             <?php
                               $csVal = isset($c['crowd_size']) && $c['crowd_size'] !== '' ? (int)$c['crowd_size'] : null;

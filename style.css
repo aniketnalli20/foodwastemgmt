@@ -1250,3 +1250,6 @@ ul { list-style: none; padding-left: 0; }
 .toast.success { background: #167a2a; }
 .toast.error { background: #8b0000; }
 .toast.show { opacity: 1; transform: translateY(0); }
+
+/* Verified badge (Material Symbols) */
+.verified-badge { font-variation-settings: 'OPSZ' 24; font-size: 20px; line-height: 1; vertical-align: middle; color: #1DA1F2; margin-left: 6px; }

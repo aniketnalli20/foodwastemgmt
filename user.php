@@ -23,10 +23,17 @@ try {
 // Follower count
 $followers = 0;
 $isFollowing = false;
+$isVerified = false;
 try {
   $stc = $pdo->prepare('SELECT COUNT(*) FROM follows WHERE target_user_id = ?');
   $stc->execute([$id]);
   $followers = (int)($stc->fetchColumn() ?: 0);
+} catch (Throwable $e) {}
+// Consider a creator verified if contributors table has their username marked verified
+try {
+  $stV = $pdo->prepare('SELECT verified FROM contributors WHERE name = ?');
+  $stV->execute([trim((string)($user['username'] ?? ''))]);
+  $isVerified = ((int)($stV->fetchColumn() ?: 0)) === 1;
 } catch (Throwable $e) {}
 try {
   $st3 = $pdo->prepare('SELECT COUNT(*) FROM follows WHERE follower_user_id = ? AND target_user_id = ?');
@@ -56,8 +63,9 @@ try {
   <main class="container" style="max-width: var(--content-max); padding: var(--content-pad);">
     <section class="card-plain" aria-label="User Profile">
       <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-        <h2 class="section-title" style="margin:0;">
-          <?= h($user['username']) ?>
+        <h2 class="section-title" style="margin:0; display:inline-flex; align-items:center; gap:6px;">
+          <span><?= h($user['username']) ?></span>
+          <?php if ($isVerified): ?><span class="material-symbols-outlined verified-badge" title="Verified" aria-label="Verified">verified</span><?php endif; ?>
         </h2>
         <?php if (is_logged_in() && (int)$_SESSION['user_id'] !== $id): ?>
           <button type="button" class="btn pill follow-toggle" data-target-user-id="<?= (int)$id ?>"><?= $isFollowing ? 'Following' : 'Follow' ?></button>
