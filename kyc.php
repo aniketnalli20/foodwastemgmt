@@ -79,7 +79,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['action'] ?? '')
       <?php if ($message): ?>
         <div class="alert success" role="status"><?= h($message) ?></div>
       <?php endif; ?>
-      <form method="post" class="form kyc-form" action="<?= h($BASE_PATH) ?>kyc.php">
+      <form method="post" class="form kyc-form form-card" action="<?= h($BASE_PATH) ?>kyc.php">
         <input type="hidden" name="action" value="submit_kyc">
         <div class="group-title">User Details</div>
         <div class="form-grid">

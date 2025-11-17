@@ -273,7 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
                   <?php endif; ?>
                 </div>
             </div>
-            <form method="post" action="<?= h($BASE_PATH) ?>profile.php" class="form" style="margin-top:16px;">
+            <form method="post" action="<?= h($BASE_PATH) ?>profile.php" class="form form-card" style="margin-top:16px;">
                 <input type="hidden" name="action" value="update_profile">
                 <label for="phone"><strong>Phone</strong></label>
                 <input id="phone" name="phone" type="text" class="input" placeholder="e.g., +91 98765 43210" value="<?= h($user['phone'] ?? '') ?>" pattern="[0-9+\-\s]{7,30}" autocomplete="tel" aria-describedby="phone-hint" list="phone-presets" />
