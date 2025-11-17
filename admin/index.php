@@ -256,7 +256,7 @@ try {
   $wallets = $pdo->query('SELECT w.user_id, u.username, w.balance, w.updated_at FROM karma_wallets w JOIN users u ON u.id = w.user_id ORDER BY w.updated_at DESC' . ($walletsFull ? '' : ' LIMIT ' . (int)$limitRows))->fetchAll(PDO::FETCH_ASSOC) ?: [];
   $contributorsList = [];
   try {
-    $sql = "SELECT c.contributor_name AS name, COALESCE(cc.verified, 0) AS verified\n            FROM (SELECT DISTINCT contributor_name FROM campaigns WHERE contributor_name IS NOT NULL AND contributor_name <> '') c\n            LEFT JOIN contributors cc ON cc.name = c.contributor_name\n            ORDER BY c.contributor_name ASC";
+    $sql = "SELECT c.name AS name, COALESCE(cc.verified, 0) AS verified\n            FROM (\n              SELECT DISTINCT contributor_name AS name FROM campaigns WHERE contributor_name IS NOT NULL AND contributor_name <> ''\n              UNION\n              SELECT DISTINCT username AS name FROM users WHERE username IS NOT NULL AND username <> ''\n            ) c\n            LEFT JOIN contributors cc ON cc.name = c.name\n            ORDER BY c.name ASC";
     $contributorsList = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC) ?: [];
   } catch (Throwable $e) {}
 } catch (Throwable $e) {}
