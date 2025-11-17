@@ -354,9 +354,43 @@ try {
       $lenRejected = arcLen($pRejected);
     ?>
     <section id="dashboard" class="card-plain card-horizontal card-fullbleed" aria-label="Dashboard">
-      <div class="empty-dashboard">
-        <strong class="section-title">Dashboard</strong>
-        <p class="muted" style="margin:6px 0 0;">Dashboard UI is being redesigned.</p>
+      <h2 class="section-title">Dashboard</h2>
+      <div class="dash-tabs" role="tablist">
+        <a href="#dashboard" class="tab-btn active" data-tab="overview">Overview</a>
+        <a href="#dashboard" class="tab-btn" data-tab="calendar">Calendar</a>
+        <a href="#dashboard" class="tab-btn" data-tab="tasks">Tasks</a>
+        <a href="#dashboard" class="tab-btn" data-tab="activity">Activity</a>
+      </div>
+      <div class="tab-pane active" id="tab-overview">
+        <div class="dash-cards">
+          <div class="metric-card"><div class="metric-value"><?= (int)$totalUsers ?></div><div class="metric-label">Total Users</div></div>
+          <div class="metric-card"><div class="metric-value"><?= (int)$totalCampaigns ?></div><div class="metric-label">Campaigns</div></div>
+          <div class="metric-card"><div class="metric-value"><?= (int)$openCampaigns ?></div><div class="metric-label">Open Campaigns</div></div>
+          <div class="metric-card"><div class="metric-value"><?= (int)$closedCampaigns ?></div><div class="metric-label">Closed Campaigns</div></div>
+          <div class="metric-card"><div class="metric-value"><?= (int)$kycApproved ?></div><div class="metric-label">KYC Approved</div></div>
+          <div class="metric-card"><div class="metric-value"><?= (int)$kycPending ?></div><div class="metric-label">KYC Pending</div></div>
+          <div class="metric-card"><div class="metric-value"><?= (int)$walletsTotal ?></div><div class="metric-label">Wallets</div></div>
+          <div class="metric-card"><div class="metric-value"><?= (int)$endorseTotal ?></div><div class="metric-label">Endorsements</div></div>
+        </div>
+        <div class="chart-card" style="margin-top:12px;">
+          <div class="section-title" style="margin:0 0 8px;">Engagement</div>
+          <div class="chart" style="height:160px; border:1px dashed var(--border); border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--muted);">Line chart coming soon</div>
+        </div>
+      </div>
+      <div class="tab-pane" id="tab-calendar">
+        <div class="card-plain" style="margin-top:6px;">
+          <div class="muted">Calendar view coming soon</div>
+        </div>
+      </div>
+      <div class="tab-pane" id="tab-tasks">
+        <div class="card-plain" style="margin-top:6px;">
+          <div class="muted">Tasks view coming soon</div>
+        </div>
+      </div>
+      <div class="tab-pane" id="tab-activity">
+        <div class="card-plain" style="margin-top:6px;">
+          <div class="muted">Activity view coming soon</div>
+        </div>
       </div>
     </section>
     <h2 class="section-title" id="dbtools" style="margin-left: var(--content-pad);">Database Tools</h2>
@@ -846,6 +880,29 @@ try {
           } catch(e) {}
         }
       });
+    })();
+  </script>
+  <script>
+    (function(){
+      try {
+        var wrap = document.querySelector('.dash-tabs');
+        if (!wrap) return;
+        var btns = wrap.querySelectorAll('.tab-btn');
+        function activate(tab){
+          btns.forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-tab') === tab); });
+          ['overview','calendar','tasks','activity'].forEach(function(t){
+            var pane = document.getElementById('tab-' + t);
+            if (pane) pane.classList.toggle('active', t === tab);
+          });
+        }
+        btns.forEach(function(b){
+          b.addEventListener('click', function(ev){
+            ev.preventDefault();
+            var tab = b.getAttribute('data-tab');
+            activate(tab);
+          });
+        });
+      } catch(e) {}
     })();
   </script>
   <script>

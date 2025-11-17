@@ -1305,6 +1305,18 @@ ul { list-style: none; padding-left: 0; }
 /* Dashboard placeholder during redesign */
 .empty-dashboard { border: 1px dashed var(--border); border-radius: 12px; padding: 12px; background: #fff; color: var(--muted); }
 
+/* Dashboard tabs and metrics */
+.dash-tabs { display: flex; gap: 6px; margin: 0 0 12px; }
+.dash-tabs .tab-btn { background: #f0f2f6; color: #111; border: 1px solid var(--border); padding: 6px 12px; border-radius: 999px; text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+.dash-tabs .tab-btn.active { background: #111; color: #fff; border-color: #111; }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+.dash-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.metric-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
+.metric-value { font-size: clamp(1.2rem, 1.6vw + 0.6rem, 1.8rem); font-weight: 800; line-height: 1; }
+.metric-label { margin-top: 6px; color: var(--muted); font-weight: 600; }
+.chart-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
+
 /* Compact card width for KYC section */
 .card-compact { max-width: 900px; margin-left: auto; margin-right: auto; }
 @media (max-width: 920px) { .card-compact { max-width: 720px; } }
