@@ -194,7 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
                 <div><?= h($user['created_at'] ?? '') ?></div>
             </div>
             <div class="profile-grid" style="margin-top:12px;">
-                <div class="label"><strong>Karma Coins</strong></div>
+                <div class="label"><em class="muted">Karma Coins earned since joined</em></div>
                 <div><?= h((string)$karmaBalance) ?></div>
                 <div class="label"><strong>Endorsements Received</strong></div>
                 <div><?= h((string)$endorseTotal) ?></div>
