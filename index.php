@@ -246,7 +246,7 @@ try {
             <div class="stats">
               <div class="stat"><span id="meals-count" class="stat-num">0</span><span class="stat-label">Meals Made</span></div>
               <div class="stat"><span id="donors-count" class="stat-num">0</span><span class="stat-label">Contributors</span></div>
-              <div class="stat"><span id="partners-count" class="stat-num">0</span><span class="stat-label">Partners</span></div>
+              <div class="stat"><span id="active-count" class="stat-num">0</span><span class="stat-label">Active Users</span></div>
             </div>
         </div>
         <div id="campaigns-refresh" class="card-plain" style="display:none; margin-top:12px; text-align:center;">
@@ -414,9 +414,25 @@ try {
             </div>
         </div>
     </footer>
+    <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true" style="display:none;"></div>
     <script>
     // Expose BASE_PATH to JS for building internal requests correctly under subfolder or vhost
     window.BASE_PATH = '<?= h($BASE_PATH) ?>';
+    </script>
+    <script>
+    // Toast helper
+    (function(){
+      function showToast(msg, type){
+        var el = document.getElementById('toast');
+        if (!el) return;
+        el.textContent = msg;
+        el.className = 'toast ' + (type || '');
+        el.style.display = 'block';
+        el.classList.add('show');
+        setTimeout(function(){ el.classList.remove('show'); el.style.display = 'none'; }, 2400);
+      }
+      window.showToast = showToast;
+    })();
     </script>
     <script>
     (function(){
@@ -478,10 +494,15 @@ try {
             if (!j) return;
             var mealsEl = document.getElementById('meals-count');
             var donorsEl = document.getElementById('donors-count');
-            var partnersEl = document.getElementById('partners-count');
+            var activeEl = document.getElementById('active-count');
             if (mealsEl && typeof j.mealsSaved === 'number') mealsEl.textContent = j.mealsSaved.toString();
             if (donorsEl && typeof j.donorsCount === 'number') donorsEl.textContent = j.donorsCount.toString();
-            if (partnersEl && typeof j.partnersCount === 'number') partnersEl.textContent = j.partnersCount.toString();
+            if (activeEl && typeof j.activeUsersCount === 'number') {
+              var val = j.activeUsersCount;
+              activeEl.textContent = val.toString();
+              activeEl.classList.remove('high','low');
+              activeEl.classList.add(val >= 7 ? 'high' : 'low');
+            }
           })
           .catch(function(){ /* silent */ });
       }
@@ -507,8 +528,9 @@ try {
             .then(function(j){
               var countEl = document.querySelector('.endorse-count[data-campaign-id="' + id + '"]');
               if (countEl && j && typeof j.count === 'number') { countEl.textContent = j.count.toString(); }
+              if (j && j.ok) { if (window.showToast) window.showToast('Endorsed successfully','success'); }
               btn.disabled = false;
-            }).catch(function(){ btn.disabled = false; });
+            }).catch(function(){ btn.disabled = false; if (window.showToast) window.showToast('Please log in to endorse','error'); });
         });
       });
 
@@ -517,11 +539,11 @@ try {
         var url = (window.location.origin || '') + (window.BASE_PATH || '<?= h($BASE_PATH) ?>') + 'index.php#campaign-' + id;
         var title = 'No Starve Campaign';
         if (navigator.share) {
-          navigator.share({ title: title, url: url }).catch(function(){});
+          navigator.share({ title: title, url: url }).then(function(){ if (window.showToast) window.showToast('Link shared','success'); }).catch(function(){});
         } else if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(url).then(function(){ alert('Link copied to clipboard'); }).catch(function(){ alert(url); });
+          navigator.clipboard.writeText(url).then(function(){ if (window.showToast) window.showToast('Link copied','success'); }).catch(function(){ if (window.showToast) window.showToast('Copy failed','error'); });
         } else {
-          alert(url);
+          if (window.showToast) window.showToast('Copy this link: ' + url,'');
         }
       }
       qsAll('.share-btn').forEach(function(btn){
