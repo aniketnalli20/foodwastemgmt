@@ -23,10 +23,20 @@ try {
         $partnersCount = (int)($pdo->query("SELECT COUNT(DISTINCT contributor_name) FROM campaigns WHERE contributor_name IS NOT NULL AND contributor_name <> ''")->fetchColumn() ?: 0);
     } catch (Throwable $e) {}
 
+    // Active Users: distinct users who endorsed in the last 30 days
+    $activeUsersCount = 0;
+    try {
+        $cutoff = gmdate('Y-m-d H:i:s', time() - (30 * 24 * 3600));
+        $st = $pdo->prepare('SELECT COUNT(DISTINCT user_id) FROM endorsements WHERE user_id IS NOT NULL AND created_at >= ?');
+        $st->execute([$cutoff]);
+        $activeUsersCount = (int)($st->fetchColumn() ?: 0);
+    } catch (Throwable $e) {}
+
     echo json_encode([
         'mealsSaved' => $mealsSaved,
         'donorsCount' => $donorsCount,
         'partnersCount' => $partnersCount,
+        'activeUsersCount' => $activeUsersCount,
     ]);
 } catch (Throwable $e) {
     http_response_code(500);

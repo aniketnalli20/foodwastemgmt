@@ -407,7 +407,7 @@ try {
                         </ul>
                         <div class="actions">
                             <a class="btn dark pill" href="<?= h($BASE_PATH) ?>login.php">Get access</a>
-                            <a class="btn light pill" href="<?= h($BASE_PATH) ?>register.php">Register</a>
+                            <a class="btn light pill" href="<?= h($BASE_PATH) ?>login.php?tab=register">Register</a>
                         </div>
                     </div>
                 </div>
