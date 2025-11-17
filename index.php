@@ -160,7 +160,7 @@ $listings = $listingsStmt->fetchAll();
 // Fetch recent campaigns
 $campaigns = [];
 try {
-    $campSql = "SELECT id, title, summary, area, target_meals, status, created_at, contributor_name, endorse_campaign, location, crowd_size, closing_time, latitude, longitude,\n  (SELECT COALESCE(SUM(amount), 0) FROM karma_events e WHERE e.ref_type = 'campaign' AND e.ref_id = campaigns.id) AS coins_received\n  FROM campaigns\n  WHERE status = 'open'\n    AND ((location IS NOT NULL AND location <> '') OR (area IS NOT NULL AND area <> ''))\n    AND crowd_size IS NOT NULL\n    AND closing_time IS NOT NULL AND closing_time <> ''";
+    $campSql = "SELECT id, user_id, title, summary, area, target_meals, status, created_at, contributor_name, endorse_campaign, location, crowd_size, closing_time, latitude, longitude,\n  (SELECT COALESCE(SUM(amount), 0) FROM karma_events e WHERE e.ref_type = 'campaign' AND e.ref_id = campaigns.id) AS coins_received\n  FROM campaigns\n  WHERE status = 'open'\n    AND ((location IS NOT NULL AND location <> '') OR (area IS NOT NULL AND area <> ''))\n    AND crowd_size IS NOT NULL\n    AND closing_time IS NOT NULL AND closing_time <> ''";
     $campParams = [];
     if ($cityFilter !== '') {
         $campSql .= " AND ((area LIKE ?) OR (location LIKE ?))";
@@ -303,6 +303,14 @@ try {
                             <div class="tweet-actions">
                                 <button class="tweet-btn endorse-btn" type="button" data-campaign-id="<?= (int)$c['id'] ?>">Endorse <span class="endorse-count" data-campaign-id="<?= (int)$c['id'] ?>"><?= h((string)($c['endorse_campaign'] ?? 0)) ?></span></button>
                                 <button class="tweet-btn share-btn" type="button" data-campaign-id="<?= (int)$c['id'] ?>">Share</button>
+                                <?php $tuid = isset($c['user_id']) ? (int)$c['user_id'] : 0; $cname = trim((string)($c['contributor_name'] ?? '')); ?>
+                                <?php if ($tuid > 0): ?>
+                                  <a class="tweet-btn" href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$tuid ?>">View Profile</a>
+                                  <button class="tweet-btn follow-btn" type="button" data-target-user-id="<?= (int)$tuid ?>">Follow</button>
+                                <?php elseif ($cname !== ''): ?>
+                                  <a class="tweet-btn" href="<?= h($BASE_PATH) ?>contributor.php?name=<?= rawurlencode($cname) ?>">View Profile</a>
+                                  <button class="tweet-btn follow-btn" type="button" data-contributor-name="<?= h($cname) ?>">Follow</button>
+                                <?php endif; ?>
                                 <?php
                                   $lat = isset($c['latitude']) && $c['latitude'] !== '' ? (float)$c['latitude'] : null;
                                   $lon = isset($c['longitude']) && $c['longitude'] !== '' ? (float)$c['longitude'] : null;
@@ -452,6 +460,16 @@ try {
     })();
     </script>
     <script>
+    // Show toast for registration success
+    (function(){
+      try {
+        var params = new URLSearchParams(window.location.search || '');
+        var reg = params.get('registered');
+        if (reg) { if (window.showToast) window.showToast('Registration successful','success'); }
+      } catch (e) {}
+    })();
+    </script>
+    <script>
     (function(){
       try {
         var params = new URLSearchParams(window.location.search || '');
@@ -551,6 +569,30 @@ try {
           var id = parseInt(btn.getAttribute('data-campaign-id'), 10);
           if (!id) return;
           shareCampaign(id);
+        });
+      });
+
+      // Follow
+      qsAll('.follow-btn').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var uid = parseInt(btn.getAttribute('data-target-user-id') || '0', 10);
+          var cname = btn.getAttribute('data-contributor-name') || '';
+          var body = 'mode=toggle';
+          if (uid > 0) body += '&target_user_id=' + encodeURIComponent(uid);
+          else if (cname) body += '&contributor_name=' + encodeURIComponent(cname);
+          fetch((window.BASE_PATH || '<?= h($BASE_PATH) ?>') + 'follow.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: body
+          }).then(function(r){ return r.json(); })
+            .then(function(j){
+              if (j && j.ok) {
+                btn.textContent = j.following ? 'Following' : 'Follow';
+                if (window.showToast) window.showToast(j.following ? 'Now following' : 'Unfollowed', 'success');
+              } else {
+                if (window.showToast) window.showToast('Please log in to follow','error');
+              }
+            }).catch(function(){ if (window.showToast) window.showToast('Please log in to follow','error'); });
         });
       });
     })();

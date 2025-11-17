@@ -290,3 +290,28 @@ if (($DRIVER ?? ($DB_DRIVER ?? 'mysql')) === 'pgsql') {
         CONSTRAINT fk_karma_events_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=' . $DB_CHARSET);
 }
+// Follows: users can follow creators (users) or named contributors (string)
+if (($DRIVER ?? ($DB_DRIVER ?? 'mysql')) === 'pgsql') {
+    $pdo->exec('CREATE TABLE IF NOT EXISTS follows (
+        id SERIAL PRIMARY KEY,
+        follower_user_id INT NOT NULL,
+        target_user_id INT,
+        contributor_name VARCHAR(255),
+        created_at TIMESTAMP NOT NULL,
+        CONSTRAINT fk_follows_follower FOREIGN KEY (follower_user_id) REFERENCES users(id) ON DELETE CASCADE,
+        CONSTRAINT fk_follows_target FOREIGN KEY (target_user_id) REFERENCES users(id) ON DELETE CASCADE
+    )');
+} else {
+    $pdo->exec('CREATE TABLE IF NOT EXISTS follows (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        follower_user_id INT NOT NULL,
+        target_user_id INT NULL,
+        contributor_name VARCHAR(255) NULL,
+        created_at DATETIME NOT NULL,
+        CONSTRAINT fk_follows_follower FOREIGN KEY (follower_user_id) REFERENCES users(id) ON DELETE CASCADE,
+        CONSTRAINT fk_follows_target FOREIGN KEY (target_user_id) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=' . $DB_CHARSET);
+}
+// Uniqueness to prevent duplicate follows
+try { $pdo->exec('CREATE UNIQUE INDEX idx_follows_user_target ON follows (follower_user_id, target_user_id)'); } catch (Throwable $e) {}
+try { $pdo->exec('CREATE UNIQUE INDEX idx_follows_user_contrib ON follows (follower_user_id, contributor_name)'); } catch (Throwable $e) {}

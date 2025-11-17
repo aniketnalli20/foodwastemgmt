@@ -27,6 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['login_role'] = 'user';
             $_SESSION['is_admin'] = 0;
             $dest = $next !== '' ? $next : 'index.php#hero';
+            // Append registered flag for toast on destination
+            if (strpos($dest, '?') === false) { $dest .= '?registered=1'; } else { $dest .= '&registered=1'; }
             header('Location: ' . $BASE_PATH . $dest);
             exit;
         } catch (Throwable $e) {
