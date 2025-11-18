@@ -54,6 +54,19 @@ $followersFull = isset($_GET['followers_full']);
 $followingFull = isset($_GET['following_full']);
 $followersList = get_user_followers($id, $followersFull ? 100 : 15, 0);
 $followingList = get_user_following($id, $followingFull ? 100 : 15, 0);
+// Counts
+$followersCount = get_followers_count($id);
+$followingCount = get_following_count($id);
+// Current user's following set to mark button states
+$followingSet = [];
+if (is_logged_in()) {
+  try {
+    $stF = $pdo->prepare('SELECT target_user_id FROM follows WHERE follower_user_id = ? AND target_user_id IS NOT NULL');
+    $stF->execute([(int)$_SESSION['user_id']]);
+    $rowsF = $stF->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    foreach ($rowsF as $rf) { $tid = (int)($rf['target_user_id'] ?? 0); if ($tid > 0) $followingSet[$tid] = true; }
+  } catch (Throwable $e) {}
+}
 
 // Admin profile preview controls
 if (is_admin() && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['action'] ?? '') === 'admin_profile_preview') {
@@ -139,7 +152,7 @@ if (is_admin() && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['a
     <section class="card-plain" aria-label="Connections" id="connections">
       <h2 class="section-title">Connections</h2>
       <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-        <strong>Followers</strong>
+        <strong>Followers (<?= (int)$followersCount ?>)</strong>
         <?php if (!$followersFull): ?>
           <a class="btn btn-sm secondary" href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$id ?>&followers_full=1#followers">View More</a>
         <?php endif; ?>
@@ -148,18 +161,27 @@ if (is_admin() && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['a
         <table class="table" aria-label="Followers list">
           <thead><tr><th>User</th><th>Since</th><th>Action</th></tr></thead>
           <tbody>
+            <?php if (empty($followersList)): ?>
+              <tr><td colspan="3" class="muted">No followers yet.</td></tr>
+            <?php endif; ?>
             <?php foreach ($followersList as $fu): ?>
               <tr>
                 <td><a href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$fu['id'] ?>" class="nav-link">@<?= h($fu['username']) ?></a></td>
                 <td><?= h(date('Y-m-d', strtotime((string)($fu['followed_at'] ?? gmdate('c'))))) ?></td>
-                <td><a class="chip" href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$fu['id'] ?>">View Profile</a></td>
+                <td>
+                  <a class="chip" href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$fu['id'] ?>">View Profile</a>
+                  <?php if (is_logged_in() && (int)$_SESSION['user_id'] !== (int)$fu['id']): ?>
+                    <?php $isF = !empty($followingSet[(int)$fu['id']]); ?>
+                    <button type="button" class="btn btn-sm pill follow-toggle" data-target-user-id="<?= (int)$fu['id'] ?>" style="margin-left:6px;"><?= $isF ? 'Following' : 'Follow back' ?></button>
+                  <?php endif; ?>
+                </td>
               </tr>
             <?php endforeach; ?>
           </tbody>
         </table>
       </div>
       <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:10px;">
-        <strong>Following</strong>
+        <strong>Following (<?= (int)$followingCount ?>)</strong>
         <?php if (!$followingFull): ?>
           <a class="btn btn-sm secondary" href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$id ?>&following_full=1#following">View More</a>
         <?php endif; ?>
@@ -168,11 +190,19 @@ if (is_admin() && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['a
         <table class="table" aria-label="Following list">
         <thead><tr><th>User</th><th>Since</th><th>Action</th></tr></thead>
         <tbody>
+          <?php if (empty($followingList)): ?>
+            <tr><td colspan="3" class="muted">Not following anyone yet.</td></tr>
+          <?php endif; ?>
           <?php foreach ($followingList as $fo): ?>
             <tr>
               <td><a href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$fo['id'] ?>" class="nav-link">@<?= h($fo['username']) ?></a></td>
               <td><?= h(date('Y-m-d', strtotime((string)($fo['followed_at'] ?? gmdate('c'))))) ?></td>
-              <td><a class="chip" href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$fo['id'] ?>">View Profile</a></td>
+              <td>
+                <a class="chip" href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$fo['id'] ?>">View Profile</a>
+                <?php if (is_logged_in()): ?>
+                  <button type="button" class="btn btn-sm pill follow-toggle" data-target-user-id="<?= (int)$fo['id'] ?>" style="margin-left:6px;">Unfollow</button>
+                <?php endif; ?>
+              </td>
             </tr>
           <?php endforeach; ?>
         </tbody>
@@ -269,16 +299,28 @@ if (is_admin() && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['a
 
   <script>
   (function(){
-    var btn = document.querySelector('.follow-toggle');
-    if (!btn) return;
-    btn.addEventListener('click', function(){
-      var uid = parseInt(btn.getAttribute('data-target-user-id') || '0', 10);
+    function handleClick(e){
+      var t = e.target;
+      if (!t.classList.contains('follow-toggle')) return;
+      var uid = parseInt(t.getAttribute('data-target-user-id') || '0', 10);
+      if (!uid) return;
       var body = 'mode=toggle&target_user_id=' + encodeURIComponent(uid);
       fetch('<?= h($BASE_PATH) ?>follow.php', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body })
         .then(function(r){ return r.json(); })
-        .then(function(j){ if (j && j.ok) { btn.textContent = j.following ? 'Following' : 'Follow'; } })
+        .then(function(j){ if (j && j.ok) {
+            t.textContent = j.following ? 'Following' : 'Follow';
+            // update counts displayed
+            var fHdr = document.querySelector('#connections strong');
+            var fHdrs = document.querySelectorAll('#connections strong');
+            if (fHdrs && fHdrs.length >= 2) {
+              var fCountEl = fHdrs[0]; var foCountEl = fHdrs[1];
+              var followerInc = (t.closest('#followers') ? (j.following ? 0 : 0) : 0);
+              // Note: counts will refresh on next page load; keeping simple live UI
+            }
+          } })
         .catch(function(){});
-    });
+    }
+    document.addEventListener('click', handleClick);
   })();
   </script>
 </body>

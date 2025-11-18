@@ -39,6 +39,16 @@ $followersFull = isset($_GET['followers_full']);
 $followingFull = isset($_GET['following_full']);
 $followersList = get_user_followers((int)$user['id'], $followersFull ? 100 : 15, 0);
 $followingList = get_user_following((int)$user['id'], $followingFull ? 100 : 15, 0);
+// Counts and following set (for button state)
+$followersCount = get_followers_count((int)$user['id']);
+$followingCount = get_following_count((int)$user['id']);
+$followingSet = [];
+try {
+  $stF = $pdo->prepare('SELECT target_user_id FROM follows WHERE follower_user_id = ? AND target_user_id IS NOT NULL');
+  $stF->execute([(int)$user['id']]);
+  $rowsF = $stF->fetchAll(PDO::FETCH_ASSOC) ?: [];
+  foreach ($rowsF as $rf) { $tid = (int)($rf['target_user_id'] ?? 0); if ($tid > 0) $followingSet[$tid] = true; }
+} catch (Throwable $e) {}
 
 // Handle profile updates (phone, address)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'update_profile') {
@@ -178,7 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
       onScroll();
       window.addEventListener('scroll', onScroll, { passive: true });
     })();
-    </script>
+  </script>
     <script>
     (function(){
       var btn = document.querySelector('.navbar-toggler');
@@ -309,7 +319,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
           <div class="card-plain" aria-label="Connections" id="connections" style="margin-top:12px;">
             <div class="panel-title">Connections</div>
             <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-              <strong>Followers</strong>
+              <strong>Followers (<?= (int)$followersCount ?>)</strong>
               <?php if (!$followersFull): ?>
                 <a class="btn btn-sm secondary" href="<?= h($BASE_PATH) ?>profile.php?followers_full=1#followers">View More</a>
               <?php endif; ?>
@@ -318,18 +328,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
               <table class="table" aria-label="Followers list">
                 <thead><tr><th>User</th><th>Since</th><th>Action</th></tr></thead>
                 <tbody>
+                  <?php if (empty($followersList)): ?>
+                    <tr><td colspan="3" class="muted">No followers yet.</td></tr>
+                  <?php endif; ?>
                   <?php foreach ($followersList as $fu): ?>
                     <tr>
                       <td><a href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$fu['id'] ?>" class="nav-link">@<?= h($fu['username']) ?></a></td>
                       <td><?= h(date('Y-m-d', strtotime((string)($fu['followed_at'] ?? gmdate('c'))))) ?></td>
-                      <td><a class="chip" href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$fu['id'] ?>">View Profile</a></td>
+                      <td>
+                        <a class="chip" href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$fu['id'] ?>">View Profile</a>
+                        <?php if ((int)$user['id'] !== (int)$fu['id']): ?>
+                          <?php $isF = !empty($followingSet[(int)$fu['id']]); ?>
+                          <button type="button" class="btn btn-sm pill follow-toggle" data-target-user-id="<?= (int)$fu['id'] ?>" style="margin-left:6px;"><?= $isF ? 'Following' : 'Follow back' ?></button>
+                        <?php endif; ?>
+                      </td>
                     </tr>
                   <?php endforeach; ?>
                 </tbody>
               </table>
             </div>
             <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:10px;">
-              <strong>Following</strong>
+              <strong>Following (<?= (int)$followingCount ?>)</strong>
               <?php if (!$followingFull): ?>
                 <a class="btn btn-sm secondary" href="<?= h($BASE_PATH) ?>profile.php?following_full=1#following">View More</a>
               <?php endif; ?>
@@ -338,11 +357,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
               <table class="table" aria-label="Following list">
                 <thead><tr><th>User</th><th>Since</th><th>Action</th></tr></thead>
                 <tbody>
+                  <?php if (empty($followingList)): ?>
+                    <tr><td colspan="3" class="muted">Not following anyone yet.</td></tr>
+                  <?php endif; ?>
                   <?php foreach ($followingList as $fo): ?>
                     <tr>
                       <td><a href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$fo['id'] ?>" class="nav-link">@<?= h($fo['username']) ?></a></td>
                       <td><?= h(date('Y-m-d', strtotime((string)($fo['followed_at'] ?? gmdate('c'))))) ?></td>
-                      <td><a class="chip" href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$fo['id'] ?>">View Profile</a></td>
+                      <td>
+                        <a class="chip" href="<?= h($BASE_PATH) ?>user.php?id=<?= (int)$fo['id'] ?>">View Profile</a>
+                        <button type="button" class="btn btn-sm pill follow-toggle" data-target-user-id="<?= (int)$fo['id'] ?>" style="margin-left:6px;">Unfollow</button>
+                      </td>
                     </tr>
                   <?php endforeach; ?>
                 </tbody>
@@ -507,3 +532,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'send_
     </footer>
 </body>
 </html>
+    <script>
+    (function(){
+      document.addEventListener('click', function(e){
+        var t = e.target;
+        if (!t.classList.contains('follow-toggle')) return;
+        var uid = parseInt(t.getAttribute('data-target-user-id') || '0', 10);
+        if (!uid) return;
+        var body = 'mode=toggle&target_user_id=' + encodeURIComponent(uid);
+        fetch('<?= h($BASE_PATH) ?>follow.php', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body })
+          .then(function(r){ return r.json(); })
+          .then(function(j){ if (j && j.ok) { t.textContent = j.following ? 'Following' : 'Follow'; } })
+          .catch(function(){});
+      });
+    })();
+    </script>
