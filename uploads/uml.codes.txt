@@ -1,0 +1,111 @@
+@startuml
+skinparam usecaseBorderColor #2D3748
+skinparam usecaseBackgroundColor #EDF2F7
+skinparam packageBorderColor #CBD5E0
+left to right direction
+
+actor "User" as User
+actor "Meal Provider" as Provider
+actor "Administrator" as Admin
+actor "Map/Location Service" as Map <<external>>
+actor "Payment Gateway" as Payment <<external>>
+
+rectangle "NO STARVE PLATFORM" as NSP {
+  (Authenticate) as UC_Auth
+  (Manage Profile Data) as UC_Profile
+  (Browse Nearby Meals) as UC_Browse
+  (Search/Filter Meals) as UC_Search
+  (View Meal Details) as UC_View
+  (Reserve/Claim Meal) as UC_Reserve
+  (Connect with Provider) as UC_Contact
+  (Check Availability) as UC_Avail
+  (Submit Meal Listing) as UC_Submit
+  (Update Listing/Inventory) as UC_Update
+  (Moderate Listings) as UC_Moderate
+  (Generate Activity/Impact Reports) as UC_Reports
+  (Notifications) as UC_Notify
+  (Map Integration) as UC_Map
+}
+
+User -- UC_Auth
+User -- UC_Profile
+User -- UC_Browse
+User -- UC_Search
+User -- UC_View
+User -- UC_Reserve
+User -- UC_Contact
+
+Provider -- UC_Auth
+Provider -- UC_Submit
+Provider -- UC_Update
+Provider -- UC_Avail
+Provider -- UC_Contact
+
+Admin -- UC_Moderate
+Admin -- UC_Reports
+
+Map -- UC_Map
+Payment -- UC_Reserve
+
+UC_Browse ..> UC_Map : <<include>>
+UC_Search ..> UC_Map : <<include>>
+UC_Reserve ..> UC_Auth : <<include>>
+UC_Reserve ..> UC_Avail : <<include>>
+UC_Submit ..> UC_Auth : <<include>>
+UC_Update ..> UC_Auth : <<include>>
+UC_Submit ..> UC_Notify : <<extend>>
+UC_Reserve ..> UC_Notify : <<extend>>
+
+legend left
+Components:
+- Actors: User, Meal Provider, Administrator, external Map and Payment systems.
+- System Boundary: "NO STARVE PLATFORM" contains all use cases.
+- Associations: lines show who can access which use case.
+- Relationships: include = mandatory subflow; extend = optional follow-up.
+endlegend
+
+@enduml
+@startuml
+title Reserve/Claim Meal Sequence
+left to right direction
+
+actor User
+participant "Browser\nhttp://127.0.0.1:8080/" as Web
+participant "index.php" as Index
+participant "app.php (helpers)" as App
+database "Database (PDO)" as DB
+actor "Meal Provider" as Provider
+participant "Map Service" as Map
+
+User -> Web: Open Home
+Web -> Index: GET /index.php
+activate Index
+Index -> DB: SELECT open listings
+DB --> Index: listings
+Index --> Web: Render listings
+deactivate Index
+
+User -> Web: Submit claim form
+Web -> Index: POST /index.php?action=claim_listing
+activate Index
+Index -> DB: BEGIN
+Index -> DB: INSERT INTO claims
+Index -> DB: UPDATE listings SET status='claimed'
+DB --> Index: COMMIT
+Index --> Web: 200 OK + "Listing claimed successfully"
+deactivate Index
+Web --> User: Show success
+
+opt View map
+User -> Web: Click Map link
+Web -> Map: GET (search or lat/lon)
+Map --> Web: Map page
+end
+
+alt Invalid input
+Index --> Web: 400 + validation error
+else Database failure
+Index --> Web: 500 + failure note
+end
+
+@enduml

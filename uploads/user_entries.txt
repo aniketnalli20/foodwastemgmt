@@ -3,3 +3,4 @@
 2025-11-17T15:19:35+00:00 | register | username=patrica | email=patricia.williams101@company.com | phone= | address=
 2025-11-17T15:54:34+00:00 | register | username=Google User | email=google@nostrv.com | phone= | address=
 2025-11-22T12:29:20+00:00 | register | username=Google User | email=google@nostrv.com | phone= | address=
+2025-11-22T12:54:17+00:00 | register | username=Aniket | email=aniketnalli@gmail.com | phone=9004887740 | address=Pleasant Park
