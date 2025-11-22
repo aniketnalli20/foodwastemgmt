@@ -595,3 +595,40 @@ end note
 
 ' End: Component Diagram
 @enduml
+@startuml
+' --- Next Diagram: Deployment (Runtime) ---
+' Deployment Diagram: No Starve Runtime
+title Deployment Diagram
+
+node "Client Device" as Client <<device>> {
+  artifact "Web Browser\nhttp://127.0.0.1:8080" as Browser
+}
+
+cloud "Internet" as Internet
+
+node "No Starve Host\nc:\xampp\htdocs\No-starve" as Host <<server>> {
+  node "Web Server (Apache/PHP)" as WebServer <<server>> {
+    artifact "index.php" as Index
+    artifact "app.php" as App
+    artifact "admin/index.php" as AdminApp
+    artifact "uploads/" as Uploads
+  }
+}
+
+database "MySQL (PDO)" as DB
+cloud "External Map (Google/Nominatim)" as MapAPI
+cloud "Email SMTP" as SMTP
+
+Client -[#blue]-> WebServer : HTTP GET/POST\nport 8080
+AdminApp -[#blue]-> WebServer : internal routing
+WebServer -[#green]-> DB : TCP 3306\nSQL queries
+WebServer -[#purple]-> MapAPI : HTTPS geocode/search
+WebServer -[#orange]-> SMTP : SMTP 587\npassword reset
+
+note right of WebServer
+Homepage runs on port 8080
+UML codes stored at uploads/uml.codes.txt
+end note
+
+' End: Deployment Diagram
+@enduml
