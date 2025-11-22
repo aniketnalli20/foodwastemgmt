@@ -1,4 +1,5 @@
 @startuml
+' Use Case Diagram: No Starve
 skinparam usecaseBorderColor #2D3748
 skinparam usecaseBackgroundColor #EDF2F7
 skinparam packageBorderColor #CBD5E0
@@ -57,20 +58,24 @@ UC_Submit ..> UC_Notify : <<extend>>
 UC_Reserve ..> UC_Notify : <<extend>>
 
 legend left
+' Diagram Notes
 Components:
 - Actors: User, Meal Provider, Administrator, external Map and Payment systems.
 - System Boundary: "NO STARVE PLATFORM" contains all use cases.
 - Associations: lines show who can access which use case.
 - Relationships: include = mandatory subflow; extend = optional follow-up.
 endlegend
+'
+' End: Use Case Diagram
 
 @enduml
+' --- Next Diagram: Sequence (Reserve/Claim Meal) ---
 @startuml
+' Sequence Diagram: Reserve/Claim Meal
 title Reserve/Claim Meal Sequence
-left to right direction
 
 actor User
-participant "Browser\nhttp://127.0.0.1:8080/" as Web
+participant "Browser (http://127.0.0.1:8080)" as Web
 participant "index.php" as Index
 participant "app.php (helpers)" as App
 database "Database (PDO)" as DB
@@ -108,4 +113,224 @@ else Database failure
 Index --> Web: 500 + failure note
 end
 
+' End: Reserve/Claim Meal Sequence
+@enduml
+@startuml
+' --- Next Diagram: Activity (Meal Discovery and Claim) ---
+' Activity Diagram: Meal Discovery and Claim
+title Meal Discovery and Claim Activity
+
+start
+
+partition User {
+  :Open Home Page (#hero);
+  :Optionally set filters: city, pincode;
+}
+
+partition "Server (index.php)" {
+  :Build WHERE (city LIKE, pincode LIKE, status='open');
+  :SELECT open listings\nORDER BY COALESCE(expires_at, far-future), id DESC LIMIT 20;
+  :Render campaign list and stats;
+}
+
+partition Map {
+  :External map link (Google Maps search or lat/lon);
+}
+
+if (User clicks Map?) then (yes)
+  :Open Map;
+else (no)
+endif
+
+if (User chooses a listing?) then (yes)
+  partition "Server (index.php)" {
+    if (Listing status == 'open'?) then (yes)
+      :Show claim form (name, contact, NGO, notes);
+    else (no)
+      :Show message: already claimed;
+      :Return to listings;
+    endif
+  }
+
+  partition User {
+    :Submit claim;
+  }
+
+  partition "Server (index.php)" {
+    :Validate listing_id > 0;
+    :Validate claimer_name not empty;
+    if (Valid?) then (yes)
+      partition DB {
+        :BEGIN;
+        :INSERT INTO claims;
+        :UPDATE listings SET status='claimed',\nclaimed_at=now WHERE id = ? AND status='open';
+        :COMMIT;
+      }
+      :Set success message;
+    else (no)
+      :Set error message;
+    endif
+  }
+else (no)
+  :Continue browsing campaigns;
+endif
+
+stop
+
+' End: Activity Diagram
+@enduml
+@startuml
+' --- Next Diagram: Class (Core Entities) ---
+' Class Diagram: No Starve Core
+skinparam classAttributeIconSize 0
+hide methods
+
+class User {
+  +id: int
+  +username: string
+  +email: string
+  +password_hash: string
+  +phone: string?
+  +address: text?
+  +created_at: datetime
+  +is_admin: bool
+  +followers_override: int?
+}
+
+class Campaign {
+  +id: int
+  +user_id: int?
+  +title: string
+  +summary: text?
+  +area: string?
+  +status: CampaignStatus
+  +created_at: datetime
+  +contributor_name: string
+  +location: string?
+  +crowd_size: int?
+  +image_url: string?
+  +closing_time: datetime?
+  +latitude: float?
+  +longitude: float?
+  +endorse_campaign: int?
+  +endorse_contributor: int?
+}
+
+class Listing {
+  +id: int
+  +donor_type: string
+  +donor_name: string
+  +contact: string?
+  +item: string
+  +quantity: string
+  +address: text
+  +city: string
+  +pincode: string
+  +expires_at: datetime?
+  +image_url: string?
+  +status: ListingStatus
+  +created_at: datetime
+  +claimed_at: datetime?
+}
+
+class Claim {
+  +id: int
+  +listing_id: int
+  +ngo_name: string?
+  +claimer_name: string
+  +contact: string?
+  +notes: text?
+  +created_at: datetime
+}
+
+class KarmaWallet {
+  +user_id: int
+  +balance: int
+  +updated_at: datetime
+}
+
+class KarmaEvent {
+  +id: int
+  +user_id: int
+  +amount: int
+  +reason: string?
+  +ref_type: string?
+  +ref_id: int?
+  +created_at: datetime
+}
+
+class KycRequest {
+  +id: int
+  +user_id: int
+  +full_name: string
+  +phone: string
+  +address: text
+  +bank_account_name: string
+  +bank_account_number: string
+  +ifsc: string
+  +bank_name: string
+  +id_number: string
+  +status: KycStatus
+  +notes: text?
+  +created_at: datetime
+  +updated_at: datetime
+}
+
+class Contributor {
+  +name: string
+  +verified: bool
+  +created_at: datetime
+  +updated_at: datetime
+}
+
+class Follow {
+  +id: int
+  +follower_user_id: int
+  +target_user_id: int?
+  +contributor_name: string?
+  +created_at: datetime
+}
+
+class Endorsement {
+  +id: int
+  +user_id: int
+  +campaign_id: int
+  +created_at: datetime
+}
+
+interface MapService <<external>> {
+  +reverse(lat, lon)
+  +search(q)
+}
+
+enum CampaignStatus { open, closed }
+enum ListingStatus { open, claimed }
+enum KycStatus { pending, approved, rejected }
+
+User "1" -- "0..*" Campaign : creates
+User "1" o-- "1" KarmaWallet : owns
+User "1" -- "0..*" KarmaEvent : has
+User "1" -- "0..*" KycRequest : submits
+
+Campaign "1" -- "0..*" Endorsement : endorsed-by
+Endorsement "0..*" --> User : by
+
+Listing "1" -- "0..*" Claim : has
+Claim --> Listing : listing_id
+
+Follow --> User : follower
+Follow --> User : target
+Follow --> Contributor : alt-target
+
+Contributor "1" <-- "0..*" Campaign : by-name
+
+Campaign ..> MapService : map link
+KarmaEvent ..> Campaign : ref_type='campaign'
+
+note right of Campaign
+coins_received via KarmaEvent sum
+contributor_verified via Contributors
+end note
+
+' End: Class Diagram
 @enduml
