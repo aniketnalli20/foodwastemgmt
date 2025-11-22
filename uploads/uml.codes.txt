@@ -344,3 +344,49 @@ end note
 
 ' End: Class Diagram
 @enduml
+@startuml
+' --- Next Diagram: Flowchart (User Journey) ---
+' Flowchart: No Starve User Journey
+title User Journey Flowchart
+
+start
+:Open Home (index.php);
+if (Logged in?) then (yes)
+  :Show nav: Profile, Wallet, KYC, Create Campaign;
+  if (Submit Meal Listing?) then (yes)
+    :Fill listing form (donor_type, donor_name, item, quantity, address, city, pincode, expires_at, image);
+    :Validate required fields;
+    if (Valid?) then (yes)
+      :INSERT INTO listings (status='open');
+      :Success toast;
+    else (no)
+      :Show validation errors;
+    endif
+  else (no)
+    :Browse campaigns and open listings;
+    :Optionally filter by city/pincode;
+    if (Select listing?) then (yes)
+      if (Listing is 'open'?) then (yes)
+        :Fill claim form (name, contact, NGO, notes);
+        :BEGIN; INSERT claim; UPDATE listing status='claimed'; COMMIT;
+        :Success toast;
+      else (no)
+        :Show "already claimed";
+      endif
+    else (no)
+      :Continue browsing;
+    endif
+  endif
+else (no)
+  :Public browse (campaigns); Optional Map link;
+  :Login/Register (login.php / register.php);
+  if (Auth success?) then (yes)
+    :Redirect to requested page (next) or #hero;
+  else (no)
+    :Show error message;
+  endif
+endif
+stop
+
+' End: Flowchart Diagram
+@enduml
