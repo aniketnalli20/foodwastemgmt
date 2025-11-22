@@ -219,11 +219,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
                     <span>Continue with Google</span>
                   </a>
-                  <div class="input-with-icon">
-                    <span class="material-symbols-outlined" aria-hidden="true">mail</span>
-                    <input placeholder="Email" id="google_email" type="email" class="input" aria-label="Email" />
-                  </div>
-                  <div class="muted" id="google_email_hint"></div>
                   <a class="btn-social github" href="<?= h($BASE_PATH) ?>github_login.php<?= $next ? ('?next=' . urlencode($next)) : '' ?>" aria-label="Log in with GitHub">
                     <span class="material-symbols-outlined" aria-hidden="true">terminal</span>
                     <span>Log in with GitHub</span>
@@ -356,39 +351,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     })();
     </script>
     <script>
-    // Google email live check and redirect
+    // Google redirect
     (function(){
-      var input = document.getElementById('google_email');
-      var hint = document.getElementById('google_email_hint');
       var btn = document.getElementById('btn-google');
       var nextQS = <?= json_encode($next) ?>;
-      var tid = null;
-      function setHint(text){ if (hint) { hint.textContent = text || ''; } }
-      function check(){
-        var val = (input && input.value || '').trim();
-        if (val === '') { setHint(''); return; }
-        var body = 'action=' + encodeURIComponent('check_email') + '&email=' + encodeURIComponent(val);
-        fetch('<?= h($BASE_PATH) ?>login.php', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body })
-          .then(function(r){ return r.json(); })
-          .then(function(j){
-            if (!j || !j.ok) { setHint('Unable to verify email'); return; }
-            var txt = '';
-            if (!j.valid && j.suggestion) { txt = 'Did you mean ' + j.suggestion + '?'; }
-            else if (j.valid && j.mx) { txt = (j.exists ? 'Account found. You can continue.' : 'No account found. We will create one.'); }
-            else if (j.valid && !j.mx) { txt = 'Email looks valid, but domain has no MX record.'; }
-            setHint(txt);
-          })
-          .catch(function(){ setHint('Network error while checking email'); });
-      }
-      if (input) {
-        input.addEventListener('input', function(){ clearTimeout(tid); tid = setTimeout(check, 500); });
-        input.addEventListener('blur', check);
-      }
       if (btn) {
         btn.addEventListener('click', function(ev){
           ev.preventDefault();
-          var val = (input && input.value || '').trim();
-          var url = '<?= h($BASE_PATH) ?>google_login.php?email=' + encodeURIComponent(val || '') + (nextQS ? ('&next=' + encodeURIComponent(nextQS)) : '');
+          var url = '<?= h($BASE_PATH) ?>google_login.php' + (nextQS ? ('?next=' + encodeURIComponent(nextQS)) : '');
           window.location.href = url;
         });
       }
