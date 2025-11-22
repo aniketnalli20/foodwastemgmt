@@ -303,9 +303,19 @@ interface MapService <<external>> {
   +search(q)
 }
 
-enum CampaignStatus { open, closed }
-enum ListingStatus { open, claimed }
-enum KycStatus { pending, approved, rejected }
+enum CampaignStatus {
+  open;
+  closed
+}
+enum ListingStatus {
+  open;
+  claimed
+}
+enum KycStatus {
+  pending;
+  approved;
+  rejected
+}
 
 User "1" -- "0..*" Campaign : creates
 User "1" o-- "1" KarmaWallet : owns
