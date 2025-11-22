@@ -1,5 +1,4 @@
 @startuml
-scale 0.7
 ' Use Case Diagram: No Starve
 skinparam usecaseBorderColor #2D3748
 skinparam usecaseBackgroundColor #EDF2F7
@@ -547,32 +546,30 @@ events }o--|| campaigns : ref (when ref_type='campaign')
 @startuml
 ' --- Next Diagram: Component (Architecture) ---
 ' Component Diagram: No Starve Architecture
-title Component Diagram
+scale 0.7
+title Component Diagram (Medium)
 
 component "Web Client" as Client
-component "PHP Frontend (index.php)" as Front
-component "Auth Module (login.php, register.php)" as Auth
-component "Listing Service (create/claim)" as Listing
-component "Campaign Service (create_campaign.php, app.php)" as Campaign
-component "Follow Service (follow.php)" as FollowSvc
-component "Endorse Service (endorse.php)" as EndorseSvc
-component "KYC Service (kyc.php)" as KYCSvc
-component "Wallet Service (wallet.php, app.php)" as WalletSvc
-component "Stats API (stats.php)" as StatsAPI
-component "Geocode API (geocode.php)" as GeocodeAPI
-component "Admin Tools (admin/index.php)" as Admin
-database "Database (PDO: MySQL/PostgreSQL)" as DB
-cloud "External Map (Google/Nominatim)" as ExtMap
+component "PHP Frontend\n(index.php)" as Front
+component "Auth Module\n(login.php, register.php)" as Auth
+component "Listing Service\n(create/claim)" as Listing
+component "Campaign Service\n(create_campaign.php, app.php)" as Campaign
+component "Wallet Service\n(wallet.php, app.php)" as WalletSvc
+component "KYC Service\n(kyc.php)" as KYCSvc
+component "Social Service\n(follow.php, endorse.php)" as SocialSvc
+component "Stats API\n(stats.php)" as StatsAPI
+component "Geocode API\n(geocode.php)" as GeocodeAPI
+component "Admin Tools\n(admin/index.php)" as Admin
+database "Database (PDO)" as DB
+cloud "External Map" as ExtMap
 cloud "Email SMTP" as SMTP
 
 Client --> Front
+Front --> Auth
 Front --> Listing
 Front --> Campaign
-Front --> Auth
-Front --> FollowSvc
-Front --> EndorseSvc
-Front --> KYCSvc
 Front --> WalletSvc
+Front --> SocialSvc
 Front --> StatsAPI
 Front --> GeocodeAPI
 Front ..> ExtMap : map link
@@ -583,14 +580,12 @@ Admin --> WalletSvc
 Admin --> KYCSvc
 Admin --> StatsAPI
 
+Auth --> DB
 Listing --> DB
 Campaign --> DB
-FollowSvc --> DB
-EndorseSvc --> DB
-KYCSvc --> DB
 WalletSvc --> DB
+KYCSvc --> DB
 StatsAPI --> DB
-Auth --> DB
 GeocodeAPI ..> ExtMap
 Auth ..> SMTP : password reset
 
