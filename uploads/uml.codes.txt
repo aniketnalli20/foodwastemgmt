@@ -1,9 +1,10 @@
 @startuml
+scale 0.7
 ' Use Case Diagram: No Starve
 skinparam usecaseBorderColor #2D3748
 skinparam usecaseBackgroundColor #EDF2F7
 skinparam packageBorderColor #CBD5E0
-left to right direction
+top to bottom direction
 
 actor "User" as User
 actor "Meal Provider" as Provider
@@ -389,4 +390,213 @@ endif
 stop
 
 ' End: Flowchart Diagram
+@enduml
+@startuml
+' --- Next Diagram: ER (Database Schema) ---
+' ER Diagram: No Starve Database
+title Entity Relationship Diagram
+
+hide methods
+skinparam classAttributeIconSize 0
+
+entity "users" as users {
+  * id : INT
+  --
+  username : VARCHAR
+  email : VARCHAR
+  password_hash : VARCHAR
+  phone : VARCHAR?
+  address : TEXT?
+  is_admin : BOOL
+  followers_override : INT?
+  created_at : DATETIME
+}
+
+entity "campaigns" as campaigns {
+  * id : INT
+  --
+  user_id : INT?
+  title : VARCHAR
+  summary : TEXT?
+  area : VARCHAR?
+  status : ENUM(open, closed)
+  created_at : DATETIME
+  contributor_name : VARCHAR
+  location : VARCHAR?
+  crowd_size : INT?
+  image_url : VARCHAR?
+  closing_time : DATETIME?
+  latitude : FLOAT?
+  longitude : FLOAT?
+  endorse_campaign : INT?
+  endorse_contributor : INT?
+}
+
+entity "listings" as listings {
+  * id : INT
+  --
+  donor_type : VARCHAR
+  donor_name : VARCHAR
+  contact : VARCHAR?
+  item : VARCHAR
+  quantity : VARCHAR
+  address : TEXT
+  city : VARCHAR
+  pincode : VARCHAR
+  expires_at : DATETIME?
+  image_url : VARCHAR?
+  status : ENUM(open, claimed)
+  created_at : DATETIME
+  claimed_at : DATETIME?
+}
+
+entity "claims" as claims {
+  * id : INT
+  --
+  listing_id : INT
+  ngo_name : VARCHAR?
+  claimer_name : VARCHAR
+  contact : VARCHAR?
+  notes : TEXT?
+  created_at : DATETIME
+}
+
+entity "karma_wallets" as wallets {
+  * user_id : INT
+  --
+  balance : INT
+  updated_at : DATETIME
+}
+
+entity "karma_events" as events {
+  * id : INT
+  --
+  user_id : INT
+  amount : INT
+  reason : VARCHAR?
+  ref_type : VARCHAR?
+  ref_id : INT?
+  created_at : DATETIME
+}
+
+entity "kyc_requests" as kyc {
+  * id : INT
+  --
+  user_id : INT
+  full_name : VARCHAR
+  phone : VARCHAR
+  address : TEXT
+  bank_account_name : VARCHAR
+  bank_account_number : VARCHAR
+  ifsc : VARCHAR
+  bank_name : VARCHAR
+  id_number : VARCHAR
+  status : ENUM(pending, approved, rejected)
+  notes : TEXT?
+  created_at : DATETIME
+  updated_at : DATETIME
+}
+
+entity "contributors" as contributors {
+  * name : VARCHAR
+  --
+  verified : BOOL
+  created_at : DATETIME
+  updated_at : DATETIME
+}
+
+entity "follows" as follows {
+  * id : INT
+  --
+  follower_user_id : INT
+  target_user_id : INT?
+  contributor_name : VARCHAR?
+  created_at : DATETIME
+}
+
+entity "endorsements" as endorsements {
+  * id : INT
+  --
+  user_id : INT
+  campaign_id : INT
+  created_at : DATETIME
+}
+
+' Relationships
+users ||--o{ campaigns : creates
+users ||--|| wallets : owns
+users ||--o{ events : has
+users ||--o{ kyc : submits
+
+campaigns ||--o{ endorsements : endorsed-by
+endorsements }o--|| users : by
+
+listings ||--o{ claims : has
+claims }o--|| listings : for
+
+follows }o--|| users : follower
+follows }o--o| users : target
+follows }o--|| contributors : alt-target
+
+contributors ||--o{ campaigns : by-name
+
+events }o--|| campaigns : ref (when ref_type='campaign')
+
+' End: ER Diagram
+@enduml
+@startuml
+' --- Next Diagram: Component (Architecture) ---
+' Component Diagram: No Starve Architecture
+title Component Diagram
+
+component "Web Client" as Client
+component "PHP Frontend (index.php)" as Front
+component "Auth Module (login.php, register.php)" as Auth
+component "Listing Service (create/claim)" as Listing
+component "Campaign Service (create_campaign.php, app.php)" as Campaign
+component "Follow Service (follow.php)" as FollowSvc
+component "Endorse Service (endorse.php)" as EndorseSvc
+component "KYC Service (kyc.php)" as KYCSvc
+component "Wallet Service (wallet.php, app.php)" as WalletSvc
+component "Stats API (stats.php)" as StatsAPI
+component "Geocode API (geocode.php)" as GeocodeAPI
+component "Admin Tools (admin/index.php)" as Admin
+database "Database (PDO: MySQL/PostgreSQL)" as DB
+cloud "External Map (Google/Nominatim)" as ExtMap
+cloud "Email SMTP" as SMTP
+
+Client --> Front
+Front --> Listing
+Front --> Campaign
+Front --> Auth
+Front --> FollowSvc
+Front --> EndorseSvc
+Front --> KYCSvc
+Front --> WalletSvc
+Front --> StatsAPI
+Front --> GeocodeAPI
+Front ..> ExtMap : map link
+
+Admin --> Auth
+Admin --> Campaign
+Admin --> WalletSvc
+Admin --> KYCSvc
+Admin --> StatsAPI
+
+Listing --> DB
+Campaign --> DB
+FollowSvc --> DB
+EndorseSvc --> DB
+KYCSvc --> DB
+WalletSvc --> DB
+StatsAPI --> DB
+Auth --> DB
+GeocodeAPI ..> ExtMap
+Auth ..> SMTP : password reset
+
+note right of Front
+Runs on port 8080 (homepage)
+end note
+
+' End: Component Diagram
 @enduml
